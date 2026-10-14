@@ -19,6 +19,6 @@
  <ProgressRing Width="24" IsActive="True" Visibility="{x:Bind categoryDetailVM.Loading, Mode=OneWay}"/>
  </StackPanel></controls:MyAdaptiveGridView.Footer></controls:MyAdaptiveGridView>
  <TextBlock Grid.Row="1" Text="{x:Bind categoryDetailVM.EmptyMessage, Mode=OneWay}" Margin="12" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"
- Foreground="{ThemeResource TextFillColorSecondaryBrush}" Visibility="{x:Bind categoryDetailVM.IsEmpty, Mode=OneWay}"/>
+ Foreground="{ThemeResource ReadableSecondaryTextBrush}" Visibility="{x:Bind categoryDetailVM.IsEmpty, Mode=OneWay}"/>
 
  </Grid></Page>

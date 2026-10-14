@@ -3,13 +3,13 @@
  <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
  <StackPanel Margin="16,12,16,8" Spacing="8">
  <Grid x:Name="BrowseHeader" MinHeight="44"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Border Padding="4" HorizontalAlignment="Left" CornerRadius="12" Background="{ThemeResource ControlFillColorDefaultBrush}">
- <SelectorBar x:Name="PlatformPicker" HorizontalAlignment="Left" SelectionChanged="PlatformPicker_SelectionChanged" AutomationProperties.Name="直播平台">
- <SelectorBarItem Style="{StaticResource PlatformItemStyle}" Text="哔哩哔哩" Tag="{x:Bind viewModels:MainVM.Sites[0]}"/>
- <SelectorBarItem Style="{StaticResource PlatformItemStyle}" Text="抖音" Tag="{x:Bind viewModels:MainVM.Sites[1]}"/>
- </SelectorBar>
+ <ListView x:Name="PlatformPicker" Padding="0" ItemsSource="{x:Bind viewModels:MainVM.Sites}" SelectionChanged="PlatformPicker_SelectionChanged" SelectionMode="Single" IsMultiSelectCheckBoxEnabled="False" HorizontalAlignment="Left" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollMode="Disabled" ScrollViewer.VerticalScrollMode="Disabled" ItemContainerStyle="{StaticResource PlatformTabStyle}" AutomationProperties.Name="直播平台">
+ <ListView.ItemsPanel><ItemsPanelTemplate><ItemsWrapGrid Orientation="Horizontal" ItemWidth="88" ItemHeight="40"/></ItemsPanelTemplate></ListView.ItemsPanel>
+ <ListView.ItemTemplate><DataTemplate><TextBlock Text="{Binding Label}" FontSize="14" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/></DataTemplate></ListView.ItemTemplate>
+ </ListView>
  </Border><Button x:Name="HeaderRefresh" Grid.Column="1" Margin="8,0,0,0" Style="{StaticResource ToolbarIconStyle}" Command="{x:Bind recomendVM.RefreshCommand}" ToolTipService.ToolTip="刷新" AutomationProperties.Name="刷新"><FontIcon FontFamily="{StaticResource SegoeFluent}" FontSize="16" Glyph="&#xE72C;"/></Button></Grid>
  <StackPanel x:Name="PinnedGamesSection" Visibility="Collapsed" Spacing="4">
- <TextBlock Text="常看游戏" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+ <TextBlock Text="常看游戏" FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}"/>
  <ListView x:Name="PinnedGamesList" SelectionMode="None" IsItemClickEnabled="True" ItemClick="PinnedGamesList_ItemClick" ContainerContentChanging="PinnedGamesList_ContainerContentChanging" Padding="0" AutomationProperties.Name="常看游戏" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
  <ListView.Resources><CornerRadius x:Key="ListViewItemCornerRadius">8</CornerRadius></ListView.Resources>
  <ListView.ItemsPanel><ItemsPanelTemplate><ItemsWrapGrid Orientation="Horizontal" ItemWidth="160"/></ItemsPanelTemplate></ListView.ItemsPanel>
@@ -34,6 +34,6 @@
  <ProgressRing Width="24" IsActive="True" Visibility="{x:Bind recomendVM.Loading, Mode=OneWay}"/>
  </StackPanel></controls:MyAdaptiveGridView.Footer></controls:MyAdaptiveGridView>
  <TextBlock Grid.Row="1" Text="{x:Bind recomendVM.EmptyMessage, Mode=OneWay}" Margin="12" TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"
- Foreground="{ThemeResource TextFillColorSecondaryBrush}" Visibility="{x:Bind recomendVM.IsEmpty, Mode=OneWay}"/>
+ Foreground="{ThemeResource ReadableSecondaryTextBrush}" Visibility="{x:Bind recomendVM.IsEmpty, Mode=OneWay}"/>
 
  </Grid></Page>

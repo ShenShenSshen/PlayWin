@@ -67,8 +67,8 @@
                             <TextBlock Text="{x:Bind Path=UserName}" />
                             <TextBlock
                                 Margin="0,4,0,0"
-                                FontSize="12"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                                FontSize="13"
+                                Foreground="{ThemeResource ReadableSecondaryTextBrush}">
                                 观看于<Run Text="{x:Bind Path=WatchTime}" />
                             </TextBlock>
                         </StackPanel>
@@ -79,7 +79,7 @@
         <TextBlock Grid.Row="1"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+            Foreground="{ThemeResource ReadableSecondaryTextBrush}"
             Visibility="{x:Bind Path=historyVM.IsEmpty, Mode=OneWay}">
             这里还什么都没有~
         </TextBlock>

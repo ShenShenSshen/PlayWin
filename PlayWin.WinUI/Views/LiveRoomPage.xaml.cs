@@ -401,6 +401,8 @@ namespace PlayWin.WinUI.Views
                     config.FFmpegOptions.Add("user_agent", "Mozilla/5.0 BiliDroid/1.12.0 (bbcallen@gmail.com)");
                     config.FFmpegOptions.Add("referer", "https://live.bilibili.com/");
                 }
+                if (liveRoomVM.SiteName == "虎牙直播") config.FFmpegOptions.Add("referer", "https://www.huya.com/");
+                if (liveRoomVM.SiteName == "斗鱼直播") config.FFmpegOptions.Add("referer", "https://www.douyu.com/");
                 try
                 {
                     var source = await FFmpegMediaSource.CreateFromUriAsync(url, config);

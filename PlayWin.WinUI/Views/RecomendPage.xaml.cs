@@ -15,11 +15,12 @@ public sealed partial class RecomendPage : Page
     public RecomendPage()
     {
         InitializeComponent(); NavigationCacheMode = NavigationCacheMode.Enabled;
-        PlatformPicker.SelectedItem = PlatformPicker.Items[MainVM.Sites.IndexOf(MainVM.BrowseSite)];
+        PlatformPicker.ItemsSource = MainVM.Sites;
+        PlatformPicker.SelectedItem = MainVM.BrowseSite;
         Loaded += async (_, _) =>
         {
             RefreshPinnedGames();
-            if (PlatformPicker.SelectedItem?.Tag != MainVM.BrowseSite) PlatformPicker.SelectedItem = PlatformPicker.Items.Single(i => i.Tag == MainVM.BrowseSite);
+            if (PlatformPicker.SelectedItem != MainVM.BrowseSite) PlatformPicker.SelectedItem = MainVM.BrowseSite;
             else if (!recomendVM.HasLoaded) await recomendVM.LoadAsync();
             else await recomendVM.HideStoppedAsync();
             if (IsLoaded) statusTimer.Start();
@@ -27,10 +28,11 @@ public sealed partial class RecomendPage : Page
         Unloaded += (_, _) => { shortcutGeneration++; statusTimer.Stop(); recomendVM.CancelPending(); };
         statusTimer.Tick += async (_, _) => await recomendVM.HideStoppedAsync();
     }
-    private async void PlatformPicker_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs e)
+    private async void PlatformPicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!IsLoaded) return;
-        if (PlatformPicker.SelectedItem?.Tag is not Site site) return;
+        if (PlatformPicker.SelectedItem is not Site site) return;
+        PlatformTabAnimation.Play(PlatformPicker, e);
         MainVM.BrowseSite = site;
         shortcutGeneration++;
         RefreshPinnedGames();

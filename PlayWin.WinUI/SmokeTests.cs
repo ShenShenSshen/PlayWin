@@ -40,6 +40,8 @@ internal static class SmokeTests
                 typeof(App).Namespace != "PlayWin.WinUI" || typeof(PlayWin.Core.BiliBili).Namespace != "PlayWin.Core")
                 throw new Exception("Legacy assembly filenames remained in the new output.");
         });
+        await CheckAsync("Four-platform game browsing, badges, links and pin isolation", PlatformChecks.StructureAsync);
+        await CheckAsync("Missing Huya and Douyu state is an error, not stopped", PlatformChecks.MissingStatusAsync);
         Check("Button", () => XamlReader.Load("<Button " + ns + ">Test</Button>"));
         Check("System font", () => XamlReader.Load("<FontIcon " + ns + " FontFamily=\"Segoe Fluent Icons\" Glyph=\"A\" />"));
         Check("Bundled font", () => XamlReader.Load("<FontIcon " + ns + " FontFamily=\"{StaticResource SegoeFluent}\" Glyph=\"A\" />"));
@@ -87,13 +89,23 @@ internal static class SmokeTests
         {
             var page = new BaseFramePage();
             var title = (TextBlock)page.FindName("Title");
-            var icon = (Microsoft.UI.Xaml.Media.Imaging.BitmapImage)((Image)page.FindName("AppIcon")).Source;
+            var icon = (Microsoft.UI.Xaml.Media.Imaging.SvgImageSource)((Image)page.FindName("AppIcon")).Source;
             var about = (TextBlock)new Views.SettingsPage().FindName("AboutAppName");
             var product = System.Diagnostics.FileVersionInfo.GetVersionInfo(Path.Combine(AppContext.BaseDirectory, "PlayWin.exe")).ProductName;
-            if (App.ActiveWindow.Title != "游窗" || title.Text != "游窗" || title.FontSize != 18 || title.FontWeight.Weight != 600 ||
-                about.Text != "游窗" || product != "游窗" || !icon.UriSource.ToString().EndsWith("/Assets/PlayWin.png") ||
+            if (App.ActiveWindow.Title != "游窗" || title.Text != "游窗" || title.FontSize != 18 || title.FontWeight.Weight != 400 ||
+                about.Text != "游窗" || product != "游窗" || !icon.UriSource.ToString().EndsWith("/Assets/PlayWin.svg") ||
                 !File.Exists(Path.Combine(AppContext.BaseDirectory, "Assets/PlayWin.ico")))
                 throw new Exception("Application title, About name or icon does not match PlayWin branding.");
+            var titleGrid = (Grid)page.FindName("TitleBar");
+            var appIcon = (Image)page.FindName("AppIcon");
+            var navigation = (NavigationView)new MainPage().FindName("navigationView");
+            if (titleGrid.ColumnDefinitions[0].Width.Value != navigation.CompactPaneLength ||
+                appIcon.HorizontalAlignment != HorizontalAlignment.Center || appIcon.Margin != new Thickness(0) ||
+                !title.FontFamily.Source.EndsWith("ChillRound.ttf#寒蝉全圆体") || title.CharacterSpacing != 35 ||
+                (double)new MainPage().Resources["NavigationViewItemOnLeftIconBoxHeight"] != 20 ||
+                !File.Exists(Path.Combine(AppContext.BaseDirectory, "Assets/Fonts/ChillRound.ttf")) ||
+                !File.Exists(Path.Combine(AppContext.BaseDirectory, "Assets/Fonts/ChillRound-LICENSE.txt")))
+                throw new Exception("Rounded wordmark, vector icon or navigation alignment was not preserved.");
         });
         Check("Compact room title and home title restoration", () =>
         {
@@ -115,7 +127,7 @@ internal static class SmokeTests
             frame.Content = null;
             navigated.Invoke(page, new object[] { frame, null });
             MessageCenter.ChangeTitle("Stale room title");
-            if (title.Text != "游窗" || title.FontSize != 18 || title.FontWeight.Weight != 600 || icon.Width != 24)
+            if (title.Text != "游窗" || title.FontSize != 18 || title.FontWeight.Weight != 400 || icon.Width != 24)
                 throw new Exception("Home branding was not restored.");
         });
         Check("Native materials and solid content surface", () =>
@@ -135,9 +147,9 @@ internal static class SmokeTests
         {
             foreach (var page in new Page[] { new Views.RecomendPage(), new Views.CategoryPage() })
             {
-                var picker = (SelectorBar)page.FindName("PlatformPicker");
-                if (picker.Items.Count != 2 || picker.HorizontalAlignment != HorizontalAlignment.Left ||
-                    picker.Items.Any(item => item.CornerRadius.TopLeft != 8 || item.MinHeight != 36))
+                var picker = (ListView)page.FindName("PlatformPicker");
+                if (picker.Items.Count != 4 || picker.HorizontalAlignment != HorizontalAlignment.Left ||
+                    picker.ItemContainerStyle == null || picker.Items.Cast<ViewModels.Site>().Any(item => string.IsNullOrWhiteSpace(item.Label)))
                     throw new Exception("Platform selector is not compact or platforms are missing.");
             }
             var category = new Views.CategoryPage();
@@ -312,7 +324,48 @@ internal static class SmokeTests
                     if (Math.Abs(viewport.ActualWidth / viewport.ActualHeight - 16d / 9) > .006) throw new Exception("Normal playback ratio did not restore after mode changes.");
                 }
             });
+        foreach (var previewPage in new Page[] { new Views.RecomendPage(), new Views.CategoryPage() })
+        {
+            var platformTabs = (ListView)previewPage.FindName("PlatformPicker");
+            ((Grid)previewPage.FindName("BrowseHeader")).Children.OfType<Border>().Single().Child = null;
+            foreach (var width in new[] { 480d, 320d, 280d })
+            foreach (var theme in new[] { ElementTheme.Light, ElementTheme.Dark })
+                await CheckWindow("Four platform labels wrap at " + width + " in " + theme, () =>
+                {
+                    platformTabs.Width = width; platformTabs.RequestedTheme = theme;
+                    window.Root.Content = platformTabs;
+                }, () =>
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        var container = (ListViewItem)platformTabs.ContainerFromIndex(i);
+                        if (container == null) throw new Exception("Platform tab was not visible.");
+                        var label = Descendants(container).OfType<TextBlock>().First(t => t.Text == ViewModels.MainVM.Sites[i].Label);
+                        var origin = container.TransformToVisual(platformTabs).TransformPoint(new Windows.Foundation.Point());
+                        if (origin.X < -1 || origin.X + container.ActualWidth > width + 1 || label.TextTrimming != TextTrimming.None)
+                            throw new Exception("Platform label was clipped or ellipsized.");
+                    }
+                });
+        }
         var home = new Views.RecomendPage();
+        foreach (var theme in new[] { ElementTheme.Light, ElementTheme.Dark })
+        {
+            var sampleText = new TextBlock { Text = "游戏直播与设置 1280×720" };
+            var sampleButton = new Button { Content = "刷新" };
+            var sampleInput = new TextBox { Text = "搜索主播" };
+            var typography = new StackPanel { RequestedTheme = theme };
+            typography.Children.Add(sampleText);
+            typography.Children.Add(sampleButton);
+            typography.Children.Add(sampleInput);
+            await CheckWindow("Embedded Resource Han Rounded controls in " + theme, () => window.Root.Content = typography, () =>
+            {
+                foreach (var font in new[] { sampleText.FontFamily, sampleButton.FontFamily, sampleInput.FontFamily })
+                    if (!font.Source.EndsWith("ResourceHanRoundedCN-Regular.ttf#Resource Han Rounded CN")) throw new Exception("A control did not use the bundled rounded interface font.");
+                if (!File.Exists(Path.Combine(AppContext.BaseDirectory, "Assets/Fonts/ResourceHanRoundedCN-Regular.ttf")) ||
+                    !File.Exists(Path.Combine(AppContext.BaseDirectory, "Assets/Fonts/ResourceHanRounded-LICENSE.md")))
+                    throw new Exception("Resource Han Rounded font or license was missing.");
+            });
+        }
         var cards = new Controls.MyAdaptiveGridView
         {
             ItemTemplate = (DataTemplate)App.Current.Resources["RoomItemTemplate"],
@@ -490,7 +543,7 @@ internal static class SmokeTests
                 window.Root.Content = settings;
             }, () =>
             {
-                if (((StackPanel)settings.FindName("SettingsCards")).Children.OfType<Border>().Count() != 4 || settings.SettingRows.Count() != 10)
+                if (((StackPanel)settings.FindName("SettingsCards")).Children.OfType<Border>().Count() != 4 || settings.SettingRows.Count() != 12)
                     throw new Exception("Settings groups or rows are missing.");
                 var content = (StackPanel)settings.FindName("SettingsCards");
                 var expectedWidth = Math.Min(1040, logicalWidth - 32);
@@ -565,6 +618,7 @@ internal static class SmokeTests
             DouyinAccount.Instance.Logout();
             await Controls.DouyinLoginDialog.ClearCookiesAsync();
         });
+        await CheckAsync("Independent Huya and Douyu login protection and logout", () => PlatformChecks.LoginAsync(window));
         var reportDirectory = Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PlayWin")).FullName;
         File.WriteAllLines(Path.Combine(reportDirectory, "smoke-test.log"), output);
         Environment.ExitCode = failed ? 1 : 0;

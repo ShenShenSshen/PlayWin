@@ -84,8 +84,8 @@
                                 <TextBlock Text="{x:Bind Path=UserName}" />
                                 <TextBlock
                                     Margin="0,4,0,0"
-                                    FontSize="12"
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    FontSize="13"
+                                    Foreground="{ThemeResource ReadableSecondaryTextBrush}"
                                     Text="{x:Bind Path=SiteName}" />
                             </StackPanel>
                             <StackPanel
@@ -103,7 +103,7 @@
                                     Fill="Green" />
                                 <TextBlock
                                     VerticalAlignment="Center"
-                                    FontSize="12"
+                                    FontSize="13"
                                     Foreground="Green"
                                     Text="直播中"
                                     Visibility="{x:Bind Path=LiveStatus, Mode=OneWay}" />
@@ -116,7 +116,7 @@
             <TextBlock
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Foreground="{ThemeResource ReadableSecondaryTextBrush}"
                 Visibility="{x:Bind Path=favoriteVM.IsEmpty, Mode=OneWay}">
                 <Run Text="{x:Bind favoriteVM.EmptyMessage, Mode=OneWay}"/>
             </TextBlock>

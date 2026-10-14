@@ -11,6 +11,10 @@
         <Thickness x:Key="NavigationViewContentPresenterMargin">0,0,0,0</Thickness>
         <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="Transparent" />
         <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent" />
+        <x:Double x:Key="NavigationViewItemOnLeftIconBoxHeight">20</x:Double>
+        <Style TargetType="FontIcon">
+            <Setter Property="FontSize" Value="20" />
+        </Style>
         <Style TargetType="muxc:NavigationViewItem">
             <Setter Property="CornerRadius" Value="8" />
             <Setter Property="Margin" Value="0,2" />

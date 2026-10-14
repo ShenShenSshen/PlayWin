@@ -1,6 +1,11 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives">
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
+            <SolidColorBrush x:Key="PlatformSelectedBrush" Color="#1768B3" />
+            <SolidColorBrush x:Key="PlatformSelectedHoverBrush" Color="#2174BD" />
+            <SolidColorBrush x:Key="PlatformSelectedPressedBrush" Color="#164778" />
+            <SolidColorBrush x:Key="PlatformSelectedForegroundBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="ReadableSecondaryTextBrush" Color="#4B5563" />
             <SolidColorBrush x:Key="ChromeSurfaceBrush" Color="#18FFFFFF" />
             <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#EEF1F5" />
             <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="#FFFFFF" />
@@ -9,6 +14,11 @@
             <Color x:Key="CategorySelectedTextColor">#174E80</Color>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
+            <SolidColorBrush x:Key="PlatformSelectedBrush" Color="#1768B3" />
+            <SolidColorBrush x:Key="PlatformSelectedHoverBrush" Color="#2174BD" />
+            <SolidColorBrush x:Key="PlatformSelectedPressedBrush" Color="#164778" />
+            <SolidColorBrush x:Key="PlatformSelectedForegroundBrush" Color="#FFFFFF" />
+            <SolidColorBrush x:Key="ReadableSecondaryTextBrush" Color="#C4CBD4" />
             <SolidColorBrush x:Key="ChromeSurfaceBrush" Color="#10000000" />
             <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#181B20" />
             <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="#22262C" />
@@ -17,6 +27,11 @@
             <Color x:Key="CategorySelectedTextColor">#E4F0FF</Color>
         </ResourceDictionary>
         <ResourceDictionary x:Key="HighContrast">
+            <SolidColorBrush x:Key="PlatformSelectedBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="PlatformSelectedHoverBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="PlatformSelectedPressedBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <SolidColorBrush x:Key="PlatformSelectedForegroundBrush" Color="{ThemeResource SystemColorHighlightTextColor}" />
+            <SolidColorBrush x:Key="ReadableSecondaryTextBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
             <SolidColorBrush x:Key="ChromeSurfaceBrush" Color="{ThemeResource SystemColorWindowColor}" />
             <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{ThemeResource SystemColorWindowColor}" />
             <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="{ThemeResource SystemColorWindowColor}" />
@@ -38,6 +53,17 @@
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="Padding" Value="14,8" />
         <Setter Property="MinHeight" Value="36" />
+    </Style>
+    <Style x:Key="PlatformTabStyle" TargetType="ListViewItem">
+        <Setter Property="CornerRadius" Value="8"/><Setter Property="Padding" Value="10,6"/><Setter Property="Margin" Value="4"/>
+        <Setter Property="MinWidth" Value="0"/><Setter Property="MinHeight" Value="32"/>
+        <Setter Property="UseSystemFocusVisuals" Value="True"/>
+        <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListViewItem">
+            <primitives:ListViewItemPresenter CornerRadius="{TemplateBinding CornerRadius}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentMargin="{TemplateBinding Padding}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Foreground="{TemplateBinding Foreground}" Background="Transparent"
+                SelectedBackground="{ThemeResource PlatformSelectedBrush}" SelectedPointerOverBackground="{ThemeResource PlatformSelectedHoverBrush}" SelectedPressedBackground="{ThemeResource PlatformSelectedPressedBrush}" SelectedForeground="{ThemeResource PlatformSelectedForegroundBrush}"
+                PointerOverBackground="{ThemeResource ControlFillColorSecondaryBrush}" PressedBackground="{ThemeResource ControlFillColorTertiaryBrush}" FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}" FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"/>
+        </ControlTemplate></Setter.Value></Setter>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/><Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
     <!--  GridView宽高  -->
     <Style x:Key="PageTitleStyle" TargetType="TextBlock">

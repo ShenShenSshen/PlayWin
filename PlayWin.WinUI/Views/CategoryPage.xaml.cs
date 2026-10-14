@@ -11,10 +11,11 @@ public sealed partial class CategoryPage : Page
     public CategoryPage()
     {
         InitializeComponent(); NavigationCacheMode = NavigationCacheMode.Enabled;
-        PlatformPicker.SelectedItem = PlatformPicker.Items[MainVM.Sites.IndexOf(MainVM.BrowseSite)];
+        PlatformPicker.ItemsSource = MainVM.Sites;
+        PlatformPicker.SelectedItem = MainVM.BrowseSite;
         Loaded += (_, _) =>
         {
-            if (PlatformPicker.SelectedItem?.Tag != MainVM.BrowseSite) PlatformPicker.SelectedItem = PlatformPicker.Items.Single(i => i.Tag == MainVM.BrowseSite);
+            if (PlatformPicker.SelectedItem != MainVM.BrowseSite) PlatformPicker.SelectedItem = MainVM.BrowseSite;
             else if (categoryVM.Items.Count == 0) _ = LoadCategoriesAsync();
         };
     }
@@ -22,10 +23,11 @@ public sealed partial class CategoryPage : Page
     {
         await categoryVM.LoadAsync();
     }
-    private async void PlatformPicker_SelectionChanged(SelectorBar sender, SelectorBarSelectionChangedEventArgs e)
+    private async void PlatformPicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!IsLoaded) return;
-        if (PlatformPicker.SelectedItem?.Tag is not Site site) return;
+        if (PlatformPicker.SelectedItem is not Site site) return;
+        PlatformTabAnimation.Play(PlatformPicker, e);
         MainVM.BrowseSite = site;
         await LoadCategoriesAsync();
     }

@@ -71,10 +71,7 @@ internal sealed class DouyinWebRequest
         browser.IsMuted = true;
         browser.Settings.AreDevToolsEnabled = false;
         browser.Settings.AreDefaultContextMenusEnabled = false;
-        // The page supplies signing scripts only; its preview streams must never be downloaded or played.
-        browser.AddWebResourceRequestedFilter("*", CoreWebView2WebResourceContext.Media);
-        browser.WebResourceRequested += (_, args) =>
-            args.Response = environment.CreateWebResourceResponse(null, 403, "Background media disabled", "Content-Type: text/plain");
+        await BrowserMediaBlock.ApplyAsync(browser, environment);
         browser.NavigationStarting += (_, args) =>
         {
             if (!Uri.TryCreate(args.Uri, UriKind.Absolute, out var destination) || destination.Scheme != "https" || destination.Host != "live.douyin.com") args.Cancel = true;
@@ -84,16 +81,6 @@ internal sealed class DouyinWebRequest
         browser.NavigationCompleted += Completed;
         try
         {
-            await browser.AddScriptToExecuteOnDocumentCreatedAsync(@"
-                const mediaUrl = input => /\.(flv|m3u8|mp4|m4s|ts)$/i.test(new URL(input instanceof Request ? input.url : String(input), location.href).pathname);
-                const mediaError = () => new DOMException('Background media disabled', 'NotAllowedError');
-                const originalFetch = window.fetch;
-                window.fetch = function(input) { if (mediaUrl(input)) return Promise.reject(mediaError()); return originalFetch.apply(this, arguments); };
-                const originalOpen = XMLHttpRequest.prototype.open;
-                XMLHttpRequest.prototype.open = function(method, url) { if (mediaUrl(url)) throw mediaError(); return originalOpen.apply(this, arguments); };
-                HTMLMediaElement.prototype.play = function() { this.pause(); return Promise.reject(mediaError()); };
-                document.addEventListener('play', event => { if (event.target instanceof HTMLMediaElement) event.target.pause(); }, true);
-            ");
             browser.Navigate("https://live.douyin.com/");
             if (!await loaded.Task.WaitAsync(TimeSpan.FromSeconds(15))) throw new InvalidOperationException("抖音官网加载失败，请检查网络");
             for (var attempt = 0; attempt < 50; attempt++)

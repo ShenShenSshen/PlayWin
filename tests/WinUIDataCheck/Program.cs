@@ -129,12 +129,12 @@ using (var seed = new SqliteConnection("Filename=" + database))
 await DatabaseHelper.InitializeDatabase(target);
 var favorites = await DatabaseHelper.GetFavorites();
 var history = await DatabaseHelper.GetHistory();
-Check(favorites.Count == 2 && history.Count == 2, "Unsupported platform cleanup failed.");
-Check(favorites.All(x => sites.Take(2).Contains(x.SiteName)), "Removed platform survived cleanup.");
+Check(favorites.Count == 4 && history.Count == 4, "Restored platform data was deleted.");
+Check(favorites.All(x => sites.Contains(x.SiteName)), "Unknown platform data survived.");
 foreach (var site in sites.Append("未知"))
     DatabaseHelper.AddFavorite(new FavoriteItem { RoomID = "imported", SiteName = site, UserName = "user", Photo = "photo" });
-Check((await DatabaseHelper.GetFavorites()).Count == 4, "Import filtering failed.");
+Check((await DatabaseHelper.GetFavorites()).Count == 8, "Import filtering failed.");
 DatabaseHelper.DeleteFavorite(favorites[0].ID);
 await DatabaseHelper.InitializeDatabase(target);
-Check((await DatabaseHelper.GetFavorites()).Count == 3, "Repeated startup overwrote desktop data.");
-Console.WriteLine("PASS: PlayWin storage names, persisted settings, platform cleanup, import filtering and repeated startup.");
+Check((await DatabaseHelper.GetFavorites()).Count == 7, "Repeated startup overwrote desktop data.");
+Console.WriteLine("PASS: PlayWin storage names, persisted settings, four-platform preservation, import filtering and repeated startup.");

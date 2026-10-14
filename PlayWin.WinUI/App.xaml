@@ -12,6 +12,8 @@
                 <ResourceDictionary Source="ms-appx:///ValueDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <x:String x:Key="AppDisplayName">游窗</x:String>
+            <FontFamily x:Key="ContentControlThemeFontFamily">ms-appx:///Assets/Fonts/ResourceHanRoundedCN-Regular.ttf#Resource Han Rounded CN</FontFamily>
+            <FontFamily x:Key="BrandFontFamily">ms-appx:///Assets/Fonts/ChillRound.ttf#寒蝉全圆体</FontFamily>
 <!--  转换器  -->
             <convert:NumberToStringConvert x:Key="numberToStringConvert" />
             <convert:DisplayConvert x:Key="displayConvert" />
@@ -71,7 +73,7 @@
                                     <TextBlock
                                         Margin="4,2,0,0"
                                         VerticalAlignment="Center"
-                                        FontSize="12"
+                                        FontSize="13"
                                         Foreground="White"><Run Text="{Binding Path=Online, Converter={StaticResource numberToStringConvert}}" /></TextBlock>
                                 </StackPanel>
 
@@ -91,15 +93,15 @@
                     <Grid Grid.Row="2" Margin="4,0,4,4" ColumnSpacing="6">
                         <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
                     <TextBlock
-                        FontSize="12"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        FontSize="13"
+                        Foreground="{ThemeResource ReadableSecondaryTextBrush}"
                         Text="{Binding Path=UserName}"
                         TextTrimming="CharacterEllipsis"
                         TextWrapping="Wrap" />
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                        <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{Binding Converter={StaticResource searchBadgeConvert}, ConverterParameter=Status}" Visibility="{Binding Converter={StaticResource searchBadgeConvert}, ConverterParameter=StatusVisibility}"/>
+                        <TextBlock FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}" Text="{Binding Converter={StaticResource searchBadgeConvert}, ConverterParameter=Status}" Visibility="{Binding Converter={StaticResource searchBadgeConvert}, ConverterParameter=StatusVisibility}"/>
                         <Border CornerRadius="4" Padding="4,0" Background="{ThemeResource ControlFillColorSecondaryBrush}" Visibility="{Binding Converter={StaticResource searchBadgeConvert}, ConverterParameter=PlatformVisibility}">
-                            <TextBlock FontSize="12" Text="{Binding Converter={StaticResource searchBadgeConvert}, ConverterParameter=Platform}"/>
+                            <TextBlock FontSize="13" Text="{Binding Converter={StaticResource searchBadgeConvert}, ConverterParameter=Platform}"/>
                         </Border>
                     </StackPanel>
                     </Grid>

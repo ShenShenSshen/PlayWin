@@ -39,6 +39,9 @@ namespace PlayWin.WinUI.Views
             {
                 BiliAccount.Instance.OnAccountChanged += BiliAccount_OnAccountChanged;
                 DouyinAccount.Instance.OnAccountChanged += DouyinAccount_OnAccountChanged;
+                WebAccount.For(LiveSite.Huya).Changed += WebAccounts_Changed;
+                WebAccount.For(LiveSite.Douyu).Changed += WebAccounts_Changed;
+                WebAccounts_Changed(null, EventArgs.Empty);
                 DouyinAccount_OnAccountChanged(null, EventArgs.Empty);
                 BiliAccount_OnAccountChanged(null, EventArgs.Empty);
             };
@@ -46,6 +49,8 @@ namespace PlayWin.WinUI.Views
             {
                 BiliAccount.Instance.OnAccountChanged -= BiliAccount_OnAccountChanged;
                 DouyinAccount.Instance.OnAccountChanged -= DouyinAccount_OnAccountChanged;
+                WebAccount.For(LiveSite.Huya).Changed -= WebAccounts_Changed;
+                WebAccount.For(LiveSite.Douyu).Changed -= WebAccounts_Changed;
             }; 
             LoadUI();
 
@@ -232,6 +237,28 @@ namespace PlayWin.WinUI.Views
         {
             DouyinAccount.Instance.Logout();
             try { await PlayWin.WinUI.Controls.DouyinLoginDialog.ClearCookiesAsync(); }
+            catch { Utils.ShowMessageToast("本地登录已清除；网页登录状态未清理，可在登录网页中注销"); }
+        }
+        private void WebAccounts_Changed(object sender, EventArgs e)
+        {
+            foreach (var site in new[] { LiveSite.Huya, LiveSite.Douyu })
+            {
+                var account = WebAccount.For(site);
+                ((TextBlock)FindName("txt" + site)).Text = account.StatusMessage;
+                ((Button)FindName("BtnLogin" + site)).Visibility = account.Logined ? Visibility.Collapsed : Visibility.Visible;
+                ((Button)FindName("BtnLogout" + site)).Visibility = account.Saved ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+        private async void BtnLoginWeb_Click(object sender, RoutedEventArgs e)
+        {
+            var site = Enum.Parse<LiveSite>((string)((Button)sender).Tag);
+            await new Controls.WebLoginDialog(site) { XamlRoot = XamlRoot }.ShowAsync();
+        }
+        private async void BtnLogoutWeb_Click(object sender, RoutedEventArgs e)
+        {
+            var site = Enum.Parse<LiveSite>((string)((Button)sender).Tag);
+            WebAccount.For(site).Logout();
+            try { await Controls.WebLoginDialog.ClearCookiesAsync(site); }
             catch { Utils.ShowMessageToast("本地登录已清除；网页登录状态未清理，可在登录网页中注销"); }
         }
         private void BtnLogoutBili_Click(object sender, RoutedEventArgs e)

@@ -28,10 +28,14 @@ internal static class RequestErrorMessage
     {
         var saved = platform == "哔哩哔哩直播" ? !string.IsNullOrEmpty(BiliAccount.Instance.Cookie) : platform == "抖音直播" &&
             !string.IsNullOrEmpty(SettingHelper.GetValue(SettingHelper.DOUYIN_COOKIE, ""));
+        if (platform == "虎牙直播") saved = WebAccount.For(LiveSite.Huya).Saved;
+        if (platform == "斗鱼直播") saved = WebAccount.For(LiveSite.Douyu).Saved;
         if (Kind(exception) == LiveFailureKind.Authentication && saved)
         {
             if (platform == "哔哩哔哩直播") BiliAccount.Instance.MarkExpired();
             else if (platform == "抖音直播") DouyinAccount.Instance.MarkExpired();
+            else if (platform == "虎牙直播") WebAccount.For(LiveSite.Huya).MarkExpired();
+            else if (platform == "斗鱼直播") WebAccount.For(LiveSite.Douyu).MarkExpired();
         }
         return Describe(exception, platform, saved);
     }

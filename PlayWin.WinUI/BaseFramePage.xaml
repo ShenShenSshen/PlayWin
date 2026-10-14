@@ -21,12 +21,14 @@
             </Grid.ColumnDefinitions>
             <Button
                 x:Name="BtnBack"
-                Margin="8,0,0,0"
+                Width="56"
+                Height="32"
+                Margin="0"
                 Background="Transparent"
                 BorderBrush="Transparent">
                 <FontIcon
                     FontFamily="{StaticResource SegoeFluent}"
-                    FontSize="12"
+                    FontSize="16"
                     Glyph="&#xE112;" />
             </Button>
             <Grid
@@ -35,28 +37,28 @@
                 Height="32"
                 Background="#00FFFFFF">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="56" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
                 <Image
                     x:Name="AppIcon"
-                    Grid.Column="1"
+                    Grid.Column="0"
                     Width="24"
                     Height="24"
-                    Margin="12,0,0,0"
-                    HorizontalAlignment="Left"
+                    Margin="0"
+                    HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Source="Assets/PlayWin.png" />
-                <Grid Grid.Column="2" Margin="0,0,138,0" Background="#00FFFFFF">
+                    Source="Assets/PlayWin.svg" />
+                <Grid Grid.Column="1" Margin="0,0,138,0" Background="#00FFFFFF">
                     <TextBlock
                         x:Name="Title"
-                        Margin="12,0"
+                        Margin="0,0,12,0"
                         VerticalAlignment="Center"
-                        FontFamily="Segoe UI"
+                        FontFamily="{StaticResource BrandFontFamily}"
+                        CharacterSpacing="35"
                         FontSize="18"
-                        FontWeight="SemiBold"
+                        FontWeight="Normal"
                         ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"
                         TextTrimming="CharacterEllipsis"
                         Text="{StaticResource AppDisplayName}" />

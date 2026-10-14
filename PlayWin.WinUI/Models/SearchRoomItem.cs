@@ -15,6 +15,6 @@ internal sealed class SearchRoomItem : LiveRoomItem
         Online = room.Online;
         IsLive = room.IsLive;
     }
-    internal string PlatformLabel => Source is PlayWin.Core.BiliBili ? "哔哩哔哩" : "抖音";
+    internal string PlatformLabel => Source.Name.Replace("直播", "");
     internal string StatusLabel => IsLive.HasValue ? IsLive.Value ? "直播中" : "未开播" : null;
 }

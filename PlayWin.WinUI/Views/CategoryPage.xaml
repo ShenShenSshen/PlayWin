@@ -15,10 +15,10 @@
  <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
  <StackPanel Margin="16,12,16,8" Spacing="12">
  <Grid x:Name="BrowseHeader" MinHeight="44"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><Border Padding="4" HorizontalAlignment="Left" CornerRadius="12" Background="{ThemeResource ControlFillColorDefaultBrush}">
- <SelectorBar x:Name="PlatformPicker" HorizontalAlignment="Left" SelectionChanged="PlatformPicker_SelectionChanged" AutomationProperties.Name="直播平台">
- <SelectorBarItem Style="{StaticResource PlatformItemStyle}" Text="哔哩哔哩" Tag="{x:Bind viewModels:MainVM.Sites[0]}"/>
- <SelectorBarItem Style="{StaticResource PlatformItemStyle}" Text="抖音" Tag="{x:Bind viewModels:MainVM.Sites[1]}"/>
- </SelectorBar>
+ <ListView x:Name="PlatformPicker" Padding="0" ItemsSource="{x:Bind viewModels:MainVM.Sites}" SelectionChanged="PlatformPicker_SelectionChanged" SelectionMode="Single" IsMultiSelectCheckBoxEnabled="False" HorizontalAlignment="Left" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollMode="Disabled" ScrollViewer.VerticalScrollMode="Disabled" ItemContainerStyle="{StaticResource PlatformTabStyle}" AutomationProperties.Name="直播平台">
+ <ListView.ItemsPanel><ItemsPanelTemplate><ItemsWrapGrid Orientation="Horizontal" ItemWidth="88" ItemHeight="40"/></ItemsPanelTemplate></ListView.ItemsPanel>
+ <ListView.ItemTemplate><DataTemplate><TextBlock Text="{Binding Label}" FontSize="14" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/></DataTemplate></ListView.ItemTemplate>
+ </ListView>
  </Border><Button x:Name="HeaderRefresh" Grid.Column="1" Margin="8,0,0,0" Style="{StaticResource ToolbarIconStyle}" Command="{x:Bind categoryVM.RefreshCommand}" ToolTipService.ToolTip="刷新" AutomationProperties.Name="刷新"><FontIcon FontFamily="{StaticResource SegoeFluent}" FontSize="16" Glyph="&#xE72C;"/></Button></Grid>
  <ListView x:Name="GroupPicker" Padding="0" ItemsSource="{x:Bind categoryVM.Groups}" SelectedItem="{x:Bind categoryVM.SelectedGroup, Mode=TwoWay}" SelectionMode="Single" AutomationProperties.Name="游戏大类" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemContainerStyle="{StaticResource GameGroupItemStyle}">
  <ListView.ItemsPanel><ItemsPanelTemplate><ItemsWrapGrid Orientation="Horizontal" ItemWidth="112" /></ItemsPanelTemplate></ListView.ItemsPanel>

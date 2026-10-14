@@ -47,9 +47,11 @@ public sealed partial class BaseFramePage : Page
         Title.Text = App.DisplayName;
         var playing = MainFrame.Content is LiveRoomPage;
         Title.FontSize = playing ? 14 : 18;
-        Title.FontWeight = new Windows.UI.Text.FontWeight { Weight = (ushort)(playing ? 400 : 600) };
+        Title.FontFamily = (Microsoft.UI.Xaml.Media.FontFamily)App.Current.Resources[playing ? "ContentControlThemeFontFamily" : "BrandFontFamily"];
+        Title.CharacterSpacing = playing ? 0 : 35;
+        Title.FontWeight = new Windows.UI.Text.FontWeight { Weight = 400 };
         AppIcon.Width = AppIcon.Height = playing ? 18 : 24;
-        AppIcon.Source = new BitmapImage(new Uri("ms-appx:///Assets/PlayWin.png"));
+        AppIcon.Source = new SvgImageSource(new Uri("ms-appx:///Assets/PlayWin.svg"));
         BtnBack.Visibility = MainFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
     }
     private void BaseFramePage_PointerPressed(object sender, PointerRoutedEventArgs e)

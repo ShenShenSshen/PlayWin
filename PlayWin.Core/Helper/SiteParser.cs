@@ -13,6 +13,8 @@ namespace PlayWin.Core.Helper
     public enum LiveSite
     {
         Bilibili=0,
+        Huya=1,
+        Douyu=2,
         Douyin=3,
         Unknown=99,
     }
@@ -21,6 +23,15 @@ namespace PlayWin.Core.Helper
        
         public static async Task<(LiveSite, string)> ParseUrl(string url)
         {
+            if (Uri.TryCreate(url, UriKind.Absolute, out var parsed) && (parsed.Scheme == "https" || parsed.Scheme == "http"))
+            {
+                var id = parsed.AbsolutePath.Trim('/');
+                if (Regex.IsMatch(id, "^[a-zA-Z0-9_]{1,64}$"))
+                {
+                    if (parsed.Host == "www.huya.com" || parsed.Host == "m.huya.com" || parsed.Host == "huya.com") return (LiveSite.Huya, id);
+                    if (parsed.Host == "www.douyu.com" || parsed.Host == "m.douyu.com" || parsed.Host == "douyu.com") return (LiveSite.Douyu, id);
+                }
+            }
             LiveSite site= LiveSite.Unknown;
             var roomId = "";
             if (url.Contains("bilibili.com"))

@@ -60,10 +60,10 @@ internal static class BrowseChecks
             Check(BrowsePreferences.ReadPlatform() == originalSites[1], "Platform selection was not saved.");
             var home = new Views.RecomendPage();
             var page = new Views.CategoryPage();
-            foreach (var picker in new[] { (Microsoft.UI.Xaml.Controls.SelectorBar)home.FindName("PlatformPicker"), (Microsoft.UI.Xaml.Controls.SelectorBar)page.FindName("PlatformPicker") })
+            foreach (var picker in new[] { (Microsoft.UI.Xaml.Controls.ListView)home.FindName("PlatformPicker"), (Microsoft.UI.Xaml.Controls.ListView)page.FindName("PlatformPicker") })
                 Check(picker.SelectedItem == picker.Items[1], "Saved platform was not selected before the page loaded.");
-            ((Microsoft.UI.Xaml.Controls.SelectorBar)home.FindName("PlatformPicker")).SelectedItem = ((Microsoft.UI.Xaml.Controls.SelectorBar)home.FindName("PlatformPicker")).Items[0];
-            ((Microsoft.UI.Xaml.Controls.SelectorBar)page.FindName("PlatformPicker")).SelectedItem = ((Microsoft.UI.Xaml.Controls.SelectorBar)page.FindName("PlatformPicker")).Items[0];
+            ((Microsoft.UI.Xaml.Controls.ListView)home.FindName("PlatformPicker")).SelectedItem = ((Microsoft.UI.Xaml.Controls.ListView)home.FindName("PlatformPicker")).Items[0];
+            ((Microsoft.UI.Xaml.Controls.ListView)page.FindName("PlatformPicker")).SelectedItem = ((Microsoft.UI.Xaml.Controls.ListView)page.FindName("PlatformPicker")).Items[0];
             Check(MainVM.BrowseSite == originalSites[1], "Initial XAML selection overwrote the saved platform.");
             MainVM.Sites = new() { site, originalSites[1] };
             MainVM.BrowseSite = site;

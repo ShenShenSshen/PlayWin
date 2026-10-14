@@ -40,11 +40,6 @@ watch_time DATETIME);
             SqliteCommand createTable = new SqliteCommand(tableCommand, db);
             createTable.ExecuteNonQuery();
 
-            using (var cleanup = new SqliteCommand(@"DELETE FROM Favorite WHERE site_name IN ('虎牙直播', '斗鱼直播');
-DELETE FROM History WHERE site_name IN ('虎牙直播', '斗鱼直播');", db))
-            {
-                cleanup.ExecuteNonQuery();
-            }
             return Task.CompletedTask;
 
 

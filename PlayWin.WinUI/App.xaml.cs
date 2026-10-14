@@ -33,6 +33,7 @@ public partial class App : Application
             {
                 if (Environment.GetCommandLineArgs().Contains("--category-repro")) await CategoryRepro.RunAsync(window);
                 else if (Environment.GetCommandLineArgs().Contains("--browse-preferences-check")) BrowseChecks.VerifyRestart();
+                else if (Environment.GetCommandLineArgs().Contains("--platform-live")) await PlatformChecks.LiveAsync(window);
                 else if (Environment.GetCommandLineArgs().Contains("--update-download-check")) await UpdateChecks.LiveAsync();
                 else await SmokeTests.RunAsync();
             }
@@ -49,6 +50,8 @@ public partial class App : Application
         try
         {
             await DouyinAccount.Instance.InitLoginInfo();
+            await WebAccount.For(LiveSite.Huya).InitAsync();
+            await WebAccount.For(LiveSite.Douyu).InitAsync();
             await DatabaseHelper.InitializeDatabase();
             OpenWindow(typeof(BaseFramePage), args.Arguments);
         }
@@ -73,6 +76,8 @@ public partial class App : Application
     {
         Windows.Add(window);
         ActiveWindow = window;
+        var douyu = (PlayWin.Core.Douyu)ViewModels.MainVM.Sites.First(s => s.LiveSite is PlayWin.Core.Douyu).LiveSite;
+        douyu.SignAsync ??= new DouyuScriptBrowser().SignAsync;
         if (!Environment.GetCommandLineArgs().Contains("--smoke-test"))
         {
             var douyin = (PlayWin.Core.Douyin)ViewModels.MainVM.Sites.First(s => s.LiveSite is PlayWin.Core.Douyin).LiveSite;

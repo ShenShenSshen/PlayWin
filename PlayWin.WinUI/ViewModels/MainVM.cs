@@ -26,6 +26,8 @@ namespace PlayWin.WinUI.ViewModels
                 Logo="ms-appx:///Assets/Logo/douyin.png",
                 LiveSite=new PlayWin.Core.Douyin(),
             },
+            new Site { SiteType = LiveSite.Huya, Name = "虎牙直播", Logo = "ms-appx:///Assets/Logo/huya.png", LiveSite = new PlayWin.Core.Huya() },
+            new Site { SiteType = LiveSite.Douyu, Name = "斗鱼直播", Logo = "ms-appx:///Assets/Logo/douyu.png", LiveSite = new PlayWin.Core.Douyu() },
         };
         private static Site browseSite = BrowsePreferences.ReadPlatform();
         public static Site BrowseSite
@@ -45,6 +47,7 @@ namespace PlayWin.WinUI.ViewModels
     {
         public LiveSite SiteType { get; set; }
         public string Name { get; set; }
+        public string Label => Name.Replace("直播", "");
         public ILiveSite LiveSite { get; set; }
         public string Logo { get; set; }
     }

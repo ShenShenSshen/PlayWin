@@ -26,7 +26,7 @@
                           BorderThickness="0,0,0,1" CornerRadius="0">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock>播放区域尺寸</TextBlock>
-                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}">视频区域保持 16:9；窗口另加工具栏高度，屏幕不足时等比例缩小</TextBlock>
+                            <TextBlock FontSize="13" TextWrapping="Wrap" Foreground="{ThemeResource ReadableSecondaryTextBrush}">视频区域保持 16:9；窗口另加工具栏高度，屏幕不足时等比例缩小</TextBlock>
                         </StackPanel>
                         <ComboBox x:Name="cbWindowSize" HorizontalAlignment="Right" VerticalAlignment="Center" />
                     </Grid>
@@ -38,7 +38,7 @@
                         CornerRadius="0">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock>显示模式</TextBlock>
-                            <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}">切换深色与浅色模式</TextBlock>
+                            <TextBlock FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}">切换深色与浅色模式</TextBlock>
                         </StackPanel>
                         <ComboBox
                             x:Name="cbTheme"
@@ -61,7 +61,7 @@
                         CornerRadius="0">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock>导航栏位置</TextBlock>
-                            <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}">首页导航栏位置</TextBlock>
+                            <TextBlock FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}">首页导航栏位置</TextBlock>
                         </StackPanel>
                         <ComboBox
                             x:Name="cbPaneDisplayMode"
@@ -82,7 +82,7 @@
                         CornerRadius="0">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock>鼠标侧键返回</TextBlock>
-                            <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}">按鼠标侧键返回上一页</TextBlock>
+                            <TextBlock FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}">按鼠标侧键返回上一页</TextBlock>
                         </StackPanel>
                         <ToggleSwitch
                             x:Name="swMouseClosePage"
@@ -106,7 +106,7 @@
                         CornerRadius="0">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock>新窗口播放</TextBlock>
-                            <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}">使用新窗口打开直播间</TextBlock>
+                            <TextBlock FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}">使用新窗口打开直播间</TextBlock>
                         </StackPanel>
                         <ToggleSwitch
                             x:Name="swNewWindow"
@@ -122,7 +122,7 @@
                         CornerRadius="0">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock>视频解码器</TextBlock>
-                            <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}">播放失败可尝试修改此选项</TextBlock>
+                            <TextBlock FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}">播放失败可尝试修改此选项</TextBlock>
                         </StackPanel>
                         <ComboBox
                             x:Name="cbDecoder"
@@ -157,8 +157,8 @@
                                 <TextBlock>哔哩哔哩</TextBlock>
                                 <TextBlock
                                     x:Name="txtBili"
-                                    FontSize="12"
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                                    FontSize="13"
+                                    Foreground="{ThemeResource ReadableSecondaryTextBrush}">
                                     登录后可享受高清直播
                                 </TextBlock>
                             </StackPanel>
@@ -186,13 +186,21 @@
                             <Image Width="36" Height="36" Margin="0,0,12,0" Source="/Assets/Logo/douyin.png" />
                             <StackPanel VerticalAlignment="Center">
                                 <TextBlock>抖音</TextBlock>
-                                <TextBlock x:Name="txtDouyin" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="未登录，可浏览游戏直播" />
+                                <TextBlock x:Name="txtDouyin" FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}" Text="未登录，可浏览游戏直播" />
                             </StackPanel>
                         </StackPanel>
                         <Button x:Name="BtnLoginDouyin" HorizontalAlignment="Right" Click="BtnLoginDouyin_Click">立即登录</Button>
                         <Button x:Name="BtnLogoutDouyin" HorizontalAlignment="Right" Click="BtnLogoutDouyin_Click" Visibility="Collapsed">注销登录</Button>
                     </Grid>
 
+                    <Grid x:Name="SettingsHuya" Padding="16">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Image Width="36" Height="36" Margin="0,0,12,0" Source="/Assets/Logo/huya.png"/><StackPanel VerticalAlignment="Center"><TextBlock Text="虎牙"/><TextBlock x:Name="txtHuya" Text="未登录，可浏览游戏直播" FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}" TextWrapping="Wrap"/></StackPanel></StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center"><Button x:Name="BtnLoginHuya" Content="登录虎牙" Tag="Huya" Click="BtnLoginWeb_Click"/><Button x:Name="BtnLogoutHuya" Content="注销登录" Tag="Huya" Click="BtnLogoutWeb_Click" Visibility="Collapsed"/></StackPanel>
+                            </Grid>
+                    <Grid x:Name="SettingsDouyu" Padding="16">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Image Width="36" Height="36" Margin="0,0,12,0" Source="/Assets/Logo/douyu.png"/><StackPanel VerticalAlignment="Center"><TextBlock Text="斗鱼"/><TextBlock x:Name="txtDouyu" Text="未登录，可浏览游戏直播" FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}" TextWrapping="Wrap"/></StackPanel></StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center"><Button x:Name="BtnLoginDouyu" Content="登录斗鱼" Tag="Douyu" Click="BtnLoginWeb_Click"/><Button x:Name="BtnLogoutDouyu" Content="注销登录" Tag="Douyu" Click="BtnLogoutWeb_Click" Visibility="Collapsed"/></StackPanel>
+                            </Grid>
                     </StackPanel>
                     </Border>
                     <TextBlock Margin="0,20,0,8" FontSize="14" FontWeight="SemiBold">关于</TextBlock>
@@ -205,9 +213,10 @@
                         BorderThickness="0,0,0,1"
                         CornerRadius="0">
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock x:Name="AboutAppName" FontSize="18" FontWeight="SemiBold" Text="{StaticResource AppDisplayName}"/>
-                            <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="PlayWin"/>
-                            <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                            <TextBlock x:Name="AboutAppName" FontFamily="{StaticResource BrandFontFamily}" FontSize="18" FontWeight="Normal" Text="{StaticResource AppDisplayName}"/>
+                            <TextBlock FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}" Text="界面字体：资源圆体" />
+                            <TextBlock FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}" Text="PlayWin"/>
+                            <TextBlock FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}">
                                 版本:<Run x:Name="version" /></TextBlock>
                         </StackPanel>
                         <StackPanel
@@ -227,7 +236,7 @@
                     <Grid x:Name="SettingsUpdate" Padding="16,12" Background="{ThemeResource SystemControlTransparentBrush}" BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}">
                         <StackPanel VerticalAlignment="Center" Spacing="4">
                             <TextBlock Text="软件更新"/>
-                            <TextBlock FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind updateVM.Status, Mode=OneWay}"/>
+                            <TextBlock FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}" Text="{x:Bind updateVM.Status, Mode=OneWay}"/>
                             <ProgressBar x:Name="UpdateProgress" Height="4" Maximum="100" Value="{x:Bind updateVM.Progress, Mode=OneWay}" Visibility="{x:Bind updateVM.HideProgress, Mode=OneWay, Converter={StaticResource displayConvert}}" AutomationProperties.Name="安装包下载进度"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" HorizontalAlignment="Right">

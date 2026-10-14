@@ -14,7 +14,9 @@ namespace PlayWin.Core.Helper
             foreach (var category in categories)
             {
                 if ((site is BiliBili && new[] { "2", "3", "6" }.Contains(category.ID)) ||
-                    (site is Douyin && category.ID == "103,4")) result.Add(category);
+                    (site is Douyin && category.ID == "103,4") ||
+                    (site is Huya && new[] { "1", "2", "3" }.Contains(category.ID)) ||
+                    (site is Douyu && new[] { "1", "15", "9", "22" }.Contains(category.ID))) result.Add(category);
                 else if (site is BiliBili && category.ID == "13")
                 {
                     var games = category.Children.Where(c => c.ID == "561").ToList();
@@ -35,6 +37,7 @@ namespace PlayWin.Core.Helper
         public static List<LiveGameSource> OverviewSources(IEnumerable<LiveGameSource> sources) => sources.Where(s =>
             (s.Site is BiliBili && ((new[] { "2", "3", "6" }.Contains(s.Category.ParentID) && s.Category.ID == "0") ||
                 (s.Category.ParentID == "13" && s.Category.ID == "561"))) ||
-            (s.Site is Douyin && s.Category.ID == "103,4")).ToList();
+            (s.Site is Douyin && s.Category.ID == "103,4") ||
+            ((s.Site is Huya || s.Site is Douyu) && s.Category.ID == "0" && s.Category.ParentID == "1")).ToList();
     }
 }
