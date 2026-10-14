@@ -1,0 +1,8 @@
+<Window
+    x:Class="AllLive.WinUI.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Frame x:Name="RootFrame"
+           Background="Transparent"
+           Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+</Window>
