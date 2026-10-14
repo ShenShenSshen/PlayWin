@@ -1,6 +1,8 @@
 param([string]$CompilerPath)
+$installerCheckScriptRoot = $PSScriptRoot
+& (Join-Path $installerCheckScriptRoot '..\with-build-cache.ps1') {
 $ErrorActionPreference = 'Stop'
-$root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$root = [IO.Path]::GetFullPath((Join-Path $installerCheckScriptRoot '..'))
 [xml]$project = Get-Content -LiteralPath (Join-Path $root 'PlayWin.WinUI\PlayWin.csproj') -Raw
 $version = [string]$project.Project.PropertyGroup.Version
 $setup = Join-Path $root "artifacts\PlayWin-$version-x64-Setup.exe"
@@ -83,5 +85,4 @@ if ((Test-Path -LiteralPath $registry) -or (Test-Path -LiteralPath $menu) -or (T
 if (Test-Path -LiteralPath $testData) { throw 'Uninstall retained test user data or browser cache.' }
 
 'PASS uninstall removes program, shortcuts, all user data and browser cache; real user data untouched by isolated testing'
-
-
+}

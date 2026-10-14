@@ -1,4 +1,5 @@
 param([string]$CompilerPath)
+& (Join-Path $PSScriptRoot 'with-build-cache.ps1') {
 $ErrorActionPreference = 'Stop'
 
 if (-not $CompilerPath) {
@@ -15,3 +16,4 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 $version = [string]$project.Project.PropertyGroup.Version
 & $CompilerPath /Q "/DAppVersion=$version" (Join-Path $PSScriptRoot 'installer\PlayWin.iss')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}

@@ -53,6 +53,8 @@ namespace PlayWin.WinUI.Views
         DisplayRequest dispRequest;
         private bool displayActive;
         PageArgs pageArgs;
+        private RandomBrowseSession randomSession;
+        private System.Threading.CancellationTokenSource randomSwitchOperation;
         //当前处于小窗
         private bool isMini = false;
         private bool isFullWindow;
@@ -62,11 +64,32 @@ namespace PlayWin.WinUI.Views
         private int playGeneration;
         private bool switchingLine;
         private DateTime healthySince;
+        private bool floatingToolbar;
+        private int toolbarPopupCount;
+        private bool toolbarHiding;
+        private int toolbarFadeGeneration;
+        private Microsoft.UI.Xaml.Media.Animation.Storyboard toolbarFade;
+        private readonly UISettings toolbarUISettings = new();
         DispatcherTimer controlTimer;
+        private readonly DispatcherTimer miniHoverTimer = new() { Interval = TimeSpan.FromMilliseconds(100) };
+        private DateTime? miniPointerLeftAt;
 
         public LiveRoomPage()
         {
             this.InitializeComponent();
+            control.SizeChanged += (_, _) => UpdateToolbarDensity();
+            PlayBtnVolume.Flyout.Opening += (_, _) => ToolbarPopupOpened();
+            PlayBtnVolume.Flyout.Closed += (_, _) => ToolbarPopupClosed();
+            PlayerMoreMenu.Opening += (_, _) => ToolbarPopupOpened();
+            PlayerMoreMenu.Closed += (_, _) => ToolbarPopupClosed();
+            MiniMoreMenu.Opening += (_, _) => ToolbarPopupOpened();
+            MiniMoreMenu.Closed += (_, _) => ToolbarPopupClosed();
+            PlayQuality.Items.VectorChanged += (_, _) => PlayQuality.IsEnabled = PlayQuality.Items.Count > 0;
+            PlayLine.Items.VectorChanged += (_, _) => PlayLine.IsEnabled = PlayLine.Items.Count > 0;
+            PlayQuality.DropDownOpened += (_, _) => ToolbarPopupOpened();
+            PlayQuality.DropDownClosed += (_, _) => ToolbarPopupClosed();
+            PlayLine.DropDownOpened += (_, _) => ToolbarPopupOpened();
+            PlayLine.DropDownClosed += (_, _) => ToolbarPopupClosed();
 
             liveRoomVM = new LiveRoomVM();
             dispRequest = new DisplayRequest();
@@ -76,6 +99,7 @@ namespace PlayWin.WinUI.Views
             liveRoomVM.ChangedPlayUrl += LiveRoomVM_ChangedPlayUrl;
             controlTimer = new DispatcherTimer() { Interval = TimeSpan.FromSeconds(1) };
             controlTimer.Tick += ControlTimer_Tick;
+            miniHoverTimer.Tick += MiniHoverTimer_Tick;
             mediaPlayer = new MediaPlayer();
             mediaPlayer.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
             mediaPlayer.PlaybackSession.BufferingStarted += PlaybackSession_BufferingStarted;
@@ -91,6 +115,7 @@ namespace PlayWin.WinUI.Views
                 controlTimer.Start();
                 playbackWindow = App.GetWindowFor(this);
                 playbackWindow.WindowModeChanged += PlaybackWindow_ModeChanged;
+                playbackWindow.MiniToolbarLayoutChanged += PlaybackWindow_MiniToolbarLayoutChanged;
                 playbackWindow.SetPlaybackViewport(player);
                 UpdateWindowModeUI();
                 if (SettingHelper.GetValue(SettingHelper.NEW_WINDOW_LIVEROOM, false))
@@ -100,6 +125,7 @@ namespace PlayWin.WinUI.Views
                     App.GetWindowFor(this).Closed += (_, _) =>
                     {
                         closingWindow = true;
+                        EndRandomBrowse();
                         StopPlay();
                     };
                 }
@@ -107,18 +133,62 @@ namespace PlayWin.WinUI.Views
         }
         private void LiveRoomPage_Unloaded(object sender, RoutedEventArgs e)
         {
+            SettingHelper.Flush();
+            toolbarFadeGeneration++;
+            toolbarFade?.Stop();
+            toolbarFade = null;
+            toolbarPopupCount = 0;
+            EndRandomBrowse();
             recovery.Cancel();
             playGeneration++;
             liveRoomVM.CancelPendingPlayback();
             controlTimer.Stop();
+            miniHoverTimer.Stop();
+            miniPointerLeftAt = null;
             if (playbackWindow != null)
             {
                 playbackWindow.WindowModeChanged -= PlaybackWindow_ModeChanged;
+                playbackWindow.MiniToolbarLayoutChanged -= PlaybackWindow_MiniToolbarLayoutChanged;
                 playbackWindow.SetPlaybackViewport(null);
             }
             playbackWindow = null;
         }
         private void PlaybackWindow_ModeChanged(object sender, EventArgs e) => UpdateWindowModeUI();
+        private void PlaybackWindow_MiniToolbarLayoutChanged(object sender, EventArgs e) => ApplyMiniToolbarLayout();
+        private void ApplyMiniToolbarLayout()
+        {
+            if (!isMini || playbackWindow == null) return;
+            var above = playbackWindow.MiniToolbarAbove;
+            var height = playbackWindow.MiniToolbarHeight;
+            TopMiniToolbar.Height = new GridLength(above ? height : 0);
+            BottomInfo.Height = new GridLength(above ? 0 : height);
+            Grid.SetRow(control, above ? 0 : 2);
+            control.MinHeight = height > 0 ? Math.Min(44, height) : 44;
+            DockToolbarBackground.BorderThickness = above ? new Thickness(0, 0, 0, 1) : new Thickness(0, 1, 0, 0);
+        }
+        private void MiniHoverTimer_Tick(object sender, object e)
+        {
+            if (!isMini || !IsLoaded || closingWindow || playbackWindow == null) return;
+            if (toolbarPopupCount > 0 || playbackWindow.IsPointerInside())
+            {
+                miniPointerLeftAt = null;
+                ShowControl(true);
+            }
+            else
+            {
+                miniPointerLeftAt ??= DateTime.UtcNow;
+                if (DateTime.UtcNow - miniPointerLeftAt.Value >= TimeSpan.FromMilliseconds(500)) ShowControl(false);
+            }
+        }
+        private void FinishToolbarVisibility(bool show)
+        {
+            control.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+            if (isMini)
+            {
+                playbackWindow?.SetMiniToolbarVisible(show);
+                ApplyMiniToolbarLayout();
+            }
+        }
         private void HideTitleBar(bool hide)
         {
             if (SettingHelper.GetValue(SettingHelper.NEW_WINDOW_LIVEROOM, false))
@@ -303,13 +373,15 @@ namespace PlayWin.WinUI.Views
                     ToolTip.Visibility = Visibility.Collapsed;
                     break;
                 case Windows.System.VirtualKey.Escape:
-                    SetFullScreen(false);
+                    if (isMini) MiniWidnows(false);
+                    else if ((playbackWindow ?? App.GetWindowFor(this))?.AppWindow.Presenter.Kind == AppWindowPresenterKind.FullScreen) SetFullScreen(false);
+                    else if (isFullWindow) SetFullWindow(false);
 
                     break;
                 case Windows.System.VirtualKey.F8:
                 case Windows.System.VirtualKey.T:
                     //小窗播放
-                    MiniWidnows(BottomBtnExitMiniWindows.Visibility == Visibility.Visible);
+                    MiniWidnows(!isMini);
 
                     break;
                 case Windows.System.VirtualKey.F12:
@@ -478,7 +550,7 @@ namespace PlayWin.WinUI.Views
             }
         }
 
-        private void StopPlay()
+        private void StopPlay(bool resetWindowMode = true)
         {
             recovery.Cancel();
             playGeneration++;
@@ -497,8 +569,12 @@ namespace PlayWin.WinUI.Views
             controlTimer.Stop();
             ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
 
-            SetFullScreen(false);
-            MiniWidnows(false);
+            if (resetWindowMode)
+            {
+                if (isFullWindow && !closingWindow) SetFullWindow(false);
+                SetFullScreen(false);
+                MiniWidnows(false);
+            }
             //取消屏幕常亮
             if (dispRequest != null)
             {
@@ -544,7 +620,7 @@ namespace PlayWin.WinUI.Views
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-
+            EndRandomBrowse();
             StopPlay();
 
             KeyDown -= Page_KeyDown;
@@ -557,6 +633,8 @@ namespace PlayWin.WinUI.Views
             if (e.NavigationMode == Microsoft.UI.Xaml.Navigation.NavigationMode.New)
             {
                 pageArgs = e.Parameter as PageArgs;
+                randomSession = pageArgs.RandomSession;
+                UpdateRandomBrowseControls();
                 LoadSetting();
 
                 var siteInfo = MainVM.Sites.FirstOrDefault(x => x.LiveSite.Equals(pageArgs.Site));
@@ -569,6 +647,93 @@ namespace PlayWin.WinUI.Views
 
                 liveRoomVM.LoadData(pageArgs.Site, data.RoomID);
 
+            }
+        }
+
+        private void EndRandomBrowse()
+        {
+            randomSwitchOperation?.Cancel();
+            randomSession?.End();
+            UpdateRandomBrowseControls();
+        }
+
+        private void UpdateRandomBrowseControls()
+        {
+            var active = randomSession != null && !randomSession.Ended;
+            var busy = randomSwitchOperation != null;
+            foreach (var button in new[] { RandomPrevious, MiniRandomPrevious })
+            {
+                button.Visibility = active ? Visibility.Visible : Visibility.Collapsed;
+                button.IsEnabled = active && !busy && randomSession.CanGoPrevious;
+            }
+            foreach (var button in new[] { RandomNext, MiniRandomNext })
+            {
+                button.Visibility = active ? Visibility.Visible : Visibility.Collapsed;
+                button.IsEnabled = active && !busy;
+            }
+            UpdateToolbarDensity();
+        }
+
+        private async void RandomBrowse_Click(object sender, RoutedEventArgs e)
+        {
+            if (randomSession == null || randomSession.Ended || randomSwitchOperation != null) return;
+            var forward = ReferenceEquals(sender, RandomNext) || ReferenceEquals(sender, MiniRandomNext);
+            var session = randomSession;
+            var operation = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(60));
+            var roomChanged = false;
+            randomSwitchOperation = operation;
+            UpdateRandomBrowseControls();
+            ShowControl(true);
+            try
+            {
+                var choice = await session.FindAsync(forward, operation.Token);
+                if (!IsLoaded || closingWindow || operation.IsCancellationRequested || session.Ended || session != randomSession) return;
+                if (choice == null)
+                {
+                    Utils.ShowMessageToast(forward ? "暂未找到新的游戏直播，请稍后再试" : "前面的直播间已停播，暂无可返回的房间");
+                    return;
+                }
+                StopPlay(false);
+                roomChanged = true;
+                recovery.Reset();
+                healthySince = default;
+                PlaybackFailure.Visibility = Visibility.Collapsed;
+                pageArgs.Site = choice.Room.Source;
+                pageArgs.Data = choice.Room;
+                session.Commit(choice);
+                var site = MainVM.Sites.First(s => s.LiveSite == choice.Room.Source);
+                liveRoomVM.SiteLogo = site.Logo;
+                liveRoomVM.SiteName = site.Name;
+                MessageCenter.ChangeTitle("", site.LiveSite);
+                PlayerLoading.Visibility = Visibility.Visible;
+                PlayerLoadText.Text = "加载中";
+                controlTimer.Start();
+                ShowControl(true);
+                await liveRoomVM.LoadDataAsync(site.LiveSite, choice.Room.RoomID).WaitAsync(operation.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                if (roomChanged) liveRoomVM.CancelPendingPlayback();
+                if (IsLoaded && !closingWindow && !session.Ended)
+                {
+                    if (roomChanged)
+                    {
+                        PlayerLoading.Visibility = Visibility.Collapsed;
+                        PlaybackFailureText.Text = "房间加载超时，请重新播放或切换其他房间";
+                        PlaybackFailure.Visibility = Visibility.Visible;
+                    }
+                    Utils.ShowMessageToast("切换超时，请稍后再试");
+                }
+            }
+            catch (Exception ex)
+            {
+                if (IsLoaded && !closingWindow && !session.Ended) Utils.ShowMessageToast(ex.Message);
+            }
+            finally
+            {
+                if (randomSwitchOperation == operation) randomSwitchOperation = null;
+                operation.Dispose();
+                UpdateRandomBrowseControls();
             }
         }
 
@@ -606,18 +771,21 @@ namespace PlayWin.WinUI.Views
         private void LoadSetting()
         {
             //音量
+            SliderVolume.ValueChanged -= PlayerVolumeChanged;
             var volume = SettingHelper.GetValue<double>(SettingHelper.PLAYER_VOLUME, 1.0);
             mediaPlayer.Volume = volume;
             SliderVolume.Value = volume;
-            SliderVolume.ValueChanged += new RangeBaseValueChangedEventHandler((e, args) =>
-            {
-                mediaPlayer.Volume = SliderVolume.Value;
-                SettingHelper.SetValue<double>(SettingHelper.PLAYER_VOLUME, SliderVolume.Value);
-            });
+            SliderVolume.ValueChanged += PlayerVolumeChanged;
             //亮度
             _brightness = SettingHelper.GetValue<double>(SettingHelper.PLAYER_BRIGHTNESS, 0);
             BrightnessShield.Opacity = _brightness;
 
+        }
+
+        private void PlayerVolumeChanged(object sender, RangeBaseValueChangedEventArgs args)
+        {
+            mediaPlayer.Volume = SliderVolume.Value;
+            SettingHelper.SetValue(SettingHelper.PLAYER_VOLUME, SliderVolume.Value, defer: true);
         }
 
         #region 手势
@@ -633,9 +801,113 @@ namespace PlayWin.WinUI.Views
         }
         private void ShowControl(bool show)
         {
-            showControlsFlag = show ? 0 : -1;
-            control.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
-            ProtectedCursor = show || !pointer_in_player ? InputSystemCursor.Create(InputSystemCursorShape.Arrow) : null;
+            show = !floatingToolbar || show || toolbarPopupCount > 0;
+            showControlsFlag = isMini ? -1 : show ? 0 : -1;
+            ProtectedCursor = isMini || show || !pointer_in_player ? InputSystemCursor.Create(InputSystemCursorShape.Arrow) : null;
+            if (show && control.Visibility == Visibility.Visible && !toolbarHiding) return;
+            if (!show && (control.Visibility == Visibility.Collapsed || toolbarHiding)) return;
+            var from = control.Visibility == Visibility.Collapsed ? 0 : control.Opacity;
+            if (isMini && show) FinishToolbarVisibility(true);
+            toolbarFade?.Stop();
+            toolbarFade = null;
+            toolbarHiding = !show;
+            var generation = ++toolbarFadeGeneration;
+            if (!floatingToolbar || !toolbarUISettings.AnimationsEnabled)
+            {
+                control.Opacity = 1;
+                FinishToolbarVisibility(show);
+                toolbarHiding = false;
+                return;
+            }
+            control.Visibility = Visibility.Visible;
+            var fade = new Microsoft.UI.Xaml.Media.Animation.DoubleAnimation
+            {
+                From = from, To = show ? 1 : 0,
+                Duration = new Duration(TimeSpan.FromMilliseconds(150))
+            };
+            var storyboard = new Microsoft.UI.Xaml.Media.Animation.Storyboard();
+            Microsoft.UI.Xaml.Media.Animation.Storyboard.SetTarget(fade, control);
+            Microsoft.UI.Xaml.Media.Animation.Storyboard.SetTargetProperty(fade, "Opacity");
+            storyboard.Children.Add(fade);
+            storyboard.Completed += (_, _) =>
+            {
+                if (generation != toolbarFadeGeneration) return;
+                FinishToolbarVisibility(show);
+                storyboard.Stop();
+                control.Opacity = 1;
+                toolbarHiding = false;
+                toolbarFade = null;
+            };
+            toolbarFade = storyboard;
+            storyboard.Begin();
+        }
+
+        private void ToolbarPopupOpened()
+        {
+            if (!IsLoaded || closingWindow) return;
+            toolbarPopupCount++;
+            ShowControl(true);
+        }
+        private void ToolbarPopupClosed()
+        {
+            toolbarPopupCount = Math.Max(0, toolbarPopupCount - 1);
+            miniPointerLeftAt = null;
+            if (IsLoaded && !closingWindow) ShowControl(true);
+        }
+        private void UpdateToolbarDensity()
+        {
+            var availableWidth = VideoSurface.ActualWidth;
+            var requiredWidth = RandomNext.Visibility == Visibility.Visible ? 880 : 780;
+            var compact = isMini || (availableWidth > 0 && availableWidth < requiredWidth);
+            control.MaxWidth = double.PositiveInfinity;
+            var spacing = availableWidth >= 1100 ? 12 : 8;
+            PlayControls.Spacing = spacing;
+            PlaybackOptions.Spacing = 12;
+            RoomActions.Spacing = spacing;
+            StandardToolbarLayout.Padding = new Thickness(floatingToolbar ? 16 : 20, 0, floatingToolbar ? 16 : 20, 0);
+            StandardControl.Visibility = compact ? Visibility.Collapsed : Visibility.Visible;
+            MiniControl.Visibility = compact ? Visibility.Visible : Visibility.Collapsed;
+            BottomBtnExitMiniWindows.Visibility = isMini ? Visibility.Visible : Visibility.Collapsed;
+        }
+        private void MiniVolumeButton_Click(object sender, RoutedEventArgs e) => PlayBtnVolume.Flyout.ShowAt(MiniVolumeButton);
+        private void MiniFavoriteItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (liveRoomVM.IsFavorite) liveRoomVM.RemoveFavoriteCommand.Execute(null);
+            else liveRoomVM.AddFavoriteCommand.Execute(null);
+        }
+        private void MiniMoreMenu_Opening(object sender, object e)
+        {
+            MiniFavoriteItem.Text = liveRoomVM.IsFavorite ? "取消关注" : "关注";
+            MiniQualityMenu.Items.Clear();
+            foreach (var quality in liveRoomVM.Qualities ?? new List<LivePlayQuality>())
+            {
+                var item = new ToggleMenuFlyoutItem { Text = quality.Quality, IsChecked = quality == liveRoomVM.CurrentQuality };
+                item.Click += (_, _) => liveRoomVM.CurrentQuality = quality;
+                MiniQualityMenu.Items.Add(item);
+            }
+            MiniQualityMenu.IsEnabled = MiniQualityMenu.Items.Count > 0;
+            MiniLineMenu.Items.Clear();
+            foreach (var line in liveRoomVM.Lines ?? new List<PlayurlLine>())
+            {
+                var item = new ToggleMenuFlyoutItem { Text = line.Name, IsChecked = line == liveRoomVM.CurrentLine };
+                item.Click += (_, _) => liveRoomVM.CurrentLine = line;
+                MiniLineMenu.Items.Add(item);
+            }
+            MiniLineMenu.IsEnabled = MiniLineMenu.Items.Count > 0;
+            MiniModeMenu.Items.Clear();
+            var full = (playbackWindow ?? App.GetWindowFor(this))?.AppWindow.Presenter.Kind == AppWindowPresenterKind.FullScreen;
+            var fullItem = new MenuFlyoutItem { Text = full ? "退出全屏" : "全屏" };
+            fullItem.Click += (_, _) => SetFullScreen(!full);
+            MiniModeMenu.Items.Add(fullItem);
+            if (!isMini)
+            {
+                var windowItem = new MenuFlyoutItem { Text = isFullWindow ? "退出窗口内全屏" : "窗口内全屏" };
+                windowItem.Click += (_, _) => SetFullWindow(!isFullWindow);
+                MiniModeMenu.Items.Add(windowItem);
+            }
+            var miniItem = new MenuFlyoutItem { Text = isMini ? "恢复窗口" : "置顶小窗" };
+            miniItem.Click += (_, _) => MiniWidnows(!isMini);
+            MiniModeMenu.Items.Add(miniItem);
         }
         private void Grid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
@@ -660,6 +932,7 @@ namespace PlayWin.WinUI.Views
         private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             pointer_in_player = true;
+            if (isMini) ShowControl(true);
         }
 
         private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
@@ -672,6 +945,7 @@ namespace PlayWin.WinUI.Views
             }
             pointer_in_player = false;
             ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
+            if (isMini) return; // The hover timer includes the expanded rail and waits before collapsing it.
             if (!IsControlInteractionActive(FocusManager.GetFocusedElement(XamlRoot) as DependencyObject)) ShowControl(false);
         }
 
@@ -791,6 +1065,11 @@ namespace PlayWin.WinUI.Views
         }
         #endregion
         #region 窗口操作
+        private void DirectFullscreen_Click(object sender, RoutedEventArgs e)
+        {
+            var window = playbackWindow ?? App.GetWindowFor(this);
+            if (window != null) SetFullScreen(window.AppWindow.Presenter.Kind != AppWindowPresenterKind.FullScreen);
+        }
         private void PlayBtnFullScreen_Click(object sender, RoutedEventArgs e)
         {
             SetFullScreen(true);
@@ -817,6 +1096,7 @@ namespace PlayWin.WinUI.Views
         }
         private void SetFullWindow(bool full)
         {
+            (playbackWindow ?? App.GetWindowFor(this))?.SetContentExpanded(full);
             isFullWindow = full;
             UpdateWindowModeUI();
         }
@@ -833,15 +1113,46 @@ namespace PlayWin.WinUI.Views
             var window = playbackWindow ?? App.GetWindowFor(this);
             if (window == null) return;
             var full = window.AppWindow.Presenter.Kind == AppWindowPresenterKind.FullScreen;
+            var wasMini = isMini;
             isMini = window.AppWindow.Presenter.Kind == AppWindowPresenterKind.CompactOverlay;
+            if (wasMini != isMini)
+            {
+                toolbarFadeGeneration++;
+                toolbarFade?.Stop();
+                toolbarFade = null;
+                toolbarHiding = false;
+                control.Opacity = 1;
+                control.Visibility = Visibility.Collapsed;
+                miniPointerLeftAt = null;
+            }
             HideTitleBar(full || isMini);
             PlayBtnFullScreen.Visibility = full ? Visibility.Collapsed : Visibility.Visible;
             PlayBtnExitFullScreen.Visibility = full ? Visibility.Visible : Visibility.Collapsed;
+            DirectFullscreenIcon.Glyph = full ? "\uE1D8" : "\uE1D9";
+            ToolTipService.SetToolTip(DirectFullscreenButton, full ? "退出全屏" : "全屏");
+            Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(DirectFullscreenButton, full ? "退出全屏" : "全屏");
             PlayBtnFullWindow.Visibility = isFullWindow ? Visibility.Collapsed : Visibility.Visible;
             PlayBtnExitFullWindow.Visibility = isFullWindow ? Visibility.Visible : Visibility.Collapsed;
+            TopMiniToolbar.Height = new GridLength(0);
             BottomInfo.Height = full || isMini || isFullWindow ? new GridLength(0) : GridLength.Auto;
-            StandardControl.Visibility = isMini ? Visibility.Collapsed : Visibility.Visible;
-            MiniControl.Visibility = isMini ? Visibility.Visible : Visibility.Collapsed;
+            floatingToolbar = full || isMini || isFullWindow;
+            Grid.SetRow(control, floatingToolbar && !isMini ? 1 : 2);
+            control.VerticalAlignment = floatingToolbar && !isMini ? VerticalAlignment.Bottom : VerticalAlignment.Stretch;
+            control.HorizontalAlignment = HorizontalAlignment.Stretch;
+            control.MinHeight = isMini ? 44 : 60;
+            control.Margin = floatingToolbar && !isMini ? new Thickness(12, 0, 12, 12) : new Thickness(0);
+            control.RequestedTheme = floatingToolbar && !isMini ? ElementTheme.Dark : ElementTheme.Default;
+            DockToolbarBackground.Visibility = floatingToolbar && !isMini ? Visibility.Collapsed : Visibility.Visible;
+            DockToolbarBackground.BorderThickness = new Thickness(0, 1, 0, 0);
+            FloatingToolbarBackground.Visibility = floatingToolbar && !isMini ? Visibility.Visible : Visibility.Collapsed;
+            UpdateToolbarDensity();
+            if (isMini)
+            {
+                ApplyMiniToolbarLayout();
+                miniHoverTimer.Start();
+            }
+            else miniHoverTimer.Stop();
+            ShowControl(!isMini || toolbarPopupCount > 0 || window.IsPointerInside());
         }
         private void BottomBtnExitMiniWindows_Click(object sender, RoutedEventArgs e)
         {
@@ -916,6 +1227,7 @@ namespace PlayWin.WinUI.Views
         private void PlayerGrid_SizeChanged(object sender, SizeChangedEventArgs args)
         {
             ((Grid)sender).Clip = new RectangleGeometry { Rect = new Windows.Foundation.Rect(0, 0, args.NewSize.Width, args.NewSize.Height) };
+            UpdateToolbarDensity();
         }
     }
 }

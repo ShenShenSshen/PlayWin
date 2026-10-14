@@ -1,4 +1,4 @@
-using PlayWin.Core.Models;
+﻿using PlayWin.Core.Models;
 using PlayWin.WinUI.Helper;
 using PlayWin.WinUI.ViewModels;
 using Microsoft.UI.Xaml.Controls;
@@ -11,6 +11,7 @@ public sealed partial class CategoryPage : Page
     public CategoryPage()
     {
         InitializeComponent(); NavigationCacheMode = NavigationCacheMode.Enabled;
+        GroupPicker.SelectionChanged += (_, change) => PlatformTabAnimation.Play(GroupPicker, change);
         PlatformPicker.ItemsSource = MainVM.Sites;
         PlatformPicker.SelectedItem = MainVM.BrowseSite;
         Loaded += (_, _) =>

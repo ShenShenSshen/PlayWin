@@ -49,6 +49,7 @@ public partial class App : Application
         }
         try
         {
+            LogHelper.Log("启动游窗", LogType.INFO);
             await DouyinAccount.Instance.InitLoginInfo();
             await WebAccount.For(LiveSite.Huya).InitAsync();
             await WebAccount.For(LiveSite.Douyu).InitAsync();

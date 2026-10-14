@@ -2,6 +2,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.IO;
+using System;
+using System.Threading;
 namespace PlayWin.WinUI.Helper
 {
     public class SettingHelper
@@ -11,17 +13,52 @@ namespace PlayWin.WinUI.Helper
         private static readonly Dictionary<string, JToken> Values = File.Exists(FilePath)
             ? JsonConvert.DeserializeObject<Dictionary<string, JToken>>(File.ReadAllText(FilePath)) ?? new()
             : new();
+        private static bool dirty;
+        private static long saveDue;
+        private static readonly Timer SaveTimer = new(_ =>
+        {
+            try
+            {
+                lock (Gate)
+                {
+                    if (!dirty) return;
+                    var remaining = saveDue - Environment.TickCount64;
+                    if (remaining > 0) { SaveTimer.Change((int)remaining, Timeout.Infinite); return; }
+                    Flush();
+                }
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            { LogHelper.Log("设置保存失败，将在下次保存时重试", LogType.ERROR, ex); }
+        }, null, Timeout.Infinite, Timeout.Infinite);
         public static T GetValue<T>(string key, T fallback)
         {
             lock (Gate) return Values.TryGetValue(key, out var value) && value.Type != JTokenType.Null ? value.ToObject<T>() : fallback;
         }
-        public static void SetValue<T>(string key, T value)
+        public static void SetValue<T>(string key, T value, bool defer = false)
         {
             lock (Gate)
             {
-                Values[key] = value == null ? JValue.CreateNull() : JToken.FromObject(value);
+                var next = value == null ? JValue.CreateNull() : JToken.FromObject(value);
+                if (Values.TryGetValue(key, out var previous) && JToken.DeepEquals(previous, next)) return;
+                Values[key] = next;
+                dirty = true;
+                if (defer)
+                {
+                    saveDue = Environment.TickCount64 + 500;
+                    SaveTimer.Change(500, Timeout.Infinite);
+                }
+                else Flush();
+            }
+        }
+        public static void Flush()
+        {
+            lock (Gate)
+            {
+                SaveTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                if (!dirty) return;
                 File.WriteAllText(FilePath + ".tmp", JsonConvert.SerializeObject(Values));
                 File.Move(FilePath + ".tmp", FilePath, true);
+                dirty = false;
             }
         }
         /// <summary>

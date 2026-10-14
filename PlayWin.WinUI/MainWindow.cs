@@ -5,6 +5,7 @@ using Microsoft.UI.Windowing;
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Windows.Graphics;
 namespace PlayWin.WinUI;
 public sealed partial class MainWindow : Window
@@ -14,9 +15,16 @@ public sealed partial class MainWindow : Window
     public static readonly string[] WindowSizeOptions = { "960×540", "1280×720", "1600×900", "1920×1080" };
     public string SelectedWindowSize { get; private set; } = GetSavedWindowSize();
     public event EventHandler WindowModeChanged;
+    internal event EventHandler MiniToolbarLayoutChanged;
+    internal bool MiniToolbarAbove { get; private set; }
+    internal double MiniToolbarHeight => miniToolbarPixels / (Root.XamlRoot?.RasterizationScale ?? 1);
+    private bool miniToolbarVisible;
+    private int miniToolbarPixels;
+    private double miniToolbarScale = 1;
     private bool updatingBounds;
     private PointInt32 normalPosition;
     private FrameworkElement playbackViewport;
+    private Windows.Foundation.Size? expandedContentChrome;
     private bool boundsQueued;
     private bool closed;
     private readonly string placementKey;
@@ -32,7 +40,7 @@ public sealed partial class MainWindow : Window
         Root.RequestedTheme = (ElementTheme)SettingHelper.GetValue(SettingHelper.THEME, 0);
         Root.SizeChanged += (_, _) => QueueWindowBounds();
         Root.Loaded += (_, _) => Root.XamlRoot.Changed += (_, _) => QueueWindowBounds();
-        Closed += (_, _) => { SavePlacement(); closed = true; };
+        Closed += (_, _) => { SavePlacement(); SettingHelper.Flush(); closed = true; };
         AppWindow.Changed += (_, args) =>
         {
             if (updatingBounds) return;
@@ -75,16 +83,30 @@ public sealed partial class MainWindow : Window
     internal SizeInt32 GetWindowChromeSize()
     {
         var scale = Root.XamlRoot?.RasterizationScale ?? 1;
-        var horizontal = playbackViewport?.IsLoaded == true ? Math.Max(0, Root.ActualWidth - playbackViewport.ActualWidth) : 0;
-        var vertical = playbackViewport?.IsLoaded == true ? Math.Max(0, Root.ActualHeight - playbackViewport.ActualHeight) : 32;
+        var horizontal = expandedContentChrome?.Width ?? (playbackViewport?.IsLoaded == true ? Math.Max(0, Root.ActualWidth - playbackViewport.ActualWidth) : 0);
+        var vertical = expandedContentChrome?.Height ?? (playbackViewport?.IsLoaded == true ? Math.Max(0, Root.ActualHeight - playbackViewport.ActualHeight) : 32);
         return new SizeInt32(Math.Max(0, AppWindow.Size.Width - AppWindow.ClientSize.Width) + (int)Math.Round(horizontal * scale),
             Math.Max(0, AppWindow.Size.Height - AppWindow.ClientSize.Height) + (int)Math.Round(vertical * scale));
     }
     internal void SetPlaybackViewport(FrameworkElement viewport)
     {
+        if (viewport == null)
+        {
+            expandedContentChrome = null;
+            SetMiniToolbarVisible(false);
+        }
         if (playbackViewport != null) playbackViewport.SizeChanged -= PlaybackViewport_SizeChanged;
         playbackViewport = viewport;
         if (playbackViewport != null) playbackViewport.SizeChanged += PlaybackViewport_SizeChanged;
+        QueueWindowBounds();
+    }
+    internal void SetContentExpanded(bool expanded)
+    {
+        if (expanded && expandedContentChrome == null)
+            expandedContentChrome = new Windows.Foundation.Size(
+                playbackViewport?.IsLoaded == true ? Math.Max(0, Root.ActualWidth - playbackViewport.ActualWidth) : 0,
+                playbackViewport?.IsLoaded == true ? Math.Max(0, Root.ActualHeight - playbackViewport.ActualHeight) : 32);
+        else if (!expanded) expandedContentChrome = null;
         QueueWindowBounds();
     }
     private void PlaybackViewport_SizeChanged(object sender, SizeChangedEventArgs e) => QueueWindowBounds();
@@ -101,6 +123,8 @@ public sealed partial class MainWindow : Window
     }
     public void SetWindowMode(AppWindowPresenterKind kind)
     {
+        if (AppWindow.Presenter.Kind == AppWindowPresenterKind.CompactOverlay && kind != AppWindowPresenterKind.CompactOverlay)
+            SetMiniToolbarVisible(false);
         if (AppWindow.Presenter.Kind == AppWindowPresenterKind.Overlapped) { normalPosition = AppWindow.Position; SavePlacement(); }
         updatingBounds = true;
         try
@@ -120,7 +144,7 @@ public sealed partial class MainWindow : Window
         {
             DisplayId = display.DisplayId.Value, WorkX = display.WorkArea.X, WorkY = display.WorkArea.Y,
             OffsetX = AppWindow.Position.X - display.WorkArea.X, OffsetY = AppWindow.Position.Y - display.WorkArea.Y
-        });
+        }, defer: true);
     }
     private void RestorePlacement()
     {
@@ -165,16 +189,65 @@ public sealed partial class MainWindow : Window
                 presenter.IsMaximizable = false;
                 if (presenter.State == OverlappedPresenterState.Maximized) presenter.Restore();
             }
-            var size = AppWindow.Presenter.Kind == AppWindowPresenterKind.CompactOverlay ? new SizeInt32(480, 270) : GetPresetSize(SelectedWindowSize);
             var workArea = DisplayArea.GetFromWindowId(AppWindow.Id, DisplayAreaFallback.Nearest).WorkArea;
-            var chrome = AppWindow.Presenter.Kind == AppWindowPresenterKind.CompactOverlay ? default : GetWindowChromeSize();
-            var bounds = FitBounds(size, AppWindow.Position, workArea, chrome);
+            RectInt32 bounds;
+            if (AppWindow.Presenter.Kind == AppWindowPresenterKind.CompactOverlay)
+            {
+                // Recover the video's screen position before changing the toolbar edge or DPI.
+                var videoPosition = new PointInt32(AppWindow.Position.X,
+                    AppWindow.Position.Y + (MiniToolbarAbove ? miniToolbarPixels : 0));
+                var video = FitBounds(new SizeInt32(480, 270), videoPosition, workArea);
+                var scale = Root.XamlRoot?.RasterizationScale ?? 1;
+                var toolbar = GetMiniToolbarBounds(video, workArea, miniToolbarVisible ? (int)Math.Round(44 * scale) : 0);
+                var layoutChanged = MiniToolbarAbove != toolbar.Above || miniToolbarPixels != toolbar.Height || miniToolbarScale != scale;
+                MiniToolbarAbove = toolbar.Above;
+                miniToolbarPixels = toolbar.Height;
+                miniToolbarScale = scale;
+                bounds = toolbar.Bounds;
+                if (layoutChanged) MiniToolbarLayoutChanged?.Invoke(this, EventArgs.Empty);
+            }
+            else
+            {
+                miniToolbarVisible = false;
+                miniToolbarPixels = 0;
+                MiniToolbarAbove = false;
+                bounds = FitBounds(GetPresetSize(SelectedWindowSize), AppWindow.Position, workArea, GetWindowChromeSize());
+            }
             if (AppWindow.Size.Width != bounds.Width || AppWindow.Size.Height != bounds.Height ||
                 AppWindow.Position.X != bounds.X || AppWindow.Position.Y != bounds.Y)
                 AppWindow.MoveAndResize(bounds);
         }
         finally { updatingBounds = false; }
     }
+    internal void SetMiniToolbarVisible(bool visible)
+    {
+        if (miniToolbarVisible == visible || closed) return;
+        miniToolbarVisible = visible;
+        if (AppWindow.Presenter.Kind == AppWindowPresenterKind.CompactOverlay) ApplyWindowBounds();
+    }
+    internal static (RectInt32 Bounds, bool Above, int Height) GetMiniToolbarBounds(RectInt32 video, RectInt32 workArea, int requestedHeight)
+    {
+        var below = Math.Max(0, workArea.Y + workArea.Height - video.Y - video.Height);
+        var above = Math.Max(0, video.Y - workArea.Y);
+        var height = Math.Min(Math.Max(0, requestedHeight), Math.Max(below, above));
+        var onTop = height > 0 && below < height;
+        return (new RectInt32(video.X, video.Y - (onTop ? height : 0), video.Width, video.Height + height), onTop, height);
+    }
+    internal bool IsPointerInside()
+    {
+        if (closed || !GetCursorPos(out var point)) return false;
+        var position = AppWindow.Position;
+        var size = AppWindow.Size;
+        return point.X >= position.X && point.Y >= position.Y && point.X < position.X + size.Width && point.Y < position.Y + size.Height &&
+            GetAncestor(WindowFromPoint(point), 2) == Handle;
+    }
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetCursorPos(out PointInt32 point);
+    [DllImport("user32.dll")]
+    private static extern nint WindowFromPoint(PointInt32 point);
+    [DllImport("user32.dll")]
+    private static extern nint GetAncestor(nint window, uint flags);
     private void UpdateCaptionTheme()
     {
         var foreground = ((Microsoft.UI.Xaml.Media.SolidColorBrush)Root.Foreground).Color;

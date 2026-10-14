@@ -4,14 +4,14 @@
 
 简洁的 Windows 游戏直播客户端。支持哔哩哔哩、抖音、虎牙和斗鱼，仅展示游戏分类，不显示弹幕。使用 WinUI 3，栏位采用磨砂材质，内容保持清晰。
 
-**已发布版本：v1.0.2 · Windows x64 · MIT**
+**已发布版本：v1.0.3 · Windows x64 · MIT**
 
-v1.0.2 新增虎牙、斗鱼，采用资源圆体正文及统一的圆角平台切换。
+v1.0.3 新增“随便逛逛”及前后切换，重设计播放器与小窗操作栏，采用雾蓝圆润界面，并减少连续设置写入、限制日志与列表积累。详见 [更新说明](RELEASE_NOTES.md)。
 
 ## 下载
 
-- [安装版 PlayWin-1.0.2-x64-Setup.exe](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.2/PlayWin-1.0.2-x64-Setup.exe)
-- [便携版 PlayWin-x64.zip](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.2/PlayWin-x64.zip)
+- [安装版 PlayWin-1.0.3-x64-Setup.exe](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.3/PlayWin-1.0.3-x64-Setup.exe)
+- [便携版 PlayWin-x64.zip](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.3/PlayWin-x64.zip)
 - [所有发布版本](https://github.com/ShenShenSshen/PlayWin/releases)
 
 安装版默认安装到当前用户目录，创建开始菜单入口，默认创建桌面快捷方式，可取消。便携版解压后运行 `PlayWin.exe`，请保留整个目录。
@@ -23,12 +23,14 @@ v1.0.2 新增虎牙、斗鱼，采用资源圆体正文及统一的圆角平台�
 - **四个平台，游戏优先**：按哔哩哔哩 / 抖音 / 虎牙 / 斗鱼切换首页和游戏分类；搜索、关注及历史统一管理。
 - **浏览记忆**：恢复最后的平台和各平台游戏大类；每个平台可手动固定最多 6 个常看游戏到首页。
 - **清晰的搜索结果**：显示平台标识和接口已提供的开播状态，直播标题可悬停查看全文。
+- **随便逛逛**：从四个平台游戏首页随机选择已开播房间，提供本轮上一个／下一个，记录末尾继续随机，切换保持当前播放器和窗口模式。
 - **轻量播放器**：清晰度与线路切换、截图、全屏、置顶小窗、独立窗口播放；双击全屏、空格暂停、滚轮调音量，控件自动隐藏。
 - **有限断流恢复**：最多重试 3 次，重新检查房间及播放地址；确认停播时停止，离开房间取消。
 - **固定比例与位置记忆**：16:9 播放区域尺寸预设，适配显示器工作区；主窗口和独立窗口分别记住位置。
 - **关注与历史**：日常关注页只显示确认开播的房间，管理入口可查看和移除停播主播；观看历史保留。支持 JSON 导入导出。
 - **账号登录**：哔哩哔哩扫码登录，抖音、虎牙、斗鱼使用各自官方网页登录，浏览器与加密会话分别保存；区分登录失效、网络失败与平台接口异常。
-- **外观与更新**：浅色 / 深色主题、磨砂导航栏；设置中手动检测更新，软件内后台下载安装包，校验后由用户启动安装器。
+- **外观与更新**：雾蓝浅色 / 深色主题、磨砂栏位，圆体标题与导航搭配微软雅黑 UI 正文；每次启动检测正式更新，设置支持后台下载安装包，校验后由用户启动安装器。
+- **资源使用**：窗口位置及音量延迟 500 毫秒合并保存；日志按天或 10 MB 滚动、最多保留 7 份归档和 7 天；首页、分类详情和搜索每页最多保留 300 个直播条目。
 
 没有弹幕、礼物效果或跨设备同步。
 
@@ -46,7 +48,7 @@ v1.0.1 起数据路径统一为 PlayWin，不自动导入 v1.0.0 的数据，需
 ```powershell
 .\build-winui.ps1
 dotnet run --project tests/WinUIDataCheck/WinUIDataCheck.csproj -c Release
-.\artifacts\PlayWin-win-x64\PlayWin.exe --smoke-test
+.\run-smoke-test.ps1
 .\build-installer.ps1 -CompilerPath '编译器目录\ISCC.exe'
 ```
 
@@ -59,7 +61,7 @@ dotnet run --project tests/WinUIDataCheck/WinUIDataCheck.csproj -c Release
 
 构建缓存、个人数据和发布产物不纳入源码。
 
-自检使用隔离测试数据，不等于真实直播、多显示器和全部 DPI 环境的人工验证。详见 [客户端说明](PlayWin.WinUI/README.md)。
+v1.0.3 已完成编译与打包；按用户要求未运行软件自测、直播或安装／卸载验证。自检使用隔离测试数据，不等于真实直播、多显示器和全部 DPI 环境的人工验证。详见 [客户端说明](PlayWin.WinUI/README.md)。
 
 ## 来源与许可证
 
@@ -67,4 +69,6 @@ dotnet run --project tests/WinUIDataCheck/WinUIDataCheck.csproj -c Release
 
 采用 [MIT 许可证](LICENSE)，保留原作者版权声明。与直播平台无官方关联。
 
-虎牙播放令牌所需 Tars 编解码复用原项目中的平台无关代码，遵循 BSD 3-Clause；正文使用资源圆体，字标使用寒蝉圆体；原 MiSans 资源保留用于对照，各字体许可随程序携带。
+虎牙播放令牌所需 Tars 编解码复用原项目中的平台无关代码，遵循 BSD 3-Clause；正文使用微软雅黑 UI，标题与导航使用资源圆体，字标使用寒蝉圆体；原 MiSans 资源保留用于对照，各字体许可随程序携带。
+
+本地构建缓存默认放在项目的 artifacts/cache 下：nuget-packages 为本项目依赖，nuget-http 为下载缓存，temp 为编译、打包和自检临时文件。build-winui.ps1、build-installer.ps1、run-smoke-test.ps1 和隔离安装检查只在运行期间使用这些路径，不修改系统全局设置。直接运行 dotnet 命令时，项目依赖遵循 NuGet.Config；其他临时文件仍遵循当前终端的 TEMP/TMP 设置。

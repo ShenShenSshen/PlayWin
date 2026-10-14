@@ -11,5 +11,6 @@ namespace PlayWin.WinUI.Models
     {
         public ILiveSite Site { get; set; }
         public object Data { get; set; }
+        internal PlayWin.WinUI.Helper.RandomBrowseSession RandomSession { get; set; }
     }
 }

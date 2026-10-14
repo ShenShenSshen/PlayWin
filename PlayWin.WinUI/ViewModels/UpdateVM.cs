@@ -20,6 +20,7 @@ public sealed class UpdateVM : BaseNotifyPropertyChanged
     public double Progress { get; private set; }
     public bool Busy { get; private set; }
     public bool Downloading { get; private set; }
+    internal string AvailableVersion => release != null && release.Version > currentVersion ? release.Tag : null;
     public bool CanCheck => !Busy;
     public bool HideProgress => !Downloading;
     public bool HideDownload => Busy || release == null || release.Version <= currentVersion || installerPath != null;

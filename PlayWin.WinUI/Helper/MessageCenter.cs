@@ -27,12 +27,14 @@ namespace PlayWin.WinUI.Helper
         public static event EventHandler<bool> HideTitlebarEvent;
         public static event EventHandler UpdateFavoriteEvent;
         public static event EventHandler UpdatePanelDisplayModeEvent;
-        public async static void OpenLiveRoom(ILiveSite liveSite, LiveRoomItem item)
+        public static void OpenLiveRoom(ILiveSite liveSite, LiveRoomItem item) => OpenLiveRoom(liveSite, item, null);
+        internal async static void OpenLiveRoom(ILiveSite liveSite, LiveRoomItem item, RandomBrowseSession randomSession)
         {
             var arg = new PageArgs()
             {
                 Site = liveSite,
-                Data = item
+                Data = item,
+                RandomSession = randomSession
             };
 
             // 如果是哔哩哔哩

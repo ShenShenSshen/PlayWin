@@ -160,6 +160,15 @@ namespace PlayWin.WinUI.ViewModels
             {
                 Loading = true;
                 Site = site;
+                RoomID = roomId?.ToString();
+                detail = null;
+                currentQuality = null;
+                currentLine = null;
+                Qualities = null;
+                Lines = null;
+                DoPropertyChanged(nameof(CurrentQuality));
+                DoPropertyChanged(nameof(CurrentLine));
+                Photo = "";
 
                 RoomId = roomId;
                 var result = await site.GetRoomDetail(roomId);
@@ -286,7 +295,7 @@ namespace PlayWin.WinUI.ViewModels
 
 
         }
-        internal void CancelPendingPlayback() { loadGeneration++; urlGeneration++; }
+        internal void CancelPendingPlayback() { loadGeneration++; urlGeneration++; Loading = false; }
         internal async Task<string> RefreshStreamAsync(CancellationToken cancellation)
         {
             if (Site == null || RoomId == null) throw new InvalidOperationException("没有正在播放的直播间");

@@ -34,6 +34,9 @@ namespace PlayWin.WinUI
     public sealed partial class MainPage : Page
     {
 
+        private bool startupUpdateChecked;
+        private System.Threading.CancellationTokenSource randomLiveOperation;
+
         public MainPage()
         {
 
@@ -42,8 +45,37 @@ namespace PlayWin.WinUI
             MessageCenter.UpdatePanelDisplayModeEvent += MessageCenter_UpdatePanelDisplayModeEvent;
             this.KeyDown += MainPage_KeyDown;
             SetPaneMode();
+            Loaded += MainPage_CheckUpdateOnStartup;
+            Unloaded += (_, _) => randomLiveOperation?.Cancel();
         }
 
+        private async void MainPage_CheckUpdateOnStartup(object sender, RoutedEventArgs e)
+        {
+            if (startupUpdateChecked || Environment.GetCommandLineArgs().Contains("--smoke-test") || Environment.GetCommandLineArgs().Contains("--category-repro")) return;
+            startupUpdateChecked = true;
+            var updates = UpdateVM.Instance;
+            await updates.CheckAsync();
+            if (updates.AvailableVersion == null || !IsLoaded || XamlRoot == null) return;
+            var dialog = new ContentDialog
+            {
+                XamlRoot = XamlRoot,
+                RequestedTheme = ActualTheme,
+                Title = "发现新版本 " + updates.AvailableVersion,
+                Content = "游窗有新版本可用，可前往设置查看并下载安装包。",
+                PrimaryButtonText = "查看更新",
+                CloseButtonText = "稍后",
+                DefaultButton = ContentDialogButton.Close
+            };
+            try
+            {
+                if (await dialog.ShowAsync() == ContentDialogResult.Primary && IsLoaded)
+                    navigationView.SelectedItem = navigationView.SettingsItem;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Log("启动更新提示未显示", LogType.ERROR, ex);
+            }
+        }
         private void MainPage_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.GamepadMenu)
@@ -88,12 +120,41 @@ namespace PlayWin.WinUI
         private void NavigationView_SelectionChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs args)
         {
             var item = args.SelectedItem as Microsoft.UI.Xaml.Controls.NavigationViewItem;
+            if (item == null || item == RandomLiveItem) return;
             if (item.Tag.ToString() == "设置" || item.Tag.ToString() == "Settings")
             {
                 item.Tag = "SettingsPage";
             }
             frame.Navigate(Type.GetType("PlayWin.WinUI.Views." + item.Tag));
 
+        }
+
+        private async void NavigationView_ItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs args)
+        {
+            if (args.InvokedItemContainer != RandomLiveItem || randomLiveOperation != null) return;
+            var operation = new System.Threading.CancellationTokenSource();
+            randomLiveOperation = operation;
+            RandomLiveItem.IsEnabled = false;
+            RandomLiveItem.Content = "正在挑选…";
+            try
+            {
+                var room = await RandomLive.PickAsync(operation.Token);
+                if (!IsLoaded || operation.IsCancellationRequested) return;
+                if (room == null) Utils.ShowMessageToast("暂未找到已开播的游戏直播，请稍后再试");
+                else MessageCenter.OpenLiveRoom(room.Source, room, new RandomBrowseSession(room));
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception ex)
+            {
+                if (IsLoaded) Utils.ShowMessageToast(ex.Message);
+            }
+            finally
+            {
+                randomLiveOperation = null;
+                RandomLiveItem.Content = "随便逛逛";
+                RandomLiveItem.IsEnabled = true;
+                operation.Dispose();
+            }
         }
 
         private async void searchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)

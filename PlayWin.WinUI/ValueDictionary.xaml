@@ -1,87 +1,104 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives">
+<?xml version="1.0" ?><ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives">
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
-            <SolidColorBrush x:Key="PlatformSelectedBrush" Color="#1768B3" />
-            <SolidColorBrush x:Key="PlatformSelectedHoverBrush" Color="#2174BD" />
-            <SolidColorBrush x:Key="PlatformSelectedPressedBrush" Color="#164778" />
-            <SolidColorBrush x:Key="PlatformSelectedForegroundBrush" Color="#FFFFFF" />
-            <SolidColorBrush x:Key="ReadableSecondaryTextBrush" Color="#4B5563" />
-            <SolidColorBrush x:Key="ChromeSurfaceBrush" Color="#18FFFFFF" />
-            <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#EEF1F5" />
-            <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="#FFFFFF" />
-            <SolidColorBrush x:Key="CardOutlineBrush" Color="#C5CFDC" />
-            <Color x:Key="CategorySelectedColor">#DCEBFA</Color>
-            <Color x:Key="CategorySelectedTextColor">#174E80</Color>
-        </ResourceDictionary>
+            <SolidColorBrush x:Key="PlatformSelectedBrush" Color="{ThemeResource AppSelectionColor}"/>
+            <SolidColorBrush x:Key="PlatformSelectedHoverBrush" Color="{ThemeResource AppSelectionHoverColor}"/>
+            <SolidColorBrush x:Key="PlatformSelectedPressedBrush" Color="{ThemeResource AppSelectionHoverColor}"/>
+            <SolidColorBrush x:Key="PlatformSelectedForegroundBrush" Color="{ThemeResource AppSelectionTextColor}"/>
+            <SolidColorBrush x:Key="ReadableSecondaryTextBrush" Color="{ThemeResource AppSecondaryColor}"/>
+            <SolidColorBrush x:Key="ChromeSurfaceBrush" Color="#18FFFFFF"/>
+            <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#EFF3F8"/>
+            <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="{ThemeResource AppSurfaceColor}"/>
+            <SolidColorBrush x:Key="CardOutlineBrush" Color="{ThemeResource AppBorderColor}"/>
+            <Color x:Key="CategorySelectedColor">#DCE9F4</Color>
+            <Color x:Key="CategorySelectedTextColor">#2F557A</Color>
+        <Color x:Key="PlayerToolbarSurfaceColor">#F2F6FA</Color><SolidColorBrush x:Key="PlayerToolbarSurfaceBrush" Color="#F2F6FA"/><Color x:Key="PlayerToolbarOptionColor">#E5EDF5</Color><SolidColorBrush x:Key="PlayerToolbarOptionBrush" Color="#E5EDF5"/><Color x:Key="PlayerToolbarTextColor">#283B50</Color><SolidColorBrush x:Key="PlayerToolbarTextBrush" Color="#283B50"/><Color x:Key="PlayerToolbarSecondaryColor">#5A6E82</Color><SolidColorBrush x:Key="PlayerToolbarSecondaryBrush" Color="#5A6E82"/><Color x:Key="PlayerToolbarStrokeColor">#D3DFE9</Color><SolidColorBrush x:Key="PlayerToolbarStrokeBrush" Color="#D3DFE9"/><Color x:Key="PlayerToolbarHoverColor">#E4ECF3</Color><SolidColorBrush x:Key="PlayerToolbarHoverBrush" Color="#E4ECF3"/><Color x:Key="PlayerToolbarPressedColor">#D5E2ED</Color><SolidColorBrush x:Key="PlayerToolbarPressedBrush" Color="#D5E2ED"/><Color x:Key="PlayerToolbarPlayColor">#476C92</Color><SolidColorBrush x:Key="PlayerToolbarPlayBrush" Color="#476C92"/><Color x:Key="PlayerToolbarPlayForegroundColor">#FFFFFF</Color><SolidColorBrush x:Key="PlayerToolbarPlayForegroundBrush" Color="#FFFFFF"/><Color x:Key="PlayerToolbarPlayHoverColor">#3C6086</Color><SolidColorBrush x:Key="PlayerToolbarPlayHoverBrush" Color="#3C6086"/><Color x:Key="PlayerToolbarPlayPressedColor">#325476</Color><SolidColorBrush x:Key="PlayerToolbarPlayPressedBrush" Color="#325476"/><Color x:Key="AppTextColor">#283B50</Color><SolidColorBrush x:Key="AppTextBrush" Color="#283B50"/><Color x:Key="AppSecondaryColor">#5A6E82</Color><SolidColorBrush x:Key="AppSecondaryBrush" Color="#5A6E82"/><Color x:Key="AppSurfaceColor">#FFFFFF</Color><SolidColorBrush x:Key="AppSurfaceBrush" Color="#FFFFFF"/><Color x:Key="AppBorderColor">#D3DFE9</Color><SolidColorBrush x:Key="AppBorderBrush" Color="#D3DFE9"/><Color x:Key="AppHoverColor">#E4ECF3</Color><SolidColorBrush x:Key="AppHoverBrush" Color="#E4ECF3"/><Color x:Key="AppPressedColor">#D5E2ED</Color><SolidColorBrush x:Key="AppPressedBrush" Color="#D5E2ED"/><Color x:Key="AppAccentColor">#476C92</Color><SolidColorBrush x:Key="AppAccentBrush" Color="#476C92"/><Color x:Key="AppAccentHoverColor">#3C6086</Color><SolidColorBrush x:Key="AppAccentHoverBrush" Color="#3C6086"/><Color x:Key="AppAccentPressedColor">#325476</Color><SolidColorBrush x:Key="AppAccentPressedBrush" Color="#325476"/><Color x:Key="AppAccentTextColor">#FFFFFF</Color><SolidColorBrush x:Key="AppAccentTextBrush" Color="#FFFFFF"/><Color x:Key="AppSelectionColor">#DCE9F4</Color><SolidColorBrush x:Key="AppSelectionBrush" Color="#DCE9F4"/><Color x:Key="AppSelectionHoverColor">#CBDFF0</Color><SolidColorBrush x:Key="AppSelectionHoverBrush" Color="#CBDFF0"/><Color x:Key="AppSelectionTextColor">#2F557A</Color><SolidColorBrush x:Key="AppSelectionTextBrush" Color="#2F557A"/><Color x:Key="AppAvatarColor">#E2ECF5</Color><SolidColorBrush x:Key="AppAvatarBrush" Color="#E2ECF5"/><SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="{ThemeResource AppAccentColor}"/><SolidColorBrush x:Key="AccentFillColorSecondaryBrush" Color="{ThemeResource AppAccentHoverColor}"/><SolidColorBrush x:Key="AccentFillColorTertiaryBrush" Color="{ThemeResource AppAccentPressedColor}"/><SolidColorBrush x:Key="TextOnAccentFillColorPrimaryBrush" Color="{ThemeResource AppAccentTextColor}"/><SolidColorBrush x:Key="AccentTextFillColorPrimaryBrush" Color="{ThemeResource AppAccentColor}"/><SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="{ThemeResource AppAccentColor}"/></ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="PlatformSelectedBrush" Color="#1768B3" />
-            <SolidColorBrush x:Key="PlatformSelectedHoverBrush" Color="#2174BD" />
-            <SolidColorBrush x:Key="PlatformSelectedPressedBrush" Color="#164778" />
-            <SolidColorBrush x:Key="PlatformSelectedForegroundBrush" Color="#FFFFFF" />
-            <SolidColorBrush x:Key="ReadableSecondaryTextBrush" Color="#C4CBD4" />
-            <SolidColorBrush x:Key="ChromeSurfaceBrush" Color="#10000000" />
-            <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#181B20" />
-            <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="#22262C" />
-            <SolidColorBrush x:Key="CardOutlineBrush" Color="#435061" />
-            <Color x:Key="CategorySelectedColor">#253E59</Color>
-            <Color x:Key="CategorySelectedTextColor">#E4F0FF</Color>
-        </ResourceDictionary>
+            <SolidColorBrush x:Key="PlatformSelectedBrush" Color="{ThemeResource AppSelectionColor}"/>
+            <SolidColorBrush x:Key="PlatformSelectedHoverBrush" Color="{ThemeResource AppSelectionHoverColor}"/>
+            <SolidColorBrush x:Key="PlatformSelectedPressedBrush" Color="{ThemeResource AppSelectionHoverColor}"/>
+            <SolidColorBrush x:Key="PlatformSelectedForegroundBrush" Color="{ThemeResource AppSelectionTextColor}"/>
+            <SolidColorBrush x:Key="ReadableSecondaryTextBrush" Color="{ThemeResource AppSecondaryColor}"/>
+            <SolidColorBrush x:Key="ChromeSurfaceBrush" Color="#10000000"/>
+            <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#151F2C"/>
+            <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="{ThemeResource AppSurfaceColor}"/>
+            <SolidColorBrush x:Key="CardOutlineBrush" Color="{ThemeResource AppBorderColor}"/>
+            <Color x:Key="CategorySelectedColor">#304B66</Color>
+            <Color x:Key="CategorySelectedTextColor">#DCEBFA</Color>
+        <Color x:Key="PlayerToolbarSurfaceColor">#1B2634</Color><SolidColorBrush x:Key="PlayerToolbarSurfaceBrush" Color="#1B2634"/><Color x:Key="PlayerToolbarOptionColor">#2A3A4D</Color><SolidColorBrush x:Key="PlayerToolbarOptionBrush" Color="#2A3A4D"/><Color x:Key="PlayerToolbarTextColor">#E6EDF5</Color><SolidColorBrush x:Key="PlayerToolbarTextBrush" Color="#E6EDF5"/><Color x:Key="PlayerToolbarSecondaryColor">#ADBDD0</Color><SolidColorBrush x:Key="PlayerToolbarSecondaryBrush" Color="#ADBDD0"/><Color x:Key="PlayerToolbarStrokeColor">#3B4D61</Color><SolidColorBrush x:Key="PlayerToolbarStrokeBrush" Color="#3B4D61"/><Color x:Key="PlayerToolbarHoverColor">#304257</Color><SolidColorBrush x:Key="PlayerToolbarHoverBrush" Color="#304257"/><Color x:Key="PlayerToolbarPressedColor">#40566D</Color><SolidColorBrush x:Key="PlayerToolbarPressedBrush" Color="#40566D"/><Color x:Key="PlayerToolbarPlayColor">#A7C5E3</Color><SolidColorBrush x:Key="PlayerToolbarPlayBrush" Color="#A7C5E3"/><Color x:Key="PlayerToolbarPlayForegroundColor">#1A3048</Color><SolidColorBrush x:Key="PlayerToolbarPlayForegroundBrush" Color="#1A3048"/><Color x:Key="PlayerToolbarPlayHoverColor">#BBD5EC</Color><SolidColorBrush x:Key="PlayerToolbarPlayHoverBrush" Color="#BBD5EC"/><Color x:Key="PlayerToolbarPlayPressedColor">#91B4D6</Color><SolidColorBrush x:Key="PlayerToolbarPlayPressedBrush" Color="#91B4D6"/><Color x:Key="AppTextColor">#E6EDF5</Color><SolidColorBrush x:Key="AppTextBrush" Color="#E6EDF5"/><Color x:Key="AppSecondaryColor">#ADBDD0</Color><SolidColorBrush x:Key="AppSecondaryBrush" Color="#ADBDD0"/><Color x:Key="AppSurfaceColor">#202B38</Color><SolidColorBrush x:Key="AppSurfaceBrush" Color="#202B38"/><Color x:Key="AppBorderColor">#3B4D61</Color><SolidColorBrush x:Key="AppBorderBrush" Color="#3B4D61"/><Color x:Key="AppHoverColor">#304257</Color><SolidColorBrush x:Key="AppHoverBrush" Color="#304257"/><Color x:Key="AppPressedColor">#40566D</Color><SolidColorBrush x:Key="AppPressedBrush" Color="#40566D"/><Color x:Key="AppAccentColor">#A7C5E3</Color><SolidColorBrush x:Key="AppAccentBrush" Color="#A7C5E3"/><Color x:Key="AppAccentHoverColor">#BBD5EC</Color><SolidColorBrush x:Key="AppAccentHoverBrush" Color="#BBD5EC"/><Color x:Key="AppAccentPressedColor">#91B4D6</Color><SolidColorBrush x:Key="AppAccentPressedBrush" Color="#91B4D6"/><Color x:Key="AppAccentTextColor">#1A3048</Color><SolidColorBrush x:Key="AppAccentTextBrush" Color="#1A3048"/><Color x:Key="AppSelectionColor">#304B66</Color><SolidColorBrush x:Key="AppSelectionBrush" Color="#304B66"/><Color x:Key="AppSelectionHoverColor">#3C5B78</Color><SolidColorBrush x:Key="AppSelectionHoverBrush" Color="#3C5B78"/><Color x:Key="AppSelectionTextColor">#DCEBFA</Color><SolidColorBrush x:Key="AppSelectionTextBrush" Color="#DCEBFA"/><Color x:Key="AppAvatarColor">#30465E</Color><SolidColorBrush x:Key="AppAvatarBrush" Color="#30465E"/><SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="{ThemeResource AppAccentColor}"/><SolidColorBrush x:Key="AccentFillColorSecondaryBrush" Color="{ThemeResource AppAccentHoverColor}"/><SolidColorBrush x:Key="AccentFillColorTertiaryBrush" Color="{ThemeResource AppAccentPressedColor}"/><SolidColorBrush x:Key="TextOnAccentFillColorPrimaryBrush" Color="{ThemeResource AppAccentTextColor}"/><SolidColorBrush x:Key="AccentTextFillColorPrimaryBrush" Color="{ThemeResource AppAccentColor}"/><SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="{ThemeResource AppAccentColor}"/></ResourceDictionary>
         <ResourceDictionary x:Key="HighContrast">
-            <SolidColorBrush x:Key="PlatformSelectedBrush" Color="{ThemeResource SystemColorHighlightColor}" />
-            <SolidColorBrush x:Key="PlatformSelectedHoverBrush" Color="{ThemeResource SystemColorHighlightColor}" />
-            <SolidColorBrush x:Key="PlatformSelectedPressedBrush" Color="{ThemeResource SystemColorHighlightColor}" />
-            <SolidColorBrush x:Key="PlatformSelectedForegroundBrush" Color="{ThemeResource SystemColorHighlightTextColor}" />
-            <SolidColorBrush x:Key="ReadableSecondaryTextBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
-            <SolidColorBrush x:Key="ChromeSurfaceBrush" Color="{ThemeResource SystemColorWindowColor}" />
-            <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{ThemeResource SystemColorWindowColor}" />
-            <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="{ThemeResource SystemColorWindowColor}" />
-            <SolidColorBrush x:Key="CardOutlineBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
-            <StaticResource x:Key="CategorySelectedColor" ResourceKey="SystemColorHighlightColor" />
-            <StaticResource x:Key="CategorySelectedTextColor" ResourceKey="SystemColorHighlightTextColor" />
-        </ResourceDictionary>
+            <SolidColorBrush x:Key="PlatformSelectedBrush" Color="{ThemeResource AppAccentColor}"/>
+            <SolidColorBrush x:Key="PlatformSelectedHoverBrush" Color="{ThemeResource AppAccentHoverColor}"/>
+            <SolidColorBrush x:Key="PlatformSelectedPressedBrush" Color="{ThemeResource AppAccentPressedColor}"/>
+            <SolidColorBrush x:Key="PlatformSelectedForegroundBrush" Color="{ThemeResource AppAccentTextColor}"/>
+            <SolidColorBrush x:Key="ReadableSecondaryTextBrush" Color="{ThemeResource AppSecondaryColor}"/>
+            <SolidColorBrush x:Key="ChromeSurfaceBrush" Color="{ThemeResource SystemColorWindowColor}"/>
+            <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{ThemeResource SystemColorWindowColor}"/>
+            <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="{ThemeResource AppSurfaceColor}"/>
+            <SolidColorBrush x:Key="CardOutlineBrush" Color="{ThemeResource AppBorderColor}"/>
+            <StaticResource x:Key="CategorySelectedColor" ResourceKey="SystemColorHighlightColor"/>
+            <StaticResource x:Key="CategorySelectedTextColor" ResourceKey="SystemColorHighlightTextColor"/>
+        <StaticResource x:Key="PlayerToolbarSurfaceColor" ResourceKey="SystemColorWindowColor"/><SolidColorBrush x:Key="PlayerToolbarSurfaceBrush" Color="{ThemeResource SystemColorWindowColor}"/><StaticResource x:Key="PlayerToolbarOptionColor" ResourceKey="SystemColorWindowColor"/><SolidColorBrush x:Key="PlayerToolbarOptionBrush" Color="{ThemeResource SystemColorWindowColor}"/><StaticResource x:Key="PlayerToolbarTextColor" ResourceKey="SystemColorWindowTextColor"/><SolidColorBrush x:Key="PlayerToolbarTextBrush" Color="{ThemeResource SystemColorWindowTextColor}"/><StaticResource x:Key="PlayerToolbarSecondaryColor" ResourceKey="SystemColorWindowTextColor"/><SolidColorBrush x:Key="PlayerToolbarSecondaryBrush" Color="{ThemeResource SystemColorWindowTextColor}"/><StaticResource x:Key="PlayerToolbarStrokeColor" ResourceKey="SystemColorWindowTextColor"/><SolidColorBrush x:Key="PlayerToolbarStrokeBrush" Color="{ThemeResource SystemColorWindowTextColor}"/><StaticResource x:Key="PlayerToolbarHoverColor" ResourceKey="SystemColorHighlightColor"/><SolidColorBrush x:Key="PlayerToolbarHoverBrush" Color="{ThemeResource SystemColorHighlightColor}"/><StaticResource x:Key="PlayerToolbarPressedColor" ResourceKey="SystemColorHighlightColor"/><SolidColorBrush x:Key="PlayerToolbarPressedBrush" Color="{ThemeResource SystemColorHighlightColor}"/><StaticResource x:Key="PlayerToolbarPlayColor" ResourceKey="SystemColorHighlightColor"/><SolidColorBrush x:Key="PlayerToolbarPlayBrush" Color="{ThemeResource SystemColorHighlightColor}"/><StaticResource x:Key="PlayerToolbarPlayForegroundColor" ResourceKey="SystemColorHighlightTextColor"/><SolidColorBrush x:Key="PlayerToolbarPlayForegroundBrush" Color="{ThemeResource SystemColorHighlightTextColor}"/><StaticResource x:Key="PlayerToolbarPlayHoverColor" ResourceKey="SystemColorHighlightColor"/><SolidColorBrush x:Key="PlayerToolbarPlayHoverBrush" Color="{ThemeResource SystemColorHighlightColor}"/><StaticResource x:Key="PlayerToolbarPlayPressedColor" ResourceKey="SystemColorHighlightColor"/><SolidColorBrush x:Key="PlayerToolbarPlayPressedBrush" Color="{ThemeResource SystemColorHighlightColor}"/><StaticResource x:Key="AppTextColor" ResourceKey="SystemColorWindowTextColor"/><SolidColorBrush x:Key="AppTextBrush" Color="{ThemeResource SystemColorWindowTextColor}"/><StaticResource x:Key="AppSecondaryColor" ResourceKey="SystemColorWindowTextColor"/><SolidColorBrush x:Key="AppSecondaryBrush" Color="{ThemeResource SystemColorWindowTextColor}"/><StaticResource x:Key="AppSurfaceColor" ResourceKey="SystemColorWindowColor"/><SolidColorBrush x:Key="AppSurfaceBrush" Color="{ThemeResource SystemColorWindowColor}"/><StaticResource x:Key="AppBorderColor" ResourceKey="SystemColorWindowTextColor"/><SolidColorBrush x:Key="AppBorderBrush" Color="{ThemeResource SystemColorWindowTextColor}"/><StaticResource x:Key="AppHoverColor" ResourceKey="SystemColorWindowColor"/><SolidColorBrush x:Key="AppHoverBrush" Color="{ThemeResource SystemColorWindowColor}"/><StaticResource x:Key="AppPressedColor" ResourceKey="SystemColorWindowColor"/><SolidColorBrush x:Key="AppPressedBrush" Color="{ThemeResource SystemColorWindowColor}"/><StaticResource x:Key="AppAccentColor" ResourceKey="SystemColorHighlightColor"/><SolidColorBrush x:Key="AppAccentBrush" Color="{ThemeResource SystemColorHighlightColor}"/><StaticResource x:Key="AppAccentHoverColor" ResourceKey="SystemColorHighlightColor"/><SolidColorBrush x:Key="AppAccentHoverBrush" Color="{ThemeResource SystemColorHighlightColor}"/><StaticResource x:Key="AppAccentPressedColor" ResourceKey="SystemColorHighlightColor"/><SolidColorBrush x:Key="AppAccentPressedBrush" Color="{ThemeResource SystemColorHighlightColor}"/><StaticResource x:Key="AppAccentTextColor" ResourceKey="SystemColorHighlightTextColor"/><SolidColorBrush x:Key="AppAccentTextBrush" Color="{ThemeResource SystemColorHighlightTextColor}"/><StaticResource x:Key="AppSelectionColor" ResourceKey="SystemColorHighlightColor"/><SolidColorBrush x:Key="AppSelectionBrush" Color="{ThemeResource SystemColorHighlightColor}"/><StaticResource x:Key="AppSelectionHoverColor" ResourceKey="SystemColorHighlightColor"/><SolidColorBrush x:Key="AppSelectionHoverBrush" Color="{ThemeResource SystemColorHighlightColor}"/><StaticResource x:Key="AppSelectionTextColor" ResourceKey="SystemColorHighlightTextColor"/><SolidColorBrush x:Key="AppSelectionTextBrush" Color="{ThemeResource SystemColorHighlightTextColor}"/><StaticResource x:Key="AppAvatarColor" ResourceKey="SystemColorWindowColor"/><SolidColorBrush x:Key="AppAvatarBrush" Color="{ThemeResource SystemColorWindowColor}"/><SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="{ThemeResource AppAccentColor}"/><SolidColorBrush x:Key="AccentFillColorSecondaryBrush" Color="{ThemeResource AppAccentHoverColor}"/><SolidColorBrush x:Key="AccentFillColorTertiaryBrush" Color="{ThemeResource AppAccentPressedColor}"/><SolidColorBrush x:Key="TextOnAccentFillColorPrimaryBrush" Color="{ThemeResource AppAccentTextColor}"/><SolidColorBrush x:Key="AccentTextFillColorPrimaryBrush" Color="{ThemeResource AppAccentColor}"/><SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="{ThemeResource AppAccentColor}"/></ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
-    <AcrylicBrush x:Key="PlayerControlsBrush" TintColor="#202020" TintOpacity="0.7" FallbackColor="#E6202020" />
-    <SolidColorBrush x:Key="CategorySelectedBrush" Color="{ThemeResource CategorySelectedColor}" />
-    <SolidColorBrush x:Key="CategorySelectedForegroundBrush" Color="{ThemeResource CategorySelectedTextColor}" />
-    <SolidColorBrush x:Key="SelectorBarItemBackgroundSelected" Color="{ThemeResource SystemAccentColor}" Opacity="0.12" />
-    <StaticResource x:Key="SelectorBarItemBackgroundPointerOver" ResourceKey="ControlFillColorSecondaryBrush" />
-    <StaticResource x:Key="SelectorBarItemBackgroundPressed" ResourceKey="ControlFillColorTertiaryBrush" />
+    <AcrylicBrush x:Key="PlayerControlsBrush" TintColor="#192329" TintOpacity="0.85" FallbackColor="#F0192329"/>
+    <SolidColorBrush x:Key="CategorySelectedBrush" Color="{ThemeResource CategorySelectedColor}"/>
+    <SolidColorBrush x:Key="CategorySelectedForegroundBrush" Color="{ThemeResource CategorySelectedTextColor}"/>
+    <SolidColorBrush x:Key="SelectorBarItemBackgroundSelected" Color="{ThemeResource SystemAccentColor}" Opacity="0.12"/>
+    <StaticResource x:Key="SelectorBarItemBackgroundPointerOver" ResourceKey="ControlFillColorSecondaryBrush"/>
+    <StaticResource x:Key="SelectorBarItemBackgroundPressed" ResourceKey="ControlFillColorTertiaryBrush"/>
     <Style x:Key="SelectorBarItemPill" TargetType="Rectangle">
-        <Setter Property="Visibility" Value="Collapsed" />
+        <Setter Property="Visibility" Value="Collapsed"/>
     </Style>
     <Style x:Key="PlatformItemStyle" TargetType="SelectorBarItem">
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Padding" Value="14,8" />
-        <Setter Property="MinHeight" Value="36" />
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="14,8"/>
+        <Setter Property="MinHeight" Value="36"/>
     </Style>
     <Style x:Key="PlatformTabStyle" TargetType="ListViewItem">
-        <Setter Property="CornerRadius" Value="8"/><Setter Property="Padding" Value="10,6"/><Setter Property="Margin" Value="4"/>
-        <Setter Property="MinWidth" Value="0"/><Setter Property="MinHeight" Value="32"/>
+        <Setter Property="CornerRadius" Value="10"/><Setter Property="Padding" Value="12,6"/><Setter Property="Margin" Value="4"/>
+        <Setter Property="MinWidth" Value="0"/><Setter Property="MinHeight" Value="36"/>
         <Setter Property="UseSystemFocusVisuals" Value="True"/>
         <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListViewItem">
-            <primitives:ListViewItemPresenter CornerRadius="{TemplateBinding CornerRadius}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentMargin="{TemplateBinding Padding}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Foreground="{TemplateBinding Foreground}" Background="Transparent"
-                SelectedBackground="{ThemeResource PlatformSelectedBrush}" SelectedPointerOverBackground="{ThemeResource PlatformSelectedHoverBrush}" SelectedPressedBackground="{ThemeResource PlatformSelectedPressedBrush}" SelectedForeground="{ThemeResource PlatformSelectedForegroundBrush}"
-                PointerOverBackground="{ThemeResource ControlFillColorSecondaryBrush}" PressedBackground="{ThemeResource ControlFillColorTertiaryBrush}" FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}" FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"/>
+            <primitives:ListViewItemPresenter x:Name="Root" Control.IsTemplateFocusTarget="True" CornerRadius="{TemplateBinding CornerRadius}" Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentMargin="{TemplateBinding Padding}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Background="Transparent" SelectedBackground="{ThemeResource PlatformSelectedBrush}" SelectedPointerOverBackground="{ThemeResource PlatformSelectedHoverBrush}" SelectedPressedBackground="{ThemeResource PlatformSelectedPressedBrush}" SelectedForeground="{ThemeResource PlatformSelectedForegroundBrush}" PointerOverBackground="{ThemeResource AppHoverBrush}" PressedBackground="{ThemeResource AppPressedBrush}" FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}" FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"/>
         </ControlTemplate></Setter.Value></Setter>
         <Setter Property="HorizontalContentAlignment" Value="Center"/><Setter Property="VerticalContentAlignment" Value="Center"/>
-    </Style>
+    <Setter Property="FontFamily" Value="{StaticResource NavigationFontFamily}"/><Setter Property="FontSize" Value="14"/></Style>
     <!--  GridView宽高  -->
     <Style x:Key="PageTitleStyle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="20" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-    </Style>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+    <Setter Property="FontFamily" Value="{StaticResource NavigationFontFamily}"/><Setter Property="Foreground" Value="{ThemeResource AppTextBrush}"/></Style>
     <Style x:Key="ToolbarIconStyle" TargetType="Button">
-        <Setter Property="Width" Value="36" />
-        <Setter Property="Height" Value="36" />
-        <Setter Property="MinWidth" Value="0" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-    </Style>
+        <Setter Property="Width" Value="36"/>
+        <Setter Property="Height" Value="36"/>
+        <Setter Property="MinWidth" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="Background" Value="{ThemeResource AppSurfaceBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}"/><Setter Property="Foreground" Value="{ThemeResource AppTextBrush}"/><Setter Property="BorderBrush" Value="{ThemeResource AppBorderBrush}"/></Style>
     <x:Double x:Key="GridViewDesiredWidth">260.0</x:Double>
     <x:Double x:Key="GridViewItemHeight">196.0</x:Double>
-</ResourceDictionary>
+<Style x:Key="PlayerToolbarButtonStyle" TargetType="Button" BasedOn="{StaticResource ToolbarIconStyle}">
+    <Setter Property="Width" Value="36"/>
+    <Setter Property="Height" Value="36"/>
+    <Setter Property="CornerRadius" Value="10"/>
+    <Setter Property="Foreground" Value="{ThemeResource PlayerToolbarTextBrush}"/>
+    <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}"/>
+    <Setter Property="FontSize" Value="14"/>
+    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+<Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/></Style><Style x:Key="PlayerToolbarPlayStyle" TargetType="Button" BasedOn="{StaticResource PlayerToolbarButtonStyle}">
+    <Setter Property="Width" Value="40"/><Setter Property="Height" Value="40"/>
+    <Setter Property="CornerRadius" Value="20"/>
+    <Setter Property="Background" Value="{ThemeResource PlayerToolbarPlayBrush}"/>
+    <Setter Property="Foreground" Value="{ThemeResource PlayerToolbarPlayForegroundBrush}"/>
+</Style><Style x:Key="PageActionButtonStyle" TargetType="Button">
+ <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}"/><Setter Property="FontSize" Value="14"/><Setter Property="MinHeight" Value="36"/>
+ <Setter Property="Padding" Value="12,6"/><Setter Property="CornerRadius" Value="10"/><Setter Property="Foreground" Value="{ThemeResource AppTextBrush}"/>
+ <Setter Property="Background" Value="{ThemeResource AppSurfaceBrush}"/><Setter Property="BorderBrush" Value="{ThemeResource AppBorderBrush}"/>
+ <Setter Property="VerticalAlignment" Value="Center"/>
+</Style></ResourceDictionary>

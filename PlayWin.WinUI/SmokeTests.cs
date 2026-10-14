@@ -1,4 +1,4 @@
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Markup;
 using System;
 using System.Collections.Generic;
@@ -187,6 +187,24 @@ internal static class SmokeTests
                     throw new Exception("Aspect ratio changed when fitting.");
             }
         });
+        Check("Mini toolbar expands without moving or resizing the video", () =>
+        {
+            var work = new RectInt32(-1200, 100, 1200, 900);
+            foreach (var scale in new[] { 1d, 1.5d, 2d })
+            foreach (var y in new[] { 120, 730 })
+            {
+                var video = new RectInt32(-1100, y, 480, 270);
+                var height = (int)Math.Round(44 * scale);
+                var toolbar = MainWindow.GetMiniToolbarBounds(video, work, height);
+                if (toolbar.Height != height || toolbar.Above != (y == 730) || toolbar.Bounds.Width != video.Width ||
+                    toolbar.Bounds.Height - toolbar.Height != video.Height || toolbar.Bounds.Y + (toolbar.Above ? toolbar.Height : 0) != video.Y ||
+                    toolbar.Bounds.Y < work.Y || toolbar.Bounds.Y + toolbar.Bounds.Height > work.Y + work.Height)
+                    throw new Exception("Expanded toolbar changed the video bounds or exceeded the work area.");
+                var collapsed = MainWindow.GetMiniToolbarBounds(video, work, 0);
+                if (collapsed.Height != 0 || collapsed.Above || collapsed.Bounds.Y != video.Y || collapsed.Bounds.Height != video.Height)
+                    throw new Exception("Mini toolbar did not collapse to the original video bounds.");
+            }
+        });
         Check("Playback viewport fitting with DPI and window chrome", () =>
         {
             foreach (var preset in MainWindow.WindowSizeOptions)
@@ -357,10 +375,10 @@ internal static class SmokeTests
             typography.Children.Add(sampleText);
             typography.Children.Add(sampleButton);
             typography.Children.Add(sampleInput);
-            await CheckWindow("Embedded Resource Han Rounded controls in " + theme, () => window.Root.Content = typography, () =>
+            await CheckWindow("Native YaHei UI controls in " + theme, () => window.Root.Content = typography, () =>
             {
                 foreach (var font in new[] { sampleText.FontFamily, sampleButton.FontFamily, sampleInput.FontFamily })
-                    if (!font.Source.EndsWith("ResourceHanRoundedCN-Regular.ttf#Resource Han Rounded CN")) throw new Exception("A control did not use the bundled rounded interface font.");
+                    if (font.Source != "Microsoft YaHei UI") throw new Exception("A control did not use the native interface font.");
                 if (!File.Exists(Path.Combine(AppContext.BaseDirectory, "Assets/Fonts/ResourceHanRoundedCN-Regular.ttf")) ||
                     !File.Exists(Path.Combine(AppContext.BaseDirectory, "Assets/Fonts/ResourceHanRounded-LICENSE.md")))
                     throw new Exception("Resource Han Rounded font or license was missing.");

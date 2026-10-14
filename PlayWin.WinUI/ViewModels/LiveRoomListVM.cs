@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace PlayWin.WinUI.ViewModels;
 public abstract class LiveRoomListVM : BaseViewModel
 {
+    private const int MaxCachedRooms = 300;
     public ObservableCollection<LiveRoomItem> Items { get; } = new();
     private List<LiveGameSource> sources;
     private readonly Dictionary<LiveGameSource, int> pages = new();
@@ -25,7 +26,7 @@ public abstract class LiveRoomListVM : BaseViewModel
     protected virtual Task<LiveCategoryResult> FetchAsync(LiveGameSource source, int page) => source.Site.GetCategoryRooms(source.Category, page);
     public async Task LoadAsync()
     {
-        if (Loading) return;
+        if (Loading || Items.Count >= MaxCachedRooms) return;
         var current = generation;
         Loading = true;
         try
@@ -68,8 +69,13 @@ public abstract class LiveRoomListVM : BaseViewModel
             }
             var keys = new HashSet<string>(Items.Select(r => r.Source.Name + ":" + r.RoomID));
             foreach (var room in rooms.OrderByDescending(r => r.Online))
+            {
+                if (Items.Count >= MaxCachedRooms) break;
                 if (keys.Add(room.Source.Name + ":" + room.RoomID)) Items.Add(room);
-            CanLoadMore = sources.Any(s => !finished.Contains(s));
+            }
+            CanLoadMore = Items.Count < MaxCachedRooms && sources.Any(s => !finished.Contains(s));
+            if (Items.Count >= MaxCachedRooms)
+                Utils.ShowMessageToast("已加载 300 个直播间，可刷新列表或缩小分类、搜索范围");
             var failedBatch = batches.FirstOrDefault(b => b.error != null || b.result?.Error != null);
             var error = failedBatch.error ?? failedBatch.result?.Error;
             EmptyMessage = error != null ? RequestErrorMessage.Report(error, failedBatch.source.Site.Name) :
