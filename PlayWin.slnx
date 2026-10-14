@@ -1,4 +1,4 @@
 <Solution>
-  <Project Path="AllLive.Core/PlayWin.Core.csproj" />
-  <Project Path="AllLive.WinUI/PlayWin.csproj" />
+  <Project Path="PlayWin.Core/PlayWin.Core.csproj" />
+  <Project Path="PlayWin.WinUI/PlayWin.csproj" />
 </Solution>

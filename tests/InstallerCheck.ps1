@@ -1,7 +1,7 @@
 param([string]$CompilerPath)
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-[xml]$project = Get-Content -LiteralPath (Join-Path $root 'AllLive.WinUI\PlayWin.csproj') -Raw
+[xml]$project = Get-Content -LiteralPath (Join-Path $root 'PlayWin.WinUI\PlayWin.csproj') -Raw
 $version = [string]$project.Project.PropertyGroup.Version
 $setup = Join-Path $root "artifacts\PlayWin-$version-x64-Setup.exe"
 if ((Get-Item -LiteralPath $setup).VersionInfo.ProductVersion.Trim() -ne $version) { throw 'Setup executable version does not match project.' }
@@ -19,7 +19,7 @@ if (-not (Test-Path -LiteralPath $CompilerPath)) { throw 'Pass -CompilerPath to 
 & $CompilerPath /Q "/DAppVersion=$version" "/DTestUserDataDir=$testData" (Join-Path $root 'installer\PlayWin.iss')
 if ($LASTEXITCODE -ne 0) { throw 'Isolated installer compilation failed.' }
 $setup = Join-Path $root "artifacts\PlayWin-$version-x64-Setup-test.exe"
-$data = Join-Path $env:LOCALAPPDATA 'AllLive'
+$data = Join-Path $env:LOCALAPPDATA 'PlayWin'
 function Run-Setup([string]$path, [string[]]$arguments) {
     $process = Start-Process -FilePath $path -ArgumentList $arguments -WindowStyle Hidden -PassThru
     if (-not $process.WaitForExit(60000)) { throw 'Installer test process exceeded 60 seconds.' }
@@ -56,11 +56,11 @@ try {
     if ($shortcut.TargetPath -ne $exe) { throw 'Start menu shortcut target is incorrect.' }
     $icon = Join-Path $installDir 'Assets\PlayWin.ico'
     $desktopShortcut = $shell.CreateShortcut($desktop)
-    if ($desktopShortcut.TargetPath -ne $exe -or $desktopShortcut.IconLocation -ne ($icon + ',0')) { throw 'Desktop shortcut does not use the YouChuang B icon.' }
-    if (-not (Test-Path -LiteralPath $icon)) { throw 'YouChuang B icon was not installed.' }
-    'PASS current-user install, version and default desktop shortcut with YouChuang B icon'
+    if ($desktopShortcut.TargetPath -ne $exe -or $desktopShortcut.IconLocation -ne ($icon + ',0')) { throw 'Desktop shortcut does not use the PlayWin B icon.' }
+    if (-not (Test-Path -LiteralPath $icon)) { throw 'PlayWin B icon was not installed.' }
+    'PASS current-user install, version and default desktop shortcut with PlayWin B icon'
     New-Item -ItemType Directory -Path (Join-Path $testData 'DouyinWebView\Default') -Force | Out-Null
-    foreach ($name in @('settings.json','AllLive.db','history.db','application.log','DouyinWebView\Default\Cookies')) {
+    foreach ($name in @('settings.json','PlayWin.db','history.db','application.log','DouyinWebView\Default\Cookies')) {
         Set-Content -LiteralPath (Join-Path $testData $name) -Value 'fake uninstall test data, not a real session'
     }
     $readme = Join-Path $installDir 'README.md'
@@ -73,8 +73,8 @@ try {
     Run-Setup $exe @('--smoke-test')
     $report = Get-Content -LiteralPath (Join-Path $data 'smoke-test.log')
     $passedChecks = ($report | Where-Object { $_ -match '^PASS' }).Count
-    if (($report | Where-Object { $_ -match '^FAIL' }) -or $passedChecks -lt 94 -or -not ($report -contains 'PASS YouChuang name, icon and 18-point title') -or -not ($report -contains 'PASS PlayWin filenames and runtime dependency references')) { throw 'Installed application smoke or PlayWin branding checks failed.' }
-    'PASS installed application: ' + $passedChecks + ' smoke checks including YouChuang branding'
+    if (($report | Where-Object { $_ -match '^FAIL' }) -or $passedChecks -lt 94 -or -not ($report -contains 'PASS PlayWin name, icon and 18-point title') -or -not ($report -contains 'PASS PlayWin filenames and runtime dependency references')) { throw 'Installed application smoke or PlayWin branding checks failed.' }
+    'PASS installed application: ' + $passedChecks + ' smoke checks including PlayWin branding'
 }
 finally {
     Remove-TestInstallation

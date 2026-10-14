@@ -1,5 +1,5 @@
 #ifndef AppVersion
-  #define AppVersion "1.0.0"
+  #define AppVersion "1.0.1"
 #endif
 #ifdef TestUserDataDir
   #define BrandName "游窗-test"
@@ -9,7 +9,7 @@
 #else
   #define BrandName "游窗"
   #define InstallerId "{{E2F869D5-6D37-4AA4-B932-5B782DDE2F17}"
-  #define UserDataDir "{localappdata}\AllLive"
+  #define UserDataDir "{localappdata}\PlayWin"
   #define TestSuffix ""
 #endif
 
@@ -40,7 +40,7 @@ CloseApplications=yes
 RestartApplications=no
 DisableProgramGroupPage=yes
 UsePreviousTasks=no
-SetupIconFile=..\AllLive.WinUI\Assets\PlayWin.ico
+SetupIconFile=..\PlayWin.WinUI\Assets\PlayWin.ico
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Shortcuts:"
@@ -54,26 +54,6 @@ Name: "{userdesktop}\{#BrandName}"; Filename: "{app}\PlayWin.exe"; WorkingDir: "
 
 [Run]
 Filename: "{app}\PlayWin.exe"; Description: "启动游窗"; Flags: nowait postinstall skipifsilent
-
-[InstallDelete]
-Type: files; Name: "{app}\AllLive.WinUI.exe"
-Type: files; Name: "{app}\AllLive.WinUI.dll"
-Type: files; Name: "{app}\AllLive.WinUI.deps.json"
-Type: files; Name: "{app}\AllLive.WinUI.runtimeconfig.json"
-Type: files; Name: "{app}\AllLive.WinUI.pri"
-Type: files; Name: "{app}\AllLive.WinUI.pdb"
-Type: files; Name: "{app}\AllLive.Core.dll"
-Type: files; Name: "{app}\AllLive.Core.pdb"
-Type: files; Name: "{app}\Assets\AllLive.ico"
-Type: files; Name: "{app}\Assets\YouChuang.ico"
-Type: files; Name: "{app}\Assets\YouChuang.png"
-Type: files; Name: "{app}\Assets\YouChuang.svg"
-#ifndef TestUserDataDir
-Type: files; Name: "{userdesktop}\AllLive WinUI 3.lnk"
-Type: files; Name: "{userprograms}\AllLive WinUI 3.lnk"
-Type: files; Name: "{userdesktop}\AllLive.lnk"
-Type: files; Name: "{userprograms}\AllLive.lnk"
-#endif
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{#UserDataDir}"

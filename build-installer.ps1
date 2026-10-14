@@ -11,7 +11,7 @@ if (-not (Test-Path -LiteralPath $CompilerPath)) {
 }
 & (Join-Path $PSScriptRoot 'build-winui.ps1')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-[xml]$project = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'AllLive.WinUI\PlayWin.csproj') -Raw
+[xml]$project = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'PlayWin.WinUI\PlayWin.csproj') -Raw
 $version = [string]$project.Project.PropertyGroup.Version
 & $CompilerPath /Q "/DAppVersion=$version" (Join-Path $PSScriptRoot 'installer\PlayWin.iss')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

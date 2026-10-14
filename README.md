@@ -1,15 +1,15 @@
 # PlayWin（游窗）
 
-<img src="AllLive.WinUI/Assets/PlayWin.png" width="80" alt="PlayWin 图标" />
+<img src="PlayWin.WinUI/Assets/PlayWin.png" width="80" alt="PlayWin 图标" />
 
 简洁的 Windows 游戏直播客户端，只看哔哩哔哩和抖音，不显示弹幕。使用 WinUI 3，栏位采用磨砂材质，内容保持清晰。
 
-**当前版本：v1.0.0 · Windows x64 · MIT**
+**当前版本：v1.0.1 · Windows x64 · MIT**
 
 ## 下载
 
-- [安装版 PlayWin-1.0.0-x64-Setup.exe](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.0/PlayWin-1.0.0-x64-Setup.exe)
-- [便携版 PlayWin-x64.zip](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.0/PlayWin-x64.zip)
+- [安装版 PlayWin-1.0.1-x64-Setup.exe](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.1/PlayWin-1.0.1-x64-Setup.exe)
+- [便携版 PlayWin-x64.zip](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.1/PlayWin-x64.zip)
 - [所有发布版本](https://github.com/ShenShenSshen/PlayWin/releases)
 
 安装版默认安装到当前用户目录，创建开始菜单入口，默认创建桌面快捷方式，可取消。便携版解压后运行 `PlayWin.exe`，请保留整个目录。
@@ -45,9 +45,9 @@
 
 ## 数据与升级
 
-发布包不包含个人登录、关注、历史或浏览器缓存。为兼容已有版本，运行数据仍保存在 `%LOCALAPPDATA%\AllLive`；安装版和便携版会使用同一份本机数据。
+发布包不包含个人登录、关注、历史或浏览器缓存。运行数据统一保存在 `%LOCALAPPDATA%\PlayWin`；安装版和便携版会使用同一份本机数据。
 
-覆盖升级保留数据；**卸载安装版会清空登录、关注、历史、设置、日志、下载文件及浏览器缓存，全部不保留**。程序和安装包暂未进行代码签名，Windows 可能显示未知发布者。
+v1.0.1 起数据路径统一为 PlayWin，不自动导入 v1.0.0 的数据，需要重新登录并重新设置；后续覆盖升级保留 PlayWin 数据。**卸载安装版会清空登录、关注、历史、设置、日志、下载文件及浏览器缓存，全部不保留**。程序和安装包暂未进行代码签名，Windows 可能显示未知发布者。
 
 平台接口变化、平台登录要求和网络状况可能影响直播获取。视频保持原比例，不拉伸或裁切；直播源自身的黑边不会被去除。
 
@@ -64,14 +64,14 @@ dotnet run --project tests/WinUIDataCheck/WinUIDataCheck.csproj -c Release
 
 解决方案：`PlayWin.slnx`。发布目录：`artifacts/PlayWin-win-x64`。
 
-- `AllLive.Core`：两个平台的接口与核心模型，项目文件 `PlayWin.Core.csproj`。
-- `AllLive.WinUI`：WinUI 3 客户端，项目文件 `PlayWin.csproj`。
+- `PlayWin.Core`：两个平台的接口与核心模型，项目文件 `PlayWin.Core.csproj`。
+- `PlayWin.WinUI`：WinUI 3 客户端，项目文件 `PlayWin.csproj`。
 - `tests`：数据、自检、图标和隔离安装验证。
 - `installer/PlayWin.iss`：当前用户安装与卸载配置。
 
-源代码目录和内部命名空间保留 AllLive，以减少迁移变动；程序文件、资源和发布文件统一使用 PlayWin。构建缓存、个人数据和发布产物不纳入源码。
+源码目录、内部命名空间、数据库、缓存、资源和发布文件统一使用 PlayWin。构建缓存、个人数据和发布产物不纳入源码。
 
-自检使用隔离测试数据，不等于真实直播、多显示器和全部 DPI 环境的人工验证。详见 [客户端说明](AllLive.WinUI/README.md)。
+自检使用隔离测试数据，不等于真实直播、多显示器和全部 DPI 环境的人工验证。详见 [客户端说明](PlayWin.WinUI/README.md)。
 
 ## 来源与许可证
 
