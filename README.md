@@ -4,21 +4,22 @@
 
 简洁的 Windows 游戏直播客户端。支持哔哩哔哩、抖音、虎牙和斗鱼，仅展示游戏分类，不显示弹幕。使用 WinUI 3，栏位采用磨砂材质，内容保持清晰。
 
-**已发布版本：v1.0.5 · Windows x64 · MIT**
+**已发布版本：v1.0.6 · Windows x64 · MIT**
 
-v1.0.5 减少播放器空闲计时与重复鼠标指针创建，最小化时暂停悬停检查，并完善窗口事件清理。界面与播放参数保持原样；CPU、内存并非全面下降。详见 [更新说明](RELEASE_NOTES.md) 与 [播放器性能报告](PLAYER_PERFORMANCE_REPORT.md)。
+v1.0.6 统一圆润标题、清晰正文与页面留白，减弱卡片边框，让直播封面和游戏图片更突出；修正独立窗口关闭后的当前窗口引用。详见 [更新说明](RELEASE_NOTES.md) 与 [视觉调整说明](VISUAL_DESIGN_NOTES.txt)。
 
-## main 分支最新调整（尚未发布安装包）
+## v1.0.6 更新
 
 - 统一圆润标题、导航和清晰正文的字号、行高、页面边距及轻量过渡。
 - 减弱直播卡片与游戏分类边线，移除分类图片底板，让直播封面和游戏图片更突出；保留雾蓝磨砂、键盘焦点和选中反馈。
 - 修正独立窗口关闭后可能继续被记为当前窗口的问题，补充对应回归检查。
-- 本地预览仍为 1.0.5；下方正式下载包保持原 v1.0.5，不包含本节改动。验证结果、首次失败记录与限制见 [视觉调整说明](VISUAL_DESIGN_NOTES.txt)。
+- 安装版和便携版同步更新，软件、关于页与安装器版本统一为 1.0.6。验证结果、首次失败记录与限制见 [视觉调整说明](VISUAL_DESIGN_NOTES.txt)。
 
 ## 下载
 
-- [安装版 PlayWin-1.0.5-x64-Setup.exe](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.5/PlayWin-1.0.5-x64-Setup.exe)
-- [便携版 PlayWin-x64.zip](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.5/PlayWin-x64.zip)
+- [安装版 PlayWin-1.0.6-x64-Setup.exe](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.6/PlayWin-1.0.6-x64-Setup.exe)
+- [便携版 PlayWin-x64.zip](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.6/PlayWin-x64.zip)
+- [SHA-256 校验文件](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.6/SHA256SUMS.txt)
 - [所有发布版本](https://github.com/ShenShenSshen/PlayWin/releases)
 
 安装版默认安装到当前用户目录，创建开始菜单入口，默认创建桌面快捷方式，可取消。便携版解压后运行 `PlayWin.exe`，请保留整个目录。
@@ -39,7 +40,7 @@ v1.0.5 减少播放器空闲计时与重复鼠标指针创建，最小化时暂�
 
 ![游窗播放器：分组操作栏、亮度与窗口操作](docs/screenshots/player.png)
 
-截图沿用 v1.0.4 的隔离访客环境，本版界面保持原样，不含日常账号信息；直播内容与平台目录会随时间变化。
+截图沿用 v1.0.4 的隔离访客环境，展示主要功能；v1.0.6 的字体、边距与卡片样式已有调整。截图不含日常账号信息；直播内容与平台目录会随时间变化。
 
 ## 功能
 
@@ -86,7 +87,7 @@ dotnet run --project tests/WinUIDataCheck/WinUIDataCheck.csproj -c Release
 
 构建缓存、个人数据和发布产物不纳入源码。
 
-v1.0.5 的播放器对照覆盖五种窗口状态、24 次切房与 13 个播放页回收，控件及恢复边界检查通过。B站访客首页与虎牙所选线路仍有未通过项，不代表四平台全面通过；总冒烟的 18 个失败项与 v1.0.4 基线一致，本轮未新增，不能视为全部通过；安装／卸载未重新实测。详见 [播放器性能报告](PLAYER_PERFORMANCE_REPORT.md)、[图片验证报告](TDD_IMAGE_REPORT.md) 与 [客户端说明](PlayWin.WinUI/README.md)。
+本次发布构建检查覆盖视觉 17 项、完整冒烟 113 项、图片 5 项与离线数据；预览阶段的播放器控件、资源策略及本地 H.264 快速播放与回收预算记录继续保留。图片检查现在等待实际像素并验证空白图不会被接受，连续三次通过；首次失败和播放器尺寸时序不一致记录保留，不能据此推断长期稳定性全面验证。见 [v1.0.6 发布检查](docs/validation/release-1.0.6.md)。150%/200% 实机缩放、系统高对比度切换和四平台全部真实线路未完整验收。v1.0.5 的 B站访客首页与虎牙所选线路未通过记录继续保留，详见 [播放器性能报告](PLAYER_PERFORMANCE_REPORT.md)、[图片验证报告](TDD_IMAGE_REPORT.md) 与 [客户端说明](PlayWin.WinUI/README.md)。
 
 ## 来源与许可证
 

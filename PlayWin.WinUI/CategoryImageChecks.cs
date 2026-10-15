@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -76,6 +76,14 @@ internal static class CategoryImageChecks
             await Task.Delay(50);
             await CheckCancelledCompletionAsync(server.Url, report);
             await CheckDonorFailureAsync(server.Url, report);
+            var blank = new Image { Width = 100, Height = 100 };
+            window.Root.Content = blank;
+            await UntilAsync(() => blank.IsLoaded, "Blank-picture control did not load");
+            var rejectedBlank = false;
+            try { await AssertPictureRenderedAsync(blank, blank, 250); }
+            catch (Exception error) when (error.Message.StartsWith("Category shows a placeholder/blank", StringComparison.Ordinal)) { rejectedBlank = true; }
+            Check(rejectedBlank, "Rendered-pixel validation accepted a permanently blank image");
+            report.Add("PASS negative control: permanently blank artwork is rejected by the rendered-pixel deadline");
         }
         finally
         {
@@ -161,17 +169,31 @@ internal static class CategoryImageChecks
         }
         return null;
     }
-    private static async Task AssertPictureRenderedAsync(FrameworkElement root, Image image)
+    private static async Task AssertPictureRenderedAsync(FrameworkElement root, Image image, int timeoutMilliseconds = 8000)
     {
-        var bitmap = new RenderTargetBitmap();
-        await bitmap.RenderAsync(root);
-        var pixels = (await bitmap.GetPixelsAsync()).ToArray();
-        var point = image.TransformToVisual(root).TransformPoint(new Windows.Foundation.Point(image.ActualWidth / 2, image.ActualHeight / 2));
-        var x = Math.Clamp((int)(point.X * bitmap.PixelWidth / root.ActualWidth), 0, bitmap.PixelWidth - 1);
-        var y = Math.Clamp((int)(point.Y * bitmap.PixelHeight / root.ActualHeight), 0, bitmap.PixelHeight - 1);
-        var offset = (y * bitmap.PixelWidth + x) * 4;
-        Check(Math.Abs(pixels[offset] - 41) <= 10 && Math.Abs(pixels[offset + 1] - 139) <= 10 && Math.Abs(pixels[offset + 2] - 233) <= 10 && pixels[offset + 3] >= 240,
-            "Category shows a placeholder/blank instead of the decoded picture: BGRA=" + string.Join(",", pixels.Skip(offset).Take(4)));
+        // Bitmap dimensions can precede a rendered frame. Sample real pixels with a
+        // fresh capture until ready; a missing/wrong picture still fails at the deadline.
+        var deadline = DateTime.UtcNow.AddMilliseconds(timeoutMilliseconds);
+        byte[] sample = Array.Empty<byte>();
+        do
+        {
+            root.UpdateLayout();
+            var bitmap = new RenderTargetBitmap();
+            await bitmap.RenderAsync(root);
+            var pixels = (await bitmap.GetPixelsAsync()).ToArray();
+            if (bitmap.PixelWidth > 0 && bitmap.PixelHeight > 0 && root.ActualWidth > 0 && root.ActualHeight > 0)
+            {
+                var point = image.TransformToVisual(root).TransformPoint(new Windows.Foundation.Point(image.ActualWidth / 2, image.ActualHeight / 2));
+                var x = Math.Clamp((int)(point.X * bitmap.PixelWidth / root.ActualWidth), 0, bitmap.PixelWidth - 1);
+                var y = Math.Clamp((int)(point.Y * bitmap.PixelHeight / root.ActualHeight), 0, bitmap.PixelHeight - 1);
+                var offset = (y * bitmap.PixelWidth + x) * 4;
+                sample = pixels.Skip(offset).Take(4).ToArray();
+                if (sample.Length == 4 && Math.Abs(sample[0] - 41) <= 10 && Math.Abs(sample[1] - 139) <= 10 && Math.Abs(sample[2] - 233) <= 10 && sample[3] >= 240)
+                    return;
+            }
+            await Task.Delay(25);
+        } while (DateTime.UtcNow < deadline);
+        throw new Exception("Category shows a placeholder/blank instead of the decoded picture: BGRA=" + string.Join(",", sample));
     }
     private static async Task<byte[]> CreatePictureAsync()
     {

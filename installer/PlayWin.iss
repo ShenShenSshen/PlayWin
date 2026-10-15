@@ -1,5 +1,5 @@
-﻿#ifndef AppVersion
-  #define AppVersion "1.0.5"
+#ifndef AppVersion
+  #define AppVersion "1.0.6"
 #endif
 #ifdef TestUserDataDir
   #define BrandName "游窗-test"
