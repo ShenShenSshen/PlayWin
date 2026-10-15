@@ -1,4 +1,4 @@
-﻿using PlayWin.WinUI.Helper;
+using PlayWin.WinUI.Helper;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -31,7 +31,8 @@ public partial class App : Application
             RegisterWindow(window);
             try
             {
-                if (Environment.GetCommandLineArgs().Contains("--category-repro")) await CategoryRepro.RunAsync(window);
+                if (Environment.GetCommandLineArgs().Contains("--visual-checks")) await VisualDesignChecks.RunAsync(window);
+                else if (Environment.GetCommandLineArgs().Contains("--category-repro")) await CategoryRepro.RunAsync(window);
                 else if (Environment.GetCommandLineArgs().Contains("--player-metrics")) await PlayerPerformanceChecks.RunAsync(window);
                 else if (Environment.GetCommandLineArgs().Contains("--image-checks")) await CategoryImageChecks.RunAsync(window);
                 else if (Environment.GetCommandLineArgs().Contains("--border-check")) await WindowBorderChecks.RunAsync(window);
@@ -91,7 +92,12 @@ public partial class App : Application
             var douyin = (PlayWin.Core.Douyin)ViewModels.MainVM.Sites.First(s => s.LiveSite is PlayWin.Core.Douyin).LiveSite;
             if (douyin.WebRequestAsync == null) { var browser = new DouyinWebRequest(); douyin.WebRequestAsync = browser.GetAsync; douyin.CancellableWebRequestAsync = browser.GetAsync; }
         }
-        window.Activated += (_, _) => ActiveWindow = window;
+        window.Activated += (_, args) =>
+        {
+            // Deactivation can arrive after Closed; never restore a removed native window.
+            if (args.WindowActivationState != WindowActivationState.Deactivated && Windows.Contains(window))
+                ActiveWindow = window;
+        };
         window.Closed += (_, _) =>
         {
             Windows.Remove(window);

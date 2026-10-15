@@ -10,7 +10,7 @@ public partial class MyAdaptiveGridView : GridView
     public double LoadMoreBottomOffset { get; set; } = 100;
     public static readonly DependencyProperty DataLoadingProperty = DependencyProperty.Register(nameof(DataLoading), typeof(bool), typeof(MyAdaptiveGridView), new PropertyMetadata(true, OnLoadingChanged));
     public bool DataLoading { get => (bool)GetValue(DataLoadingProperty); set => SetValue(DataLoadingProperty, value); }
-    public static readonly DependencyProperty DesiredWidthProperty = DependencyProperty.Register(nameof(DesiredWidth), typeof(double), typeof(MyAdaptiveGridView), new PropertyMetadata(260d, OnSizeSettingChanged));
+    public static readonly DependencyProperty DesiredWidthProperty = DependencyProperty.Register(nameof(DesiredWidth), typeof(double), typeof(MyAdaptiveGridView), new PropertyMetadata(280d, OnSizeSettingChanged));
     public double DesiredWidth { get => (double)GetValue(DesiredWidthProperty); set => SetValue(DesiredWidthProperty, value); }
     public static readonly DependencyProperty ItemHeightProperty = DependencyProperty.Register(nameof(ItemHeight), typeof(double), typeof(MyAdaptiveGridView), new PropertyMetadata(196d, OnSizeSettingChanged));
     public double ItemHeight { get => (double)GetValue(ItemHeightProperty); set => SetValue(ItemHeightProperty, value); }
@@ -47,9 +47,11 @@ public partial class MyAdaptiveGridView : GridView
         var available = Math.Max(1, ActualWidth - Padding.Left - Padding.Right);
         var columns = Math.Max(1, Math.Floor(available / Math.Max(1, DesiredWidth)));
         panel.ItemWidth = available / columns;
-        // Room cards have 8 pixels of margin and two 24-pixel text rows beneath a 16:9 cover.
+        // Each cell includes 8 DIP on each side. Text stays at its native size.
         panel.ItemHeight = ItemTemplate == (DataTemplate)App.Current.Resources["RoomItemTemplate"]
-            ? Math.Max(1, panel.ItemWidth - 8) * 9 / 16 + 56 : ItemHeight;
+            ? Math.Max(1, panel.ItemWidth - 16) * 9 / 16 + 80
+            : ItemTemplate == (DataTemplate)App.Current.Resources["GameItemTemplate"]
+                ? Math.Max(1, panel.ItemWidth - 34) * 3 / 4 + 86 : ItemHeight;
     }
     private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs args)
     {

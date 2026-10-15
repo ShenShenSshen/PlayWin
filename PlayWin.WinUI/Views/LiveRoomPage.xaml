@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><Page xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:convert="using:PlayWin.WinUI.Converters" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:local="using:PlayWin.WinUI.Views" xmlns:controls="using:PlayWin.WinUI.Controls" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:models="using:PlayWin.Core.Models" xmlns:mvvm="using:PlayWin.WinUI.ViewModels" xmlns:my="using:Microsoft.UI.Xaml.Controls" xmlns:winui="using:Microsoft.UI.Xaml.Controls" x:Class="PlayWin.WinUI.Views.LiveRoomPage" mc:Ignorable="d">
+<?xml version="1.0" ?><Page xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:convert="using:PlayWin.WinUI.Converters" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:local="using:PlayWin.WinUI.Views" xmlns:controls="using:PlayWin.WinUI.Controls" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:models="using:PlayWin.Core.Models" xmlns:mvvm="using:PlayWin.WinUI.ViewModels" xmlns:my="using:Microsoft.UI.Xaml.Controls" xmlns:winui="using:Microsoft.UI.Xaml.Controls" x:Class="PlayWin.WinUI.Views.LiveRoomPage" mc:Ignorable="d" FontFamily="{StaticResource ContentControlThemeFontFamily}" FontSize="{StaticResource BodyTextSize}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -19,7 +19,7 @@
 
                 <Image x:Name="AppIcon" Grid.Column="1" Width="18" Height="18" Margin="12,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Source="{x:Bind Path=liveRoomVM.SiteLogo, Mode=OneWay}"/>
                 <Grid Grid.Column="2" Margin="0,0,138,0" Background="#00FFFFFF">
-                    <TextBlock x:Name="Title" Margin="12,0" VerticalAlignment="Center" FontFamily="{StaticResource ContentControlThemeFontFamily}" FontSize="14" FontWeight="Normal" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}">
+                    <TextBlock x:Name="Title" Margin="12,0" VerticalAlignment="Center" FontFamily="{StaticResource ContentControlThemeFontFamily}" FontSize="{StaticResource BodyTextSize}" LineHeight="{StaticResource SecondaryLineHeight}" FontWeight="Normal" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}">
                         <Run Text="{x:Bind Path=liveRoomVM.Title, Mode=OneWay}"/>
                         <Run Text=" - "/>
                         <Run Text="{x:Bind Path=liveRoomVM.Name, Mode=OneWay}"/>

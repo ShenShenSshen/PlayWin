@@ -62,7 +62,8 @@ public sealed partial class BaseFramePage : Page
     {
         Title.Text = App.DisplayName;
         var playing = MainFrame.Content is LiveRoomPage;
-        Title.FontSize = playing ? 14 : 18;
+        Title.FontSize = (double)App.Current.Resources[playing ? "BodyTextSize" : "BrandTextSize"];
+        Title.LineHeight = (double)App.Current.Resources[playing ? "SecondaryLineHeight" : "BrandLineHeight"];
         Title.FontFamily = (Microsoft.UI.Xaml.Media.FontFamily)App.Current.Resources[playing ? "ContentControlThemeFontFamily" : "BrandFontFamily"];
         Title.CharacterSpacing = playing ? 0 : 35;
         Title.FontWeight = new Windows.UI.Text.FontWeight { Weight = 400 };

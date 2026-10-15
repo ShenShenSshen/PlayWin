@@ -9,6 +9,21 @@
             <FontFamily x:Key="ContentControlThemeFontFamily">Microsoft YaHei UI</FontFamily>
             <FontFamily x:Key="NavigationFontFamily">ms-appx:///Assets/Fonts/ResourceHanRoundedCN-Regular.ttf#Resource Han Rounded CN</FontFamily>
             <FontFamily x:Key="BrandFontFamily">ms-appx:///Assets/Fonts/ChillRound.ttf#寒蝉全圆体</FontFamily>
+
+            <x:Double x:Key="BodyTextSize">14</x:Double>
+            <x:Double x:Key="BodyLineHeight">22</x:Double>
+            <x:Double x:Key="SecondaryTextSize">13</x:Double>
+            <x:Double x:Key="SecondaryLineHeight">20</x:Double>
+            <x:Double x:Key="NavigationTextSize">14</x:Double>
+            <x:Double x:Key="NavigationLineHeight">20</x:Double>
+            <x:Double x:Key="SectionTextSize">16</x:Double>
+            <x:Double x:Key="SectionLineHeight">24</x:Double>
+            <x:Double x:Key="PageTitleTextSize">22</x:Double>
+            <x:Double x:Key="PageTitleLineHeight">30</x:Double>
+            <x:Double x:Key="BrandTextSize">18</x:Double>
+            <x:Double x:Key="BrandLineHeight">24</x:Double>
+            <Thickness x:Key="ContentItemMargin">8</Thickness>
+            <CornerRadius x:Key="GridViewItemCornerRadius">10</CornerRadius>
 <!--  转换器  -->
             <convert:NumberToStringConvert x:Key="numberToStringConvert"/>
             <convert:DisplayConvert x:Key="displayConvert"/>
@@ -36,52 +51,53 @@
             <Windows10version1903:ThemeShadow x:Key="Shadow"/>
             <!--  DataTemplate  -->
             <DataTemplate x:Key="RoomItemTemplate">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition Height="24"/>
-                        <RowDefinition Height="24"/>
-                    </Grid.RowDefinitions>
-                    <Border CornerRadius="10 10 0 0">
+                <Grid><Grid.RowDefinitions><RowDefinition/><RowDefinition Height="64"/></Grid.RowDefinitions>
+                    <Border CornerRadius="10">
                         <Grid>
-                            <Image Stretch="UniformToFill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" perf:DecodedImage.Url="{Binding Path=Cover}"/>
+                            <Image Stretch="UniformToFill" perf:DecodedImage.Url="{Binding Cover}"/>
                             <Grid Padding="8" VerticalAlignment="Bottom">
-                                <Grid.Background>
-                                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                                        <GradientStop Offset="0.993" Color="#66000005"/>
-                                        <GradientStop Offset="0" Color="#00000000"/>
-                                    </LinearGradientBrush>
-                                </Grid.Background>
-                                <StackPanel Orientation="Horizontal">
-                                    <Viewbox Width="14" Height="14">
-                                        <PathIcon HorizontalAlignment="Center" VerticalAlignment="Center" Data="{StaticResource ResourceKey=IconHot}" Foreground="White"/>
-                                    </Viewbox>
-
-                                    <TextBlock Margin="4,2,0,0" VerticalAlignment="Center" FontSize="13" Foreground="White" FontFamily="{StaticResource ContentControlThemeFontFamily}"><Run Text="{Binding Path=Online, Converter={StaticResource numberToStringConvert}}"/></TextBlock>
+                                <Grid.Background><LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1"><GradientStop Offset="0" Color="#00000000"/><GradientStop Offset="1" Color="#99000000"/></LinearGradientBrush></Grid.Background>
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <FontIcon FontFamily="{StaticResource SegoeFluent}" FontSize="14" Glyph="&#xE814;" Foreground="White" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Online, Converter={StaticResource numberToStringConvert}}" Style="{StaticResource SecondaryTextStyle}" Foreground="White"/>
                                 </StackPanel>
-
                             </Grid>
-
-
                         </Grid>
                     </Border>
-                    <TextBlock Grid.Row="1" Margin="4,4,4,0" MaxLines="1" Text="{Binding Path=Title}" ToolTipService.ToolTip="{Binding Path=Title}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" FontFamily="{StaticResource ContentControlThemeFontFamily}" FontSize="14"/>
-                    <Grid Grid.Row="2" Margin="4,0,4,4" ColumnSpacing="6">
-                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                    <TextBlock FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}" Text="{Binding Path=UserName}" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" FontFamily="{StaticResource ContentControlThemeFontFamily}"/>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                        <TextBlock FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}" Text="{Binding Converter={StaticResource searchBadgeConvert}, ConverterParameter=Status}" Visibility="{Binding Converter={StaticResource searchBadgeConvert}, ConverterParameter=StatusVisibility}" FontFamily="{StaticResource ContentControlThemeFontFamily}"/>
-                        <Border CornerRadius="4" Padding="4,0" Background="{ThemeResource ControlFillColorSecondaryBrush}" Visibility="{Binding Converter={StaticResource searchBadgeConvert}, ConverterParameter=PlatformVisibility}">
-                            <TextBlock FontSize="13" Text="{Binding Converter={StaticResource searchBadgeConvert}, ConverterParameter=Platform}" FontFamily="{StaticResource ContentControlThemeFontFamily}"/>
-                        </Border>
+                    <StackPanel Grid.Row="1" Margin="0,8,0,10" Spacing="4">
+                        <TextBlock Text="{Binding Title}" Style="{StaticResource BodyTextStyle}" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{Binding Title}"/>
+                        <Grid ColumnSpacing="6"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding UserName}" Style="{StaticResource SecondaryTextStyle}" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{Binding UserName}"/>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource SecondaryTextStyle}" Text="{Binding Converter={StaticResource searchBadgeConvert}, ConverterParameter=Status}" Visibility="{Binding Converter={StaticResource searchBadgeConvert}, ConverterParameter=StatusVisibility}"/>
+                                <Border CornerRadius="4" Padding="4,0" Background="{ThemeResource AppHoverBrush}" Visibility="{Binding Converter={StaticResource searchBadgeConvert}, ConverterParameter=PlatformVisibility}">
+                                    <TextBlock Style="{StaticResource SecondaryTextStyle}" Text="{Binding Converter={StaticResource searchBadgeConvert}, ConverterParameter=Platform}"/>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
                     </StackPanel>
-                    </Grid>
                 </Grid>
             </DataTemplate>
-            <Style x:Key="GridViewItemCornerRadiusStyle" TargetType="GridViewItem">
+
+            <DataTemplate x:Key="GameItemTemplate">
+                <Border CornerRadius="10" Padding="8" Background="{ThemeResource AppSurfaceBrush}" BorderBrush="{ThemeResource BrowsingOutlineBrush}" BorderThickness="1" ToolTipService.ToolTip="{Binding Name}">
+                    <Grid RowSpacing="12"><Grid.RowDefinitions><RowDefinition/><RowDefinition Height="40"/></Grid.RowDefinitions>
+                        <Border CornerRadius="8" Background="Transparent"><Grid>
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="4" IsHitTestVisible="False" Visibility="{Binding ElementName=GameImage, Path=(perf:DecodedImage.HasPicture), Converter={StaticResource displayConvert}}">
+                                <FontIcon FontFamily="{StaticResource SegoeFluent}" FontSize="28" Glyph="&#xE7FC;" Foreground="{ThemeResource AppSecondaryBrush}"/>
+                                <TextBlock Text="暂无图片" Style="{StaticResource SecondaryTextStyle}"/>
+                            </StackPanel>
+                            <Image x:Name="GameImage" Margin="2" Stretch="Uniform" perf:DecodedImage.Url="{Binding Pic}" AutomationProperties.AccessibilityView="Raw"/>
+                        </Grid></Border>
+                        <TextBlock Grid.Row="1" Text="{Binding Name}" Style="{StaticResource BodyTextStyle}" LineHeight="20" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis"/>
+                    </Grid>
+                </Border>
+            </DataTemplate>
+<Style x:Key="GridViewItemCornerRadiusStyle" TargetType="GridViewItem">
+                <Setter Property="UseSystemFocusVisuals" Value="True"/>
                 <Setter Property="Padding" Value="0"/>
                 <Setter Property="CornerRadius" Value="10"/>
-                <Setter Property="Margin" Value="0,0,4,4"/>
+                <Setter Property="Margin" Value="{StaticResource ContentItemMargin}"/>
                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
             </Style>

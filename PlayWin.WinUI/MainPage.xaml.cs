@@ -195,6 +195,11 @@ namespace PlayWin.WinUI
         private void navigationView_Loaded(object sender, RoutedEventArgs e)
         {
             navigationView.IsPaneOpen = false;
+            if (navigationView.SettingsItem is NavigationViewItem settings)
+            {
+                settings.MinHeight = 44; settings.Margin = new Thickness(0, 2, 0, 2);
+                settings.Icon = new FontIcon { FontFamily = (FontFamily)App.Current.Resources["SegoeFluent"], FontSize = 20, Glyph = "\uE713" };
+            }
         }
 
     }

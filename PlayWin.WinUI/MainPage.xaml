@@ -9,16 +9,16 @@
         </Style>
         <Style TargetType="muxc:NavigationViewItem">
             <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="Margin" Value="0,3"/>
-            <Setter Property="MinHeight" Value="40"/>
-        <Setter Property="FontFamily" Value="{StaticResource NavigationFontFamily}"/><Setter Property="FontSize" Value="14"/></Style>
+            <Setter Property="Margin" Value="0,2"/>
+            <Setter Property="MinHeight" Value="44"/>
+        <Setter Property="FontFamily" Value="{StaticResource NavigationFontFamily}"/><Setter Property="FontSize" Value="{StaticResource NavigationTextSize}"/></Style>
     <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{ThemeResource AppAccentColor}"/><SolidColorBrush x:Key="NavigationViewItemForeground" Color="{ThemeResource AppTextColor}"/><SolidColorBrush x:Key="NavigationViewItemForegroundPointerOver" Color="{ThemeResource AppTextColor}"/><SolidColorBrush x:Key="NavigationViewItemForegroundPressed" Color="{ThemeResource AppTextColor}"/><SolidColorBrush x:Key="NavigationViewItemBackgroundPointerOver" Color="{ThemeResource AppHoverColor}"/><SolidColorBrush x:Key="NavigationViewItemBackgroundPressed" Color="{ThemeResource AppPressedColor}"/><SolidColorBrush x:Key="NavigationViewItemBackgroundSelected" Color="{ThemeResource AppSelectionColor}"/><SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPointerOver" Color="{ThemeResource AppSelectionHoverColor}"/><SolidColorBrush x:Key="NavigationViewItemBackgroundSelectedPressed" Color="{ThemeResource AppSelectionColor}"/><SolidColorBrush x:Key="NavigationViewItemForegroundSelected" Color="{ThemeResource AppSelectionTextColor}"/><SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPointerOver" Color="{ThemeResource AppSelectionTextColor}"/><SolidColorBrush x:Key="NavigationViewItemForegroundSelectedPressed" Color="{ThemeResource AppSelectionTextColor}"/><SolidColorBrush x:Key="TopNavigationViewItemBackgroundSelected" Color="{ThemeResource AppSelectionColor}"/><SolidColorBrush x:Key="TopNavigationViewItemForegroundSelected" Color="{ThemeResource AppSelectionTextColor}"/><SolidColorBrush x:Key="TopNavigationViewItemForegroundSelectedPointerOver" Color="{ThemeResource AppSelectionTextColor}"/><SolidColorBrush x:Key="TopNavigationViewItemForegroundSelectedPressed" Color="{ThemeResource AppSelectionTextColor}"/></Page.Resources>
     <Grid>
 
 
-        <muxc:NavigationView x:Name="navigationView" Background="{ThemeResource ChromeSurfaceBrush}" IsBackButtonVisible="Collapsed" IsPaneOpen="False" IsSettingsVisible="true" Loaded="navigationView_Loaded" CompactPaneLength="56" OpenPaneLength="208" PaneDisplayMode="Left" SelectionChanged="NavigationView_SelectionChanged" ItemInvoked="NavigationView_ItemInvoked">
+        <muxc:NavigationView FontFamily="{StaticResource NavigationFontFamily}" FontSize="{StaticResource NavigationTextSize}" x:Name="navigationView" Background="{ThemeResource ChromeSurfaceBrush}" IsBackButtonVisible="Collapsed" IsPaneOpen="False" IsSettingsVisible="true" Loaded="navigationView_Loaded" CompactPaneLength="56" OpenPaneLength="208" PaneDisplayMode="Left" SelectionChanged="NavigationView_SelectionChanged" ItemInvoked="NavigationView_ItemInvoked">
             <muxc:NavigationView.AutoSuggestBox>
-                <AutoSuggestBox x:Name="searchBox" AutomationProperties.Name="搜索主播或直播链接" PlaceholderText="搜索主播或粘贴链接" QueryIcon="Find" QuerySubmitted="searchBox_QuerySubmitted" CornerRadius="10" FontSize="14"/>
+                <AutoSuggestBox x:Name="searchBox" FontFamily="{StaticResource ContentControlThemeFontFamily}" AutomationProperties.Name="搜索主播或直播链接" PlaceholderText="搜索主播或粘贴链接" QueryIcon="Find" QuerySubmitted="searchBox_QuerySubmitted" CornerRadius="10" FontSize="14"/>
             </muxc:NavigationView.AutoSuggestBox>
 
 

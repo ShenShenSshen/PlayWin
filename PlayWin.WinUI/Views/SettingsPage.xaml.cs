@@ -71,7 +71,7 @@ namespace PlayWin.WinUI.Views
                 card.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
                 card.SizeChanged += (_, args) =>
                 {
-                    var narrow = args.NewSize.Width < 600;
+                    var narrow = args.NewSize.Width < 640;
                     Grid.SetColumnSpan((FrameworkElement)card.Children[0], narrow ? 2 : 1);
                     for (var i = 1; i < card.Children.Count; i++)
                     {
