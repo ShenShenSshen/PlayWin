@@ -1,0 +1,13 @@
+{
+  "secondsPerPhase": 60,
+  "input": "local 1280x720 H.264 30fps solid-color sequence, automatic decoder, muted",
+  "results": [
+    {
+      "phase": "minimized-recovery-deadline",
+      "passed": true,
+      "recoveryTicks": 30,
+      "hoverTicks": 0
+    }
+  ],
+  "failures": []
+}

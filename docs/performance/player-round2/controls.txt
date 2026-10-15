@@ -1,0 +1,2 @@
+PASS window placement and mode restore
+PASS player inputs, fullscreen, mini-window and restore

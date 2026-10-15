@@ -61,6 +61,7 @@ namespace PlayWin.WinUI.Views
         private bool isFullWindow;
         private bool UsesExternalToolbar => isMini || (isFullWindow && (playbackWindow ?? App.GetWindowFor(this))?.AppWindow.Presenter.Kind == AppWindowPresenterKind.Overlapped);
         private MainWindow playbackWindow;
+        private AppWindow playbackAppWindow;
         private bool closingWindow;
         private readonly PlaybackRecovery recovery = new();
         private int playGeneration;
@@ -72,6 +73,8 @@ namespace PlayWin.WinUI.Views
         private int toolbarFadeGeneration;
         private Microsoft.UI.Xaml.Media.Animation.Storyboard toolbarFade;
         private readonly UISettings toolbarUISettings = new();
+        private InputSystemCursor arrowCursor;
+        private bool playbackWindowMinimized;
         DispatcherTimer controlTimer;
         private readonly DispatcherTimer miniHoverTimer = new() { Interval = TimeSpan.FromMilliseconds(100) };
         private DateTime? miniPointerLeftAt;
@@ -120,9 +123,11 @@ namespace PlayWin.WinUI.Views
             Unloaded += LiveRoomPage_Unloaded;
             Loaded += (_, _) =>
             {
-                controlTimer.Start();
                 playbackWindow = App.GetWindowFor(this);
+                playbackWindowMinimized = playbackWindow.AppWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized };
                 playbackWindow.WindowModeChanged += PlaybackWindow_ModeChanged;
+                playbackAppWindow = playbackWindow.AppWindow;
+                playbackAppWindow.Changed += PlaybackWindow_Changed;
                 playbackWindow.Closed += PlaybackWindow_Closed;
                 playbackWindow.MiniToolbarLayoutChanged += PlaybackWindow_MiniToolbarLayoutChanged;
                 playbackWindow.VideoDragStarted += PlaybackWindow_VideoDragStarted;
@@ -160,6 +165,8 @@ namespace PlayWin.WinUI.Views
             if (playbackWindow != null)
             {
                 playbackWindow.WindowModeChanged -= PlaybackWindow_ModeChanged;
+                if (playbackAppWindow != null) playbackAppWindow.Changed -= PlaybackWindow_Changed;
+                playbackAppWindow = null;
                 playbackWindow.Closed -= PlaybackWindow_Closed;
                 playbackWindow.MiniToolbarLayoutChanged -= PlaybackWindow_MiniToolbarLayoutChanged;
                 playbackWindow.VideoDragStarted -= PlaybackWindow_VideoDragStarted;
@@ -174,6 +181,9 @@ namespace PlayWin.WinUI.Views
         { closingWindow = true; EndRandomBrowse(); StopPlay(false); ReleasePlayer(); }
         private void ReleasePlayer()
         {
+            ProtectedCursor = null;
+            arrowCursor?.Dispose();
+            arrowCursor = null;
             if (mediaPlayer == null) return;
             mediaPlayer.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
             mediaPlayer.PlaybackSession.BufferingStarted -= PlaybackSession_BufferingStarted;
@@ -184,6 +194,35 @@ namespace PlayWin.WinUI.Views
             mediaPlayer.MediaFailed -= MediaPlayer_MediaFailed;
             player.SetMediaPlayer(null); mediaPlayer.Dispose(); mediaPlayer = null;
             liveRoomVM.ChangedPlayUrl -= LiveRoomVM_ChangedPlayUrl;
+        }
+        private void SetPointerVisible(bool visible)
+        {
+            if (closingWindow) return;
+            if (!visible) { if (ProtectedCursor != null) ProtectedCursor = null; return; }
+            // A page needs one arrow, not a new native cursor on every mouse move/poll.
+            arrowCursor ??= InputSystemCursor.Create(InputSystemCursorShape.Arrow);
+            if (!ReferenceEquals(ProtectedCursor, arrowCursor)) ProtectedCursor = arrowCursor;
+        }
+        private void PlaybackWindow_Changed(AppWindow sender, AppWindowChangedEventArgs args)
+        {
+            var minimized = sender.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized };
+            if (minimized == playbackWindowMinimized) return;
+            playbackWindowMinimized = minimized;
+            UpdatePlayerTimers(updateHover: true);
+        }
+        private void UpdatePlayerTimers(bool updateHover = false)
+        {
+            var alive = IsLoaded && !closingWindow && playbackWindow != null;
+            var active = alive && !playbackWindowMinimized;
+            // Recovery accounting remains live while minimized; hidden controls do not.
+            var recoveryCheck = alive && recovery.Attempts > 0 && healthySince != default &&
+                mediaPlayer?.PlaybackSession.PlaybackState == MediaPlaybackState.Playing;
+            var hideCheck = active && floatingToolbar && !UsesExternalToolbar && showControlsFlag >= 0;
+            var needControl = recoveryCheck || hideCheck;
+            if (controlTimer.IsEnabled != needControl) { if (needControl) controlTimer.Start(); else controlTimer.Stop(); }
+            if (!updateHover) return;
+            var needHover = active && UsesExternalToolbar && !draggingVideo;
+            if (miniHoverTimer.IsEnabled != needHover) { if (needHover) miniHoverTimer.Start(); else miniHoverTimer.Stop(); }
         }
         private void PlaybackWindow_ModeChanged(object sender, EventArgs e)
         { UpdateWindowModeUI(); }
@@ -323,6 +362,7 @@ namespace PlayWin.WinUI.Views
                     default:
                         break;
                 }
+                UpdatePlayerTimers();
             });
         }
 
@@ -579,7 +619,7 @@ namespace PlayWin.WinUI.Views
             }
 
             controlTimer.Stop();
-            ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
+            SetPointerVisible(true);
 
             if (resetWindowMode)
             {
@@ -628,6 +668,7 @@ namespace PlayWin.WinUI.Views
                     showControlsFlag++;
                 }
             }
+            UpdatePlayerTimers();
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -719,7 +760,6 @@ namespace PlayWin.WinUI.Views
                 MessageCenter.ChangeTitle("", site.LiveSite);
                 PlayerLoading.Visibility = Visibility.Visible;
                 PlayerLoadText.Text = "加载中";
-                controlTimer.Start();
                 ShowControl(true);
                 await liveRoomVM.LoadDataAsync(site.LiveSite, choice.Room.RoomID, operation.Token);
             }
@@ -821,7 +861,8 @@ namespace PlayWin.WinUI.Views
             if (draggingVideo) return;
             show = !floatingToolbar || show || toolbarPopupCount > 0;
             showControlsFlag = UsesExternalToolbar ? -1 : show ? 0 : -1;
-            ProtectedCursor = UsesExternalToolbar || show || !pointer_in_player ? InputSystemCursor.Create(InputSystemCursorShape.Arrow) : null;
+            UpdatePlayerTimers();
+            SetPointerVisible(UsesExternalToolbar || show || !pointer_in_player);
             if (show && control.Visibility == Visibility.Visible && !toolbarHiding) return;
             if (!show && (control.Visibility == Visibility.Collapsed || toolbarHiding)) return;
             var from = control.Visibility == Visibility.Collapsed ? 0 : control.Opacity;
@@ -1025,7 +1066,7 @@ namespace PlayWin.WinUI.Views
         private void PlaybackWindow_VideoDragCompleted(object sender, EventArgs e)
         {
             draggingVideo = false; miniPointerLeftAt = null;
-            if (IsLoaded && !closingWindow && UsesExternalToolbar) miniHoverTimer.Start();
+            UpdatePlayerTimers(updateHover: true);
         }
 
         private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
@@ -1037,7 +1078,7 @@ namespace PlayWin.WinUI.Views
                 if (point.X >= 0 && point.Y >= 0 && point.X < surface.ActualWidth && point.Y < surface.ActualHeight) return;
             }
             pointer_in_player = false;
-            ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
+            SetPointerVisible(true);
             if (UsesExternalToolbar) return; // Include the expanded rail and allow time to reach it.
             if (!IsControlInteractionActive(FocusManager.GetFocusedElement(XamlRoot) as DependencyObject)) ShowControl(false);
         }
@@ -1045,7 +1086,7 @@ namespace PlayWin.WinUI.Views
         private void Grid_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
             ShowControl(true);
-            if (ProtectedCursor == null) ProtectedCursor = InputSystemCursor.Create(InputSystemCursorShape.Arrow);
+            SetPointerVisible(true);
         }
         private static bool IsInteractiveSource(DependencyObject source)
         {
@@ -1151,10 +1192,9 @@ namespace PlayWin.WinUI.Views
             if (UsesExternalToolbar)
             {
                 ApplyMiniToolbarLayout();
-                miniHoverTimer.Start();
             }
-            else miniHoverTimer.Stop();
             ShowControl(!UsesExternalToolbar || toolbarPopupCount > 0 || window.IsPointerInside());
+            UpdatePlayerTimers(updateHover: true);
             window.RefreshVideoDragRegions(force: true);
         }
         private void BottomBtnExitMiniWindows_Click(object sender, RoutedEventArgs e)

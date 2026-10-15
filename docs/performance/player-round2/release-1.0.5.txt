@@ -1,0 +1,30 @@
+PlayWin v1.0.5 release checks - 2026-10-15
+PASS offline data and settings
+PASS performance regression checks
+PASS category image checks
+PASS player controls and window modes
+PASS quick player resource budget and lifecycle
+PASS executable product version 1.0.5 and embedded icon
+PASS update metadata/download validation and about-page version (inside aggregate smoke)
+AGGREGATE SMOKE: 18 failures, identical names in v1.0.4 baseline and v1.0.5; not an all-pass result.
+No full performance benchmark repeated for version-only release changes.
+Installer/uninstaller not rerun; packages unsigned.
+
+FAIL Compact room title and home title restoration
+FAIL Native materials and solid content surface
+FAIL Player toolbar keeps occasional actions in More
+FAIL Player controls follow FullScreen
+FAIL Player controls follow CompactOverlay
+FAIL Player controls follow FullScreen
+FAIL Player controls follow Default
+FAIL Room card rounded cover and full-title tooltip
+FAIL Pinned games wrap and native menus at width 960 in Light
+FAIL Pinned games wrap and native menus at width 960 in Dark
+FAIL Pinned games wrap and native menus at width 480 in Light
+FAIL Pinned games wrap and native menus at width 480 in Dark
+FAIL Pinned games wrap and native menus at width 280 in Light
+FAIL Pinned games wrap and native menus at width 280 in Dark
+FAIL Category selected surface alignment and centered labels
+FAIL Settings layout width 960
+FAIL Settings layout width 640
+FAIL Settings layout width 480

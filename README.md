@@ -4,14 +4,14 @@
 
 简洁的 Windows 游戏直播客户端。支持哔哩哔哩、抖音、虎牙和斗鱼，仅展示游戏分类，不显示弹幕。使用 WinUI 3，栏位采用磨砂材质，内容保持清晰。
 
-**已发布版本：v1.0.4 · Windows x64 · MIT**
+**已发布版本：v1.0.5 · Windows x64 · MIT**
 
-v1.0.4 增加游戏分类图片和抖音同名补图，修复图片显隐与立即取消关注，完善播放器布局、亮度入口及无边框窗口拖动，并减少后台请求与浏览器空闲占用。详见 [更新说明](RELEASE_NOTES.md)。
+v1.0.5 减少播放器空闲计时与重复鼠标指针创建，最小化时暂停悬停检查，并完善窗口事件清理。界面与播放参数保持原样；CPU、内存并非全面下降。详见 [更新说明](RELEASE_NOTES.md) 与 [播放器性能报告](PLAYER_PERFORMANCE_REPORT.md)。
 
 ## 下载
 
-- [安装版 PlayWin-1.0.4-x64-Setup.exe](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.4/PlayWin-1.0.4-x64-Setup.exe)
-- [便携版 PlayWin-x64.zip](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.4/PlayWin-x64.zip)
+- [安装版 PlayWin-1.0.5-x64-Setup.exe](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.5/PlayWin-1.0.5-x64-Setup.exe)
+- [便携版 PlayWin-x64.zip](https://github.com/ShenShenSshen/PlayWin/releases/download/v1.0.5/PlayWin-x64.zip)
 - [所有发布版本](https://github.com/ShenShenSshen/PlayWin/releases)
 
 安装版默认安装到当前用户目录，创建开始菜单入口，默认创建桌面快捷方式，可取消。便携版解压后运行 `PlayWin.exe`，请保留整个目录。
@@ -32,7 +32,7 @@ v1.0.4 增加游戏分类图片和抖音同名补图，修复图片显隐与立�
 
 ![游窗播放器：分组操作栏、亮度与窗口操作](docs/screenshots/player.png)
 
-截图采自本版本的隔离访客环境，不含日常账号信息；直播内容与平台目录会随时间变化。
+截图沿用 v1.0.4 的隔离访客环境，本版界面保持原样，不含日常账号信息；直播内容与平台目录会随时间变化。
 
 ## 功能
 
@@ -79,7 +79,7 @@ dotnet run --project tests/WinUIDataCheck/WinUIDataCheck.csproj -c Release
 
 构建缓存、个人数据和发布产物不纳入源码。
 
-v1.0.4 已通过离线数据、图片解码与显隐、取消与返回、缓存和 WinUI 回归检查；真实平台当前所有房间、线路及全部 DPI 环境未完整验收，安装／卸载未重新实测。详见 [图片验证报告](TDD_IMAGE_REPORT.md) 与 [客户端说明](PlayWin.WinUI/README.md)。
+v1.0.5 的播放器对照覆盖五种窗口状态、24 次切房与 13 个播放页回收，控件及恢复边界检查通过。B站访客首页与虎牙所选线路仍有未通过项，不代表四平台全面通过；总冒烟的 18 个失败项与 v1.0.4 基线一致，本轮未新增，不能视为全部通过；安装／卸载未重新实测。详见 [播放器性能报告](PLAYER_PERFORMANCE_REPORT.md)、[图片验证报告](TDD_IMAGE_REPORT.md) 与 [客户端说明](PlayWin.WinUI/README.md)。
 
 ## 来源与许可证
 

@@ -1,0 +1,2214 @@
+{
+  "secondsPerPhase": 60,
+  "input": "local 1280x720 H.264 30fps solid-color sequence, automatic decoder, muted",
+  "results": [
+    {
+      "phase": "ordinary",
+      "elapsedSeconds": 60.7706382,
+      "cpuMs": 3343.75,
+      "allocatedBytes": 1267496,
+      "controlTicks": 0,
+      "hoverTicks": 0,
+      "cursorChanges": 0,
+      "playing": true,
+      "width": 1280,
+      "height": 720,
+      "samples": [
+        {
+          "atSeconds": 1.0,
+          "privateMB": 184.34,
+          "workingMB": 263.98,
+          "threads": 55,
+          "handles": 1658
+        },
+        {
+          "atSeconds": 2.0,
+          "privateMB": 183.89,
+          "workingMB": 265.95,
+          "threads": 55,
+          "handles": 1660
+        },
+        {
+          "atSeconds": 3.0,
+          "privateMB": 184.57,
+          "workingMB": 266.84,
+          "threads": 55,
+          "handles": 1667
+        },
+        {
+          "atSeconds": 4.1,
+          "privateMB": 184.58,
+          "workingMB": 266.9,
+          "threads": 55,
+          "handles": 1667
+        },
+        {
+          "atSeconds": 5.1,
+          "privateMB": 184.58,
+          "workingMB": 266.93,
+          "threads": 55,
+          "handles": 1667
+        },
+        {
+          "atSeconds": 6.1,
+          "privateMB": 184.64,
+          "workingMB": 267.0,
+          "threads": 56,
+          "handles": 1670
+        },
+        {
+          "atSeconds": 7.1,
+          "privateMB": 184.64,
+          "workingMB": 267.03,
+          "threads": 56,
+          "handles": 1670
+        },
+        {
+          "atSeconds": 8.1,
+          "privateMB": 182.66,
+          "workingMB": 264.12,
+          "threads": 56,
+          "handles": 1668
+        },
+        {
+          "atSeconds": 9.1,
+          "privateMB": 183.8,
+          "workingMB": 265.84,
+          "threads": 58,
+          "handles": 1674
+        },
+        {
+          "atSeconds": 10.1,
+          "privateMB": 183.83,
+          "workingMB": 265.98,
+          "threads": 56,
+          "handles": 1670
+        },
+        {
+          "atSeconds": 11.1,
+          "privateMB": 183.95,
+          "workingMB": 266.05,
+          "threads": 56,
+          "handles": 1670
+        },
+        {
+          "atSeconds": 12.1,
+          "privateMB": 184.02,
+          "workingMB": 266.08,
+          "threads": 56,
+          "handles": 1670
+        },
+        {
+          "atSeconds": 13.2,
+          "privateMB": 184.06,
+          "workingMB": 266.11,
+          "threads": 57,
+          "handles": 1673
+        },
+        {
+          "atSeconds": 14.2,
+          "privateMB": 184.06,
+          "workingMB": 266.15,
+          "threads": 57,
+          "handles": 1673
+        },
+        {
+          "atSeconds": 15.2,
+          "privateMB": 183.8,
+          "workingMB": 265.99,
+          "threads": 53,
+          "handles": 1659
+        },
+        {
+          "atSeconds": 16.2,
+          "privateMB": 184.61,
+          "workingMB": 265.98,
+          "threads": 53,
+          "handles": 1657
+        },
+        {
+          "atSeconds": 17.2,
+          "privateMB": 184.79,
+          "workingMB": 266.29,
+          "threads": 53,
+          "handles": 1657
+        },
+        {
+          "atSeconds": 18.2,
+          "privateMB": 183.45,
+          "workingMB": 265.34,
+          "threads": 55,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 19.2,
+          "privateMB": 183.43,
+          "workingMB": 265.43,
+          "threads": 55,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 20.2,
+          "privateMB": 183.43,
+          "workingMB": 265.43,
+          "threads": 55,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 21.2,
+          "privateMB": 183.43,
+          "workingMB": 265.48,
+          "threads": 55,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 22.2,
+          "privateMB": 183.53,
+          "workingMB": 265.03,
+          "threads": 55,
+          "handles": 1667
+        },
+        {
+          "atSeconds": 23.3,
+          "privateMB": 183.53,
+          "workingMB": 265.71,
+          "threads": 55,
+          "handles": 1667
+        },
+        {
+          "atSeconds": 24.3,
+          "privateMB": 183.44,
+          "workingMB": 265.68,
+          "threads": 54,
+          "handles": 1659
+        },
+        {
+          "atSeconds": 25.3,
+          "privateMB": 183.38,
+          "workingMB": 265.7,
+          "threads": 53,
+          "handles": 1654
+        },
+        {
+          "atSeconds": 26.3,
+          "privateMB": 184.21,
+          "workingMB": 266.66,
+          "threads": 54,
+          "handles": 1674
+        },
+        {
+          "atSeconds": 27.3,
+          "privateMB": 185.3,
+          "workingMB": 268.85,
+          "threads": 56,
+          "handles": 1684
+        },
+        {
+          "atSeconds": 28.3,
+          "privateMB": 185.3,
+          "workingMB": 268.86,
+          "threads": 56,
+          "handles": 1684
+        },
+        {
+          "atSeconds": 29.3,
+          "privateMB": 185.82,
+          "workingMB": 269.42,
+          "threads": 57,
+          "handles": 1687
+        },
+        {
+          "atSeconds": 30.3,
+          "privateMB": 185.79,
+          "workingMB": 269.5,
+          "threads": 56,
+          "handles": 1680
+        },
+        {
+          "atSeconds": 31.4,
+          "privateMB": 185.85,
+          "workingMB": 269.56,
+          "threads": 56,
+          "handles": 1680
+        },
+        {
+          "atSeconds": 32.4,
+          "privateMB": 185.8,
+          "workingMB": 269.66,
+          "threads": 55,
+          "handles": 1680
+        },
+        {
+          "atSeconds": 33.4,
+          "privateMB": 185.8,
+          "workingMB": 269.68,
+          "threads": 55,
+          "handles": 1680
+        },
+        {
+          "atSeconds": 34.4,
+          "privateMB": 185.72,
+          "workingMB": 269.63,
+          "threads": 54,
+          "handles": 1671
+        },
+        {
+          "atSeconds": 35.4,
+          "privateMB": 185.68,
+          "workingMB": 269.63,
+          "threads": 53,
+          "handles": 1670
+        },
+        {
+          "atSeconds": 36.4,
+          "privateMB": 184.75,
+          "workingMB": 268.51,
+          "threads": 55,
+          "handles": 1682
+        },
+        {
+          "atSeconds": 37.4,
+          "privateMB": 184.81,
+          "workingMB": 268.6,
+          "threads": 56,
+          "handles": 1685
+        },
+        {
+          "atSeconds": 38.5,
+          "privateMB": 184.81,
+          "workingMB": 268.6,
+          "threads": 56,
+          "handles": 1685
+        },
+        {
+          "atSeconds": 39.5,
+          "privateMB": 184.81,
+          "workingMB": 268.61,
+          "threads": 56,
+          "handles": 1690
+        },
+        {
+          "atSeconds": 40.5,
+          "privateMB": 185.99,
+          "workingMB": 269.04,
+          "threads": 56,
+          "handles": 1690
+        },
+        {
+          "atSeconds": 41.5,
+          "privateMB": 186.05,
+          "workingMB": 269.07,
+          "threads": 56,
+          "handles": 1690
+        },
+        {
+          "atSeconds": 42.6,
+          "privateMB": 186.05,
+          "workingMB": 269.09,
+          "threads": 56,
+          "handles": 1690
+        },
+        {
+          "atSeconds": 43.6,
+          "privateMB": 186.05,
+          "workingMB": 269.1,
+          "threads": 56,
+          "handles": 1688
+        },
+        {
+          "atSeconds": 44.6,
+          "privateMB": 185.91,
+          "workingMB": 269.01,
+          "threads": 54,
+          "handles": 1678
+        },
+        {
+          "atSeconds": 45.6,
+          "privateMB": 184.29,
+          "workingMB": 267.88,
+          "threads": 55,
+          "handles": 1683
+        },
+        {
+          "atSeconds": 46.6,
+          "privateMB": 184.34,
+          "workingMB": 267.92,
+          "threads": 55,
+          "handles": 1687
+        },
+        {
+          "atSeconds": 47.6,
+          "privateMB": 184.34,
+          "workingMB": 268.07,
+          "threads": 55,
+          "handles": 1688
+        },
+        {
+          "atSeconds": 48.6,
+          "privateMB": 184.34,
+          "workingMB": 268.07,
+          "threads": 55,
+          "handles": 1688
+        },
+        {
+          "atSeconds": 49.6,
+          "privateMB": 184.34,
+          "workingMB": 268.08,
+          "threads": 55,
+          "handles": 1688
+        },
+        {
+          "atSeconds": 50.7,
+          "privateMB": 184.34,
+          "workingMB": 268.09,
+          "threads": 55,
+          "handles": 1689
+        },
+        {
+          "atSeconds": 51.7,
+          "privateMB": 184.4,
+          "workingMB": 268.12,
+          "threads": 55,
+          "handles": 1689
+        },
+        {
+          "atSeconds": 52.7,
+          "privateMB": 184.4,
+          "workingMB": 268.12,
+          "threads": 55,
+          "handles": 1687
+        },
+        {
+          "atSeconds": 53.7,
+          "privateMB": 183.75,
+          "workingMB": 267.92,
+          "threads": 55,
+          "handles": 1691
+        },
+        {
+          "atSeconds": 54.7,
+          "privateMB": 185.21,
+          "workingMB": 268.98,
+          "threads": 55,
+          "handles": 1691
+        },
+        {
+          "atSeconds": 55.7,
+          "privateMB": 185.33,
+          "workingMB": 269.04,
+          "threads": 56,
+          "handles": 1694
+        },
+        {
+          "atSeconds": 56.7,
+          "privateMB": 185.33,
+          "workingMB": 269.05,
+          "threads": 56,
+          "handles": 1694
+        },
+        {
+          "atSeconds": 57.7,
+          "privateMB": 185.26,
+          "workingMB": 269.02,
+          "threads": 55,
+          "handles": 1690
+        },
+        {
+          "atSeconds": 58.7,
+          "privateMB": 185.08,
+          "workingMB": 268.95,
+          "threads": 51,
+          "handles": 1682
+        },
+        {
+          "atSeconds": 59.8,
+          "privateMB": 185.02,
+          "workingMB": 268.91,
+          "threads": 50,
+          "handles": 1675
+        },
+        {
+          "atSeconds": 60.8,
+          "privateMB": 185.48,
+          "workingMB": 269.86,
+          "threads": 50,
+          "handles": 1675
+        }
+      ]
+    },
+    {
+      "phase": "window-full",
+      "elapsedSeconds": 60.6656102,
+      "cpuMs": 3281.25,
+      "allocatedBytes": 1210704,
+      "controlTicks": 0,
+      "hoverTicks": 564,
+      "cursorChanges": 0,
+      "playing": true,
+      "width": 1280,
+      "height": 720,
+      "samples": [
+        {
+          "atSeconds": 1.0,
+          "privateMB": 186.3,
+          "workingMB": 274.0,
+          "threads": 50,
+          "handles": 1699
+        },
+        {
+          "atSeconds": 2.0,
+          "privateMB": 185.67,
+          "workingMB": 273.93,
+          "threads": 53,
+          "handles": 1711
+        },
+        {
+          "atSeconds": 3.0,
+          "privateMB": 185.61,
+          "workingMB": 274.11,
+          "threads": 52,
+          "handles": 1708
+        },
+        {
+          "atSeconds": 4.0,
+          "privateMB": 185.61,
+          "workingMB": 274.11,
+          "threads": 52,
+          "handles": 1713
+        },
+        {
+          "atSeconds": 5.0,
+          "privateMB": 185.56,
+          "workingMB": 274.1,
+          "threads": 51,
+          "handles": 1711
+        },
+        {
+          "atSeconds": 6.1,
+          "privateMB": 185.62,
+          "workingMB": 274.13,
+          "threads": 51,
+          "handles": 1711
+        },
+        {
+          "atSeconds": 7.1,
+          "privateMB": 185.62,
+          "workingMB": 274.14,
+          "threads": 51,
+          "handles": 1711
+        },
+        {
+          "atSeconds": 8.1,
+          "privateMB": 185.5,
+          "workingMB": 274.07,
+          "threads": 49,
+          "handles": 1703
+        },
+        {
+          "atSeconds": 9.1,
+          "privateMB": 185.5,
+          "workingMB": 274.08,
+          "threads": 49,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 10.1,
+          "privateMB": 185.14,
+          "workingMB": 273.43,
+          "threads": 50,
+          "handles": 1706
+        },
+        {
+          "atSeconds": 11.1,
+          "privateMB": 185.74,
+          "workingMB": 274.1,
+          "threads": 50,
+          "handles": 1708
+        },
+        {
+          "atSeconds": 12.1,
+          "privateMB": 185.75,
+          "workingMB": 274.14,
+          "threads": 50,
+          "handles": 1708
+        },
+        {
+          "atSeconds": 13.2,
+          "privateMB": 185.75,
+          "workingMB": 274.16,
+          "threads": 50,
+          "handles": 1710
+        },
+        {
+          "atSeconds": 14.2,
+          "privateMB": 185.75,
+          "workingMB": 274.17,
+          "threads": 50,
+          "handles": 1710
+        },
+        {
+          "atSeconds": 15.2,
+          "privateMB": 185.75,
+          "workingMB": 274.18,
+          "threads": 50,
+          "handles": 1710
+        },
+        {
+          "atSeconds": 16.2,
+          "privateMB": 185.75,
+          "workingMB": 274.18,
+          "threads": 50,
+          "handles": 1710
+        },
+        {
+          "atSeconds": 17.2,
+          "privateMB": 185.81,
+          "workingMB": 274.2,
+          "threads": 50,
+          "handles": 1710
+        },
+        {
+          "atSeconds": 18.2,
+          "privateMB": 185.64,
+          "workingMB": 274.1,
+          "threads": 48,
+          "handles": 1698
+        },
+        {
+          "atSeconds": 19.2,
+          "privateMB": 184.62,
+          "workingMB": 272.53,
+          "threads": 50,
+          "handles": 1710
+        },
+        {
+          "atSeconds": 20.2,
+          "privateMB": 185.28,
+          "workingMB": 273.19,
+          "threads": 50,
+          "handles": 1710
+        },
+        {
+          "atSeconds": 21.2,
+          "privateMB": 185.34,
+          "workingMB": 273.23,
+          "threads": 50,
+          "handles": 1710
+        },
+        {
+          "atSeconds": 22.3,
+          "privateMB": 185.29,
+          "workingMB": 273.22,
+          "threads": 49,
+          "handles": 1706
+        },
+        {
+          "atSeconds": 23.3,
+          "privateMB": 185.29,
+          "workingMB": 273.23,
+          "threads": 49,
+          "handles": 1706
+        },
+        {
+          "atSeconds": 24.3,
+          "privateMB": 185.29,
+          "workingMB": 273.25,
+          "threads": 49,
+          "handles": 1706
+        },
+        {
+          "atSeconds": 25.3,
+          "privateMB": 185.29,
+          "workingMB": 273.25,
+          "threads": 49,
+          "handles": 1706
+        },
+        {
+          "atSeconds": 26.3,
+          "privateMB": 185.3,
+          "workingMB": 273.25,
+          "threads": 48,
+          "handles": 1703
+        },
+        {
+          "atSeconds": 27.3,
+          "privateMB": 185.48,
+          "workingMB": 273.34,
+          "threads": 48,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 28.3,
+          "privateMB": 183.8,
+          "workingMB": 272.41,
+          "threads": 49,
+          "handles": 1702
+        },
+        {
+          "atSeconds": 29.3,
+          "privateMB": 184.29,
+          "workingMB": 272.89,
+          "threads": 49,
+          "handles": 1702
+        },
+        {
+          "atSeconds": 30.3,
+          "privateMB": 184.49,
+          "workingMB": 273.08,
+          "threads": 49,
+          "handles": 1706
+        },
+        {
+          "atSeconds": 31.3,
+          "privateMB": 184.55,
+          "workingMB": 273.15,
+          "threads": 49,
+          "handles": 1706
+        },
+        {
+          "atSeconds": 32.3,
+          "privateMB": 184.5,
+          "workingMB": 273.14,
+          "threads": 48,
+          "handles": 1703
+        },
+        {
+          "atSeconds": 33.4,
+          "privateMB": 184.5,
+          "workingMB": 273.17,
+          "threads": 48,
+          "handles": 1703
+        },
+        {
+          "atSeconds": 34.4,
+          "privateMB": 184.5,
+          "workingMB": 273.18,
+          "threads": 48,
+          "handles": 1703
+        },
+        {
+          "atSeconds": 35.4,
+          "privateMB": 184.5,
+          "workingMB": 273.19,
+          "threads": 48,
+          "handles": 1703
+        },
+        {
+          "atSeconds": 36.4,
+          "privateMB": 184.5,
+          "workingMB": 273.21,
+          "threads": 48,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 37.4,
+          "privateMB": 184.69,
+          "workingMB": 272.54,
+          "threads": 48,
+          "handles": 1705
+        },
+        {
+          "atSeconds": 38.4,
+          "privateMB": 185.17,
+          "workingMB": 272.98,
+          "threads": 48,
+          "handles": 1699
+        },
+        {
+          "atSeconds": 39.4,
+          "privateMB": 185.17,
+          "workingMB": 272.98,
+          "threads": 48,
+          "handles": 1699
+        },
+        {
+          "atSeconds": 40.4,
+          "privateMB": 185.35,
+          "workingMB": 273.13,
+          "threads": 48,
+          "handles": 1699
+        },
+        {
+          "atSeconds": 41.4,
+          "privateMB": 185.35,
+          "workingMB": 273.14,
+          "threads": 48,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 42.4,
+          "privateMB": 185.41,
+          "workingMB": 273.15,
+          "threads": 48,
+          "handles": 1699
+        },
+        {
+          "atSeconds": 43.5,
+          "privateMB": 185.37,
+          "workingMB": 273.16,
+          "threads": 47,
+          "handles": 1698
+        },
+        {
+          "atSeconds": 44.5,
+          "privateMB": 185.37,
+          "workingMB": 273.17,
+          "threads": 47,
+          "handles": 1698
+        },
+        {
+          "atSeconds": 45.5,
+          "privateMB": 185.37,
+          "workingMB": 273.18,
+          "threads": 47,
+          "handles": 1696
+        },
+        {
+          "atSeconds": 46.5,
+          "privateMB": 184.01,
+          "workingMB": 272.68,
+          "threads": 49,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 47.5,
+          "privateMB": 184.77,
+          "workingMB": 273.34,
+          "threads": 49,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 48.5,
+          "privateMB": 184.77,
+          "workingMB": 273.4,
+          "threads": 49,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 49.5,
+          "privateMB": 184.77,
+          "workingMB": 273.52,
+          "threads": 49,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 50.5,
+          "privateMB": 184.77,
+          "workingMB": 273.52,
+          "threads": 49,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 51.6,
+          "privateMB": 184.77,
+          "workingMB": 273.52,
+          "threads": 49,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 52.6,
+          "privateMB": 184.79,
+          "workingMB": 273.5,
+          "threads": 48,
+          "handles": 1698
+        },
+        {
+          "atSeconds": 53.6,
+          "privateMB": 184.75,
+          "workingMB": 273.5,
+          "threads": 47,
+          "handles": 1698
+        },
+        {
+          "atSeconds": 54.6,
+          "privateMB": 184.75,
+          "workingMB": 273.5,
+          "threads": 47,
+          "handles": 1696
+        },
+        {
+          "atSeconds": 55.6,
+          "privateMB": 184.27,
+          "workingMB": 273.0,
+          "threads": 49,
+          "handles": 1702
+        },
+        {
+          "atSeconds": 56.6,
+          "privateMB": 184.72,
+          "workingMB": 273.45,
+          "threads": 49,
+          "handles": 1702
+        },
+        {
+          "atSeconds": 57.6,
+          "privateMB": 184.79,
+          "workingMB": 273.48,
+          "threads": 49,
+          "handles": 1702
+        },
+        {
+          "atSeconds": 58.6,
+          "privateMB": 185.0,
+          "workingMB": 273.61,
+          "threads": 49,
+          "handles": 1706
+        },
+        {
+          "atSeconds": 59.6,
+          "privateMB": 185.0,
+          "workingMB": 273.69,
+          "threads": 49,
+          "handles": 1706
+        },
+        {
+          "atSeconds": 60.7,
+          "privateMB": 185.0,
+          "workingMB": 273.7,
+          "threads": 49,
+          "handles": 1706
+        }
+      ]
+    },
+    {
+      "phase": "mini",
+      "elapsedSeconds": 60.6947158,
+      "cpuMs": 3656.25,
+      "allocatedBytes": 1144264,
+      "controlTicks": 0,
+      "hoverTicks": 565,
+      "cursorChanges": 0,
+      "playing": true,
+      "width": 1280,
+      "height": 720,
+      "samples": [
+        {
+          "atSeconds": 1.0,
+          "privateMB": 195.7,
+          "workingMB": 284.06,
+          "threads": 49,
+          "handles": 1692
+        },
+        {
+          "atSeconds": 2.0,
+          "privateMB": 195.68,
+          "workingMB": 284.02,
+          "threads": 48,
+          "handles": 1683
+        },
+        {
+          "atSeconds": 3.0,
+          "privateMB": 195.75,
+          "workingMB": 284.11,
+          "threads": 49,
+          "handles": 1690
+        },
+        {
+          "atSeconds": 4.0,
+          "privateMB": 197.11,
+          "workingMB": 285.9,
+          "threads": 49,
+          "handles": 1674
+        },
+        {
+          "atSeconds": 5.1,
+          "privateMB": 197.11,
+          "workingMB": 285.9,
+          "threads": 49,
+          "handles": 1674
+        },
+        {
+          "atSeconds": 6.1,
+          "privateMB": 189.17,
+          "workingMB": 277.98,
+          "threads": 49,
+          "handles": 1676
+        },
+        {
+          "atSeconds": 7.1,
+          "privateMB": 189.17,
+          "workingMB": 277.98,
+          "threads": 49,
+          "handles": 1676
+        },
+        {
+          "atSeconds": 8.1,
+          "privateMB": 185.86,
+          "workingMB": 272.72,
+          "threads": 48,
+          "handles": 1673
+        },
+        {
+          "atSeconds": 9.1,
+          "privateMB": 185.89,
+          "workingMB": 272.77,
+          "threads": 48,
+          "handles": 1673
+        },
+        {
+          "atSeconds": 10.1,
+          "privateMB": 185.78,
+          "workingMB": 272.71,
+          "threads": 46,
+          "handles": 1672
+        },
+        {
+          "atSeconds": 11.1,
+          "privateMB": 185.78,
+          "workingMB": 272.72,
+          "threads": 46,
+          "handles": 1670
+        },
+        {
+          "atSeconds": 12.1,
+          "privateMB": 183.83,
+          "workingMB": 272.78,
+          "threads": 43,
+          "handles": 1661
+        },
+        {
+          "atSeconds": 13.1,
+          "privateMB": 184.75,
+          "workingMB": 273.47,
+          "threads": 43,
+          "handles": 1661
+        },
+        {
+          "atSeconds": 14.2,
+          "privateMB": 184.75,
+          "workingMB": 273.47,
+          "threads": 43,
+          "handles": 1662
+        },
+        {
+          "atSeconds": 15.2,
+          "privateMB": 184.75,
+          "workingMB": 273.47,
+          "threads": 43,
+          "handles": 1662
+        },
+        {
+          "atSeconds": 16.2,
+          "privateMB": 184.68,
+          "workingMB": 273.42,
+          "threads": 42,
+          "handles": 1659
+        },
+        {
+          "atSeconds": 17.2,
+          "privateMB": 184.68,
+          "workingMB": 273.51,
+          "threads": 42,
+          "handles": 1659
+        },
+        {
+          "atSeconds": 18.2,
+          "privateMB": 184.68,
+          "workingMB": 273.52,
+          "threads": 42,
+          "handles": 1659
+        },
+        {
+          "atSeconds": 19.2,
+          "privateMB": 184.68,
+          "workingMB": 273.01,
+          "threads": 42,
+          "handles": 1659
+        },
+        {
+          "atSeconds": 20.2,
+          "privateMB": 185.56,
+          "workingMB": 273.02,
+          "threads": 42,
+          "handles": 1657
+        },
+        {
+          "atSeconds": 21.2,
+          "privateMB": 183.6,
+          "workingMB": 271.68,
+          "threads": 47,
+          "handles": 1672
+        },
+        {
+          "atSeconds": 22.2,
+          "privateMB": 184.23,
+          "workingMB": 272.32,
+          "threads": 47,
+          "handles": 1672
+        },
+        {
+          "atSeconds": 23.3,
+          "privateMB": 184.23,
+          "workingMB": 272.32,
+          "threads": 47,
+          "handles": 1672
+        },
+        {
+          "atSeconds": 24.3,
+          "privateMB": 184.23,
+          "workingMB": 272.32,
+          "threads": 47,
+          "handles": 1672
+        },
+        {
+          "atSeconds": 25.3,
+          "privateMB": 184.14,
+          "workingMB": 272.26,
+          "threads": 46,
+          "handles": 1669
+        },
+        {
+          "atSeconds": 26.3,
+          "privateMB": 184.15,
+          "workingMB": 272.26,
+          "threads": 46,
+          "handles": 1671
+        },
+        {
+          "atSeconds": 27.3,
+          "privateMB": 183.99,
+          "workingMB": 272.19,
+          "threads": 43,
+          "handles": 1662
+        },
+        {
+          "atSeconds": 28.3,
+          "privateMB": 183.99,
+          "workingMB": 272.19,
+          "threads": 43,
+          "handles": 1662
+        },
+        {
+          "atSeconds": 29.3,
+          "privateMB": 183.99,
+          "workingMB": 272.21,
+          "threads": 43,
+          "handles": 1660
+        },
+        {
+          "atSeconds": 30.3,
+          "privateMB": 183.39,
+          "workingMB": 271.47,
+          "threads": 47,
+          "handles": 1669
+        },
+        {
+          "atSeconds": 31.3,
+          "privateMB": 184.18,
+          "workingMB": 272.12,
+          "threads": 47,
+          "handles": 1669
+        },
+        {
+          "atSeconds": 32.3,
+          "privateMB": 184.18,
+          "workingMB": 272.12,
+          "threads": 47,
+          "handles": 1668
+        },
+        {
+          "atSeconds": 33.3,
+          "privateMB": 184.18,
+          "workingMB": 272.13,
+          "threads": 47,
+          "handles": 1668
+        },
+        {
+          "atSeconds": 34.4,
+          "privateMB": 184.12,
+          "workingMB": 272.1,
+          "threads": 46,
+          "handles": 1665
+        },
+        {
+          "atSeconds": 35.4,
+          "privateMB": 184.12,
+          "workingMB": 272.1,
+          "threads": 46,
+          "handles": 1665
+        },
+        {
+          "atSeconds": 36.4,
+          "privateMB": 184.05,
+          "workingMB": 272.07,
+          "threads": 44,
+          "handles": 1665
+        },
+        {
+          "atSeconds": 37.4,
+          "privateMB": 184.01,
+          "workingMB": 272.07,
+          "threads": 43,
+          "handles": 1662
+        },
+        {
+          "atSeconds": 38.4,
+          "privateMB": 184.01,
+          "workingMB": 272.07,
+          "threads": 43,
+          "handles": 1660
+        },
+        {
+          "atSeconds": 39.4,
+          "privateMB": 183.25,
+          "workingMB": 271.36,
+          "threads": 44,
+          "handles": 1667
+        },
+        {
+          "atSeconds": 40.4,
+          "privateMB": 183.91,
+          "workingMB": 271.95,
+          "threads": 44,
+          "handles": 1667
+        },
+        {
+          "atSeconds": 41.5,
+          "privateMB": 183.91,
+          "workingMB": 271.99,
+          "threads": 44,
+          "handles": 1669
+        },
+        {
+          "atSeconds": 42.5,
+          "privateMB": 183.91,
+          "workingMB": 272.03,
+          "threads": 44,
+          "handles": 1669
+        },
+        {
+          "atSeconds": 43.5,
+          "privateMB": 183.91,
+          "workingMB": 272.03,
+          "threads": 44,
+          "handles": 1669
+        },
+        {
+          "atSeconds": 44.5,
+          "privateMB": 183.91,
+          "workingMB": 272.03,
+          "threads": 44,
+          "handles": 1669
+        },
+        {
+          "atSeconds": 45.5,
+          "privateMB": 183.91,
+          "workingMB": 272.03,
+          "threads": 44,
+          "handles": 1669
+        },
+        {
+          "atSeconds": 46.5,
+          "privateMB": 183.77,
+          "workingMB": 271.96,
+          "threads": 42,
+          "handles": 1659
+        },
+        {
+          "atSeconds": 47.5,
+          "privateMB": 183.77,
+          "workingMB": 271.96,
+          "threads": 42,
+          "handles": 1657
+        },
+        {
+          "atSeconds": 48.5,
+          "privateMB": 183.21,
+          "workingMB": 271.34,
+          "threads": 44,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 49.6,
+          "privateMB": 183.91,
+          "workingMB": 271.96,
+          "threads": 44,
+          "handles": 1667
+        },
+        {
+          "atSeconds": 50.6,
+          "privateMB": 183.91,
+          "workingMB": 272.06,
+          "threads": 44,
+          "handles": 1667
+        },
+        {
+          "atSeconds": 51.6,
+          "privateMB": 183.97,
+          "workingMB": 272.11,
+          "threads": 45,
+          "handles": 1670
+        },
+        {
+          "atSeconds": 52.6,
+          "privateMB": 183.97,
+          "workingMB": 272.11,
+          "threads": 45,
+          "handles": 1670
+        },
+        {
+          "atSeconds": 53.6,
+          "privateMB": 183.97,
+          "workingMB": 272.11,
+          "threads": 45,
+          "handles": 1670
+        },
+        {
+          "atSeconds": 54.6,
+          "privateMB": 183.97,
+          "workingMB": 272.11,
+          "threads": 45,
+          "handles": 1670
+        },
+        {
+          "atSeconds": 55.6,
+          "privateMB": 183.97,
+          "workingMB": 272.11,
+          "threads": 45,
+          "handles": 1670
+        },
+        {
+          "atSeconds": 56.7,
+          "privateMB": 183.75,
+          "workingMB": 271.98,
+          "threads": 42,
+          "handles": 1655
+        },
+        {
+          "atSeconds": 57.7,
+          "privateMB": 183.45,
+          "workingMB": 271.57,
+          "threads": 47,
+          "handles": 1670
+        },
+        {
+          "atSeconds": 58.7,
+          "privateMB": 184.03,
+          "workingMB": 272.21,
+          "threads": 47,
+          "handles": 1672
+        },
+        {
+          "atSeconds": 59.7,
+          "privateMB": 184.03,
+          "workingMB": 272.21,
+          "threads": 47,
+          "handles": 1674
+        },
+        {
+          "atSeconds": 60.7,
+          "privateMB": 184.03,
+          "workingMB": 272.21,
+          "threads": 47,
+          "handles": 1674
+        }
+      ]
+    },
+    {
+      "phase": "minimized",
+      "elapsedSeconds": 60.5314068,
+      "cpuMs": 2859.375,
+      "allocatedBytes": 1096432,
+      "controlTicks": 0,
+      "hoverTicks": 0,
+      "cursorChanges": 0,
+      "playing": true,
+      "width": 1280,
+      "height": 720,
+      "samples": [
+        {
+          "atSeconds": 1.0,
+          "privateMB": 184.95,
+          "workingMB": 273.28,
+          "threads": 47,
+          "handles": 1674
+        },
+        {
+          "atSeconds": 2.0,
+          "privateMB": 184.95,
+          "workingMB": 273.28,
+          "threads": 47,
+          "handles": 1674
+        },
+        {
+          "atSeconds": 3.0,
+          "privateMB": 184.95,
+          "workingMB": 273.28,
+          "threads": 47,
+          "handles": 1674
+        },
+        {
+          "atSeconds": 4.0,
+          "privateMB": 184.93,
+          "workingMB": 273.46,
+          "threads": 47,
+          "handles": 1672
+        },
+        {
+          "atSeconds": 5.0,
+          "privateMB": 183.6,
+          "workingMB": 272.38,
+          "threads": 44,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 6.0,
+          "privateMB": 184.05,
+          "workingMB": 272.78,
+          "threads": 44,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 7.0,
+          "privateMB": 184.73,
+          "workingMB": 273.23,
+          "threads": 44,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 8.0,
+          "privateMB": 184.73,
+          "workingMB": 273.24,
+          "threads": 44,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 9.0,
+          "privateMB": 184.68,
+          "workingMB": 273.21,
+          "threads": 43,
+          "handles": 1660
+        },
+        {
+          "atSeconds": 10.1,
+          "privateMB": 184.59,
+          "workingMB": 273.21,
+          "threads": 42,
+          "handles": 1657
+        },
+        {
+          "atSeconds": 11.1,
+          "privateMB": 184.59,
+          "workingMB": 273.21,
+          "threads": 42,
+          "handles": 1657
+        },
+        {
+          "atSeconds": 12.1,
+          "privateMB": 184.59,
+          "workingMB": 273.21,
+          "threads": 42,
+          "handles": 1657
+        },
+        {
+          "atSeconds": 13.1,
+          "privateMB": 184.59,
+          "workingMB": 273.22,
+          "threads": 42,
+          "handles": 1660
+        },
+        {
+          "atSeconds": 14.1,
+          "privateMB": 183.21,
+          "workingMB": 271.46,
+          "threads": 44,
+          "handles": 1672
+        },
+        {
+          "atSeconds": 15.1,
+          "privateMB": 183.61,
+          "workingMB": 271.88,
+          "threads": 40,
+          "handles": 1662
+        },
+        {
+          "atSeconds": 16.1,
+          "privateMB": 183.61,
+          "workingMB": 271.88,
+          "threads": 40,
+          "handles": 1662
+        },
+        {
+          "atSeconds": 17.1,
+          "privateMB": 183.61,
+          "workingMB": 271.89,
+          "threads": 40,
+          "handles": 1662
+        },
+        {
+          "atSeconds": 18.1,
+          "privateMB": 183.56,
+          "workingMB": 271.87,
+          "threads": 39,
+          "handles": 1659
+        },
+        {
+          "atSeconds": 19.1,
+          "privateMB": 183.56,
+          "workingMB": 271.87,
+          "threads": 39,
+          "handles": 1659
+        },
+        {
+          "atSeconds": 20.2,
+          "privateMB": 183.48,
+          "workingMB": 271.81,
+          "threads": 38,
+          "handles": 1652
+        },
+        {
+          "atSeconds": 21.2,
+          "privateMB": 183.48,
+          "workingMB": 271.81,
+          "threads": 38,
+          "handles": 1652
+        },
+        {
+          "atSeconds": 22.2,
+          "privateMB": 183.48,
+          "workingMB": 271.81,
+          "threads": 38,
+          "handles": 1650
+        },
+        {
+          "atSeconds": 23.2,
+          "privateMB": 183.41,
+          "workingMB": 271.77,
+          "threads": 43,
+          "handles": 1667
+        },
+        {
+          "atSeconds": 24.2,
+          "privateMB": 183.99,
+          "workingMB": 272.35,
+          "threads": 43,
+          "handles": 1667
+        },
+        {
+          "atSeconds": 25.2,
+          "privateMB": 184.0,
+          "workingMB": 272.43,
+          "threads": 43,
+          "handles": 1669
+        },
+        {
+          "atSeconds": 26.2,
+          "privateMB": 184.0,
+          "workingMB": 272.43,
+          "threads": 43,
+          "handles": 1669
+        },
+        {
+          "atSeconds": 27.2,
+          "privateMB": 183.94,
+          "workingMB": 272.38,
+          "threads": 42,
+          "handles": 1666
+        },
+        {
+          "atSeconds": 28.2,
+          "privateMB": 183.94,
+          "workingMB": 272.41,
+          "threads": 42,
+          "handles": 1666
+        },
+        {
+          "atSeconds": 29.2,
+          "privateMB": 183.94,
+          "workingMB": 272.43,
+          "threads": 42,
+          "handles": 1666
+        },
+        {
+          "atSeconds": 30.3,
+          "privateMB": 183.8,
+          "workingMB": 272.35,
+          "threads": 40,
+          "handles": 1660
+        },
+        {
+          "atSeconds": 31.3,
+          "privateMB": 183.8,
+          "workingMB": 272.35,
+          "threads": 40,
+          "handles": 1658
+        },
+        {
+          "atSeconds": 32.3,
+          "privateMB": 185.32,
+          "workingMB": 271.96,
+          "threads": 41,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 33.3,
+          "privateMB": 185.65,
+          "workingMB": 272.53,
+          "threads": 41,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 34.3,
+          "privateMB": 185.65,
+          "workingMB": 272.53,
+          "threads": 41,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 35.3,
+          "privateMB": 185.65,
+          "workingMB": 272.54,
+          "threads": 41,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 36.3,
+          "privateMB": 185.65,
+          "workingMB": 272.54,
+          "threads": 41,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 37.4,
+          "privateMB": 185.65,
+          "workingMB": 272.54,
+          "threads": 41,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 38.4,
+          "privateMB": 185.65,
+          "workingMB": 272.54,
+          "threads": 41,
+          "handles": 1663
+        },
+        {
+          "atSeconds": 39.4,
+          "privateMB": 185.63,
+          "workingMB": 272.52,
+          "threads": 41,
+          "handles": 1661
+        },
+        {
+          "atSeconds": 40.4,
+          "privateMB": 185.49,
+          "workingMB": 272.42,
+          "threads": 39,
+          "handles": 1653
+        },
+        {
+          "atSeconds": 41.4,
+          "privateMB": 184.73,
+          "workingMB": 271.41,
+          "threads": 40,
+          "handles": 1658
+        },
+        {
+          "atSeconds": 42.4,
+          "privateMB": 185.36,
+          "workingMB": 272.0,
+          "threads": 40,
+          "handles": 1660
+        },
+        {
+          "atSeconds": 43.4,
+          "privateMB": 185.31,
+          "workingMB": 272.01,
+          "threads": 39,
+          "handles": 1657
+        },
+        {
+          "atSeconds": 44.4,
+          "privateMB": 185.36,
+          "workingMB": 272.12,
+          "threads": 40,
+          "handles": 1660
+        },
+        {
+          "atSeconds": 45.4,
+          "privateMB": 185.5,
+          "workingMB": 272.14,
+          "threads": 39,
+          "handles": 1656
+        },
+        {
+          "atSeconds": 46.4,
+          "privateMB": 185.5,
+          "workingMB": 272.14,
+          "threads": 39,
+          "handles": 1656
+        },
+        {
+          "atSeconds": 47.4,
+          "privateMB": 185.5,
+          "workingMB": 272.14,
+          "threads": 39,
+          "handles": 1656
+        },
+        {
+          "atSeconds": 48.4,
+          "privateMB": 185.5,
+          "workingMB": 272.14,
+          "threads": 39,
+          "handles": 1654
+        },
+        {
+          "atSeconds": 49.5,
+          "privateMB": 185.5,
+          "workingMB": 272.14,
+          "threads": 39,
+          "handles": 1654
+        },
+        {
+          "atSeconds": 50.5,
+          "privateMB": 184.86,
+          "workingMB": 271.55,
+          "threads": 40,
+          "handles": 1657
+        },
+        {
+          "atSeconds": 51.5,
+          "privateMB": 185.38,
+          "workingMB": 272.14,
+          "threads": 40,
+          "handles": 1657
+        },
+        {
+          "atSeconds": 52.5,
+          "privateMB": 185.51,
+          "workingMB": 272.14,
+          "threads": 39,
+          "handles": 1654
+        },
+        {
+          "atSeconds": 53.5,
+          "privateMB": 185.51,
+          "workingMB": 272.15,
+          "threads": 39,
+          "handles": 1654
+        },
+        {
+          "atSeconds": 54.5,
+          "privateMB": 185.55,
+          "workingMB": 272.17,
+          "threads": 40,
+          "handles": 1657
+        },
+        {
+          "atSeconds": 55.5,
+          "privateMB": 185.5,
+          "workingMB": 272.13,
+          "threads": 39,
+          "handles": 1654
+        },
+        {
+          "atSeconds": 56.5,
+          "privateMB": 185.5,
+          "workingMB": 272.13,
+          "threads": 39,
+          "handles": 1654
+        },
+        {
+          "atSeconds": 57.5,
+          "privateMB": 185.51,
+          "workingMB": 272.15,
+          "threads": 39,
+          "handles": 1652
+        },
+        {
+          "atSeconds": 58.5,
+          "privateMB": 185.51,
+          "workingMB": 272.15,
+          "threads": 39,
+          "handles": 1652
+        },
+        {
+          "atSeconds": 59.5,
+          "privateMB": 185.57,
+          "workingMB": 272.21,
+          "threads": 40,
+          "handles": 1659
+        },
+        {
+          "atSeconds": 60.5,
+          "privateMB": 185.57,
+          "workingMB": 272.43,
+          "threads": 40,
+          "handles": 1659
+        }
+      ]
+    },
+    {
+      "phase": "full-screen",
+      "elapsedSeconds": 60.5050876,
+      "cpuMs": 2703.125,
+      "allocatedBytes": 1174816,
+      "controlTicks": 6,
+      "hoverTicks": 0,
+      "cursorChanges": 0,
+      "playing": true,
+      "width": 1280,
+      "height": 720,
+      "samples": [
+        {
+          "atSeconds": 1.0,
+          "privateMB": 191.61,
+          "workingMB": 278.63,
+          "threads": 47,
+          "handles": 1689
+        },
+        {
+          "atSeconds": 2.0,
+          "privateMB": 191.63,
+          "workingMB": 278.66,
+          "threads": 47,
+          "handles": 1691
+        },
+        {
+          "atSeconds": 3.0,
+          "privateMB": 191.65,
+          "workingMB": 279.08,
+          "threads": 47,
+          "handles": 1691
+        },
+        {
+          "atSeconds": 4.0,
+          "privateMB": 191.56,
+          "workingMB": 279.02,
+          "threads": 46,
+          "handles": 1685
+        },
+        {
+          "atSeconds": 5.0,
+          "privateMB": 191.56,
+          "workingMB": 279.02,
+          "threads": 46,
+          "handles": 1683
+        },
+        {
+          "atSeconds": 6.0,
+          "privateMB": 192.34,
+          "workingMB": 280.05,
+          "threads": 47,
+          "handles": 1695
+        },
+        {
+          "atSeconds": 7.1,
+          "privateMB": 192.38,
+          "workingMB": 280.43,
+          "threads": 48,
+          "handles": 1698
+        },
+        {
+          "atSeconds": 8.1,
+          "privateMB": 192.38,
+          "workingMB": 280.46,
+          "threads": 48,
+          "handles": 1698
+        },
+        {
+          "atSeconds": 9.1,
+          "privateMB": 192.31,
+          "workingMB": 280.42,
+          "threads": 48,
+          "handles": 1698
+        },
+        {
+          "atSeconds": 10.1,
+          "privateMB": 192.36,
+          "workingMB": 280.45,
+          "threads": 49,
+          "handles": 1703
+        },
+        {
+          "atSeconds": 11.1,
+          "privateMB": 192.36,
+          "workingMB": 280.45,
+          "threads": 49,
+          "handles": 1703
+        },
+        {
+          "atSeconds": 12.1,
+          "privateMB": 191.79,
+          "workingMB": 279.89,
+          "threads": 49,
+          "handles": 1708
+        },
+        {
+          "atSeconds": 13.1,
+          "privateMB": 191.7,
+          "workingMB": 279.82,
+          "threads": 48,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 14.1,
+          "privateMB": 191.62,
+          "workingMB": 279.79,
+          "threads": 46,
+          "handles": 1697
+        },
+        {
+          "atSeconds": 15.1,
+          "privateMB": 191.62,
+          "workingMB": 279.79,
+          "threads": 46,
+          "handles": 1697
+        },
+        {
+          "atSeconds": 16.1,
+          "privateMB": 190.71,
+          "workingMB": 278.59,
+          "threads": 47,
+          "handles": 1706
+        },
+        {
+          "atSeconds": 17.2,
+          "privateMB": 190.71,
+          "workingMB": 278.59,
+          "threads": 47,
+          "handles": 1706
+        },
+        {
+          "atSeconds": 18.2,
+          "privateMB": 190.71,
+          "workingMB": 278.59,
+          "threads": 47,
+          "handles": 1706
+        },
+        {
+          "atSeconds": 19.2,
+          "privateMB": 190.71,
+          "workingMB": 278.59,
+          "threads": 47,
+          "handles": 1706
+        },
+        {
+          "atSeconds": 20.2,
+          "privateMB": 190.64,
+          "workingMB": 278.54,
+          "threads": 46,
+          "handles": 1703
+        },
+        {
+          "atSeconds": 21.2,
+          "privateMB": 190.64,
+          "workingMB": 278.54,
+          "threads": 46,
+          "handles": 1703
+        },
+        {
+          "atSeconds": 22.2,
+          "privateMB": 190.64,
+          "workingMB": 278.54,
+          "threads": 46,
+          "handles": 1703
+        },
+        {
+          "atSeconds": 23.2,
+          "privateMB": 190.62,
+          "workingMB": 278.61,
+          "threads": 46,
+          "handles": 1699
+        },
+        {
+          "atSeconds": 24.2,
+          "privateMB": 190.62,
+          "workingMB": 278.61,
+          "threads": 46,
+          "handles": 1699
+        },
+        {
+          "atSeconds": 25.2,
+          "privateMB": 190.63,
+          "workingMB": 279.26,
+          "threads": 46,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 26.2,
+          "privateMB": 190.63,
+          "workingMB": 279.37,
+          "threads": 46,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 27.3,
+          "privateMB": 190.63,
+          "workingMB": 279.37,
+          "threads": 46,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 28.3,
+          "privateMB": 190.63,
+          "workingMB": 279.37,
+          "threads": 46,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 29.3,
+          "privateMB": 190.56,
+          "workingMB": 279.32,
+          "threads": 45,
+          "handles": 1698
+        },
+        {
+          "atSeconds": 30.3,
+          "privateMB": 190.56,
+          "workingMB": 279.32,
+          "threads": 45,
+          "handles": 1698
+        },
+        {
+          "atSeconds": 31.3,
+          "privateMB": 190.56,
+          "workingMB": 279.32,
+          "threads": 45,
+          "handles": 1698
+        },
+        {
+          "atSeconds": 32.3,
+          "privateMB": 190.6,
+          "workingMB": 279.37,
+          "threads": 46,
+          "handles": 1699
+        },
+        {
+          "atSeconds": 33.3,
+          "privateMB": 188.96,
+          "workingMB": 277.83,
+          "threads": 46,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 34.3,
+          "privateMB": 190.58,
+          "workingMB": 279.08,
+          "threads": 46,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 35.3,
+          "privateMB": 190.58,
+          "workingMB": 279.08,
+          "threads": 46,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 36.3,
+          "privateMB": 190.58,
+          "workingMB": 279.08,
+          "threads": 46,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 37.3,
+          "privateMB": 190.58,
+          "workingMB": 279.08,
+          "threads": 46,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 38.4,
+          "privateMB": 190.52,
+          "workingMB": 279.04,
+          "threads": 45,
+          "handles": 1698
+        },
+        {
+          "atSeconds": 39.4,
+          "privateMB": 190.52,
+          "workingMB": 279.04,
+          "threads": 45,
+          "handles": 1698
+        },
+        {
+          "atSeconds": 40.4,
+          "privateMB": 190.52,
+          "workingMB": 279.04,
+          "threads": 45,
+          "handles": 1698
+        },
+        {
+          "atSeconds": 41.4,
+          "privateMB": 190.52,
+          "workingMB": 279.04,
+          "threads": 45,
+          "handles": 1696
+        },
+        {
+          "atSeconds": 42.4,
+          "privateMB": 189.0,
+          "workingMB": 277.86,
+          "threads": 47,
+          "handles": 1704
+        },
+        {
+          "atSeconds": 43.4,
+          "privateMB": 189.74,
+          "workingMB": 278.54,
+          "threads": 47,
+          "handles": 1706
+        },
+        {
+          "atSeconds": 44.4,
+          "privateMB": 189.74,
+          "workingMB": 278.54,
+          "threads": 47,
+          "handles": 1708
+        },
+        {
+          "atSeconds": 45.4,
+          "privateMB": 189.74,
+          "workingMB": 278.54,
+          "threads": 47,
+          "handles": 1708
+        },
+        {
+          "atSeconds": 46.4,
+          "privateMB": 189.69,
+          "workingMB": 278.52,
+          "threads": 46,
+          "handles": 1705
+        },
+        {
+          "atSeconds": 47.4,
+          "privateMB": 189.69,
+          "workingMB": 278.52,
+          "threads": 46,
+          "handles": 1705
+        },
+        {
+          "atSeconds": 48.4,
+          "privateMB": 189.61,
+          "workingMB": 278.45,
+          "threads": 45,
+          "handles": 1698
+        },
+        {
+          "atSeconds": 49.4,
+          "privateMB": 189.66,
+          "workingMB": 278.49,
+          "threads": 46,
+          "handles": 1701
+        },
+        {
+          "atSeconds": 50.4,
+          "privateMB": 189.68,
+          "workingMB": 278.5,
+          "threads": 46,
+          "handles": 1699
+        },
+        {
+          "atSeconds": 51.4,
+          "privateMB": 189.0,
+          "workingMB": 277.86,
+          "threads": 48,
+          "handles": 1707
+        },
+        {
+          "atSeconds": 52.4,
+          "privateMB": 189.8,
+          "workingMB": 278.87,
+          "threads": 48,
+          "handles": 1709
+        },
+        {
+          "atSeconds": 53.4,
+          "privateMB": 189.81,
+          "workingMB": 278.98,
+          "threads": 48,
+          "handles": 1708
+        },
+        {
+          "atSeconds": 54.5,
+          "privateMB": 190.7,
+          "workingMB": 279.44,
+          "threads": 48,
+          "handles": 1710
+        },
+        {
+          "atSeconds": 55.5,
+          "privateMB": 190.7,
+          "workingMB": 279.44,
+          "threads": 48,
+          "handles": 1710
+        },
+        {
+          "atSeconds": 56.5,
+          "privateMB": 190.7,
+          "workingMB": 279.44,
+          "threads": 48,
+          "handles": 1710
+        },
+        {
+          "atSeconds": 57.5,
+          "privateMB": 190.6,
+          "workingMB": 279.39,
+          "threads": 46,
+          "handles": 1703
+        },
+        {
+          "atSeconds": 58.5,
+          "privateMB": 190.52,
+          "workingMB": 279.33,
+          "threads": 45,
+          "handles": 1696
+        },
+        {
+          "atSeconds": 59.5,
+          "privateMB": 190.48,
+          "workingMB": 279.31,
+          "threads": 44,
+          "handles": 1692
+        },
+        {
+          "atSeconds": 60.5,
+          "privateMB": 189.3,
+          "workingMB": 278.18,
+          "threads": 45,
+          "handles": 1697
+        }
+      ]
+    },
+    {
+      "phase": "same-player-room-switches",
+      "count": 24,
+      "milliseconds": [
+        239.3001,
+        209.0643,
+        177.2408,
+        120.4168,
+        187.1219,
+        133.304,
+        237.2535,
+        225.9069,
+        176.4599,
+        121.1977,
+        198.9152,
+        120.0508,
+        238.0274,
+        230.9797,
+        184.43,
+        133.544,
+        219.7962,
+        134.6924,
+        248.8365,
+        226.0745,
+        237.2211,
+        255.4106,
+        185.6275,
+        84.1452
+      ]
+    },
+    {
+      "phase": "page-release",
+      "openedPages": 13,
+      "survivingPagesAfterDiagnosticGC": 0,
+      "privateBeforeDiagnosticGCMB": 242.875,
+      "privateAfterDiagnosticGCMB": 214.32421875
+    }
+  ],
+  "failures": []
+}

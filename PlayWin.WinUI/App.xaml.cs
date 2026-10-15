@@ -32,6 +32,7 @@ public partial class App : Application
             try
             {
                 if (Environment.GetCommandLineArgs().Contains("--category-repro")) await CategoryRepro.RunAsync(window);
+                else if (Environment.GetCommandLineArgs().Contains("--player-metrics")) await PlayerPerformanceChecks.RunAsync(window);
                 else if (Environment.GetCommandLineArgs().Contains("--image-checks")) await CategoryImageChecks.RunAsync(window);
                 else if (Environment.GetCommandLineArgs().Contains("--border-check")) await WindowBorderChecks.RunAsync(window);
                 else if (Environment.GetCommandLineArgs().Contains("--performance-playback")) await PerformanceRegressionChecks.PlaybackAsync(window);
