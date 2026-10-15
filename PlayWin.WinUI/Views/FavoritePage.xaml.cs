@@ -26,16 +26,16 @@ namespace PlayWin.WinUI.Views
     public sealed partial class FavoritePage : Page
     {
         readonly FavoriteVM favoriteVM;
-        readonly DispatcherTimer statusTimer = new() { Interval = TimeSpan.FromSeconds(60) };
         public FavoritePage()
         {
             favoriteVM = new FavoriteVM();
             this.NavigationCacheMode = NavigationCacheMode.Enabled;
-            MessageCenter.UpdateFavoriteEvent += MessageCenter_UpdateFavoriteEvent; ;
+            Loaded += (_, _) => { MessageCenter.UpdateFavoriteEvent -= MessageCenter_UpdateFavoriteEvent; MessageCenter.UpdateFavoriteEvent += MessageCenter_UpdateFavoriteEvent; };
+            Unloaded += (_, _) => MessageCenter.UpdateFavoriteEvent -= MessageCenter_UpdateFavoriteEvent;
             this.InitializeComponent();
-            Loaded += async (_, _) => { await favoriteVM.LoadAsync(); if (IsLoaded) statusTimer.Start(); };
-            Unloaded += (_, _) => { statusTimer.Stop(); favoriteVM.CancelPending(); };
-            statusTimer.Tick += async (_, _) => await favoriteVM.LoadAsync();
+            Loaded += async (_, _) => { await favoriteVM.LoadAsync();  };
+            Unloaded += (_, _) => {  favoriteVM.CancelPending(); };
+            _ = new PageStatusRefresh(this, () => favoriteVM.LoadAsync(), favoriteVM.CancelPending);
         }
 
         private void MessageCenter_UpdateFavoriteEvent(object sender, EventArgs e)

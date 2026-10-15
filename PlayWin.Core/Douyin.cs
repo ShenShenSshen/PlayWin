@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Web;
 using System.Xml.Linq;
 
@@ -39,7 +40,7 @@ namespace PlayWin.Core
         private readonly Dictionary<string, (DateTime expires, bool live)> liveStatusCache = new Dictionary<string, (DateTime, bool)>();
         public void ClearLiveStatusCache() { lock (liveStatusGate) liveStatusCache.Clear(); }
         public string UserAgent { get; set; } = USER_AGENT;
-        private async Task<Dictionary<string, string>> GetRequestHeaders()
+        private async Task<Dictionary<string, string>> GetRequestHeaders(CancellationToken cancellationToken = default)
         {
             var requestHeaders = new Dictionary<string, string>(headers) { ["User-Agent"] = UserAgent };
             if (!string.IsNullOrEmpty(Cookie)) requestHeaders["Cookie"] = Cookie;
@@ -49,21 +50,22 @@ namespace PlayWin.Core
                 {
                     try
                     {
-                        var resp = await HttpUtil.Head("https://live.douyin.com", requestHeaders);
+                        using var resp = await HttpUtil.Head("https://live.douyin.com", requestHeaders, cancellationToken: cancellationToken);
                         if (resp.Headers.TryGetValues("Set-Cookie", out var values))
                             anonymousCookie = values.Select(c => c.Split(';')[0]).FirstOrDefault(c => c.StartsWith("ttwid=")) ?? "";
                     }
-                    catch { }
+                    catch (Exception error) when (!(error is OperationCanceledException)) { }
                 }
                 if (!string.IsNullOrEmpty(anonymousCookie)) requestHeaders["Cookie"] = anonymousCookie;
             }
             return requestHeaders;
         }
 
-        public async Task<List<LiveCategory>> GetCategores()
+        public Task<List<LiveCategory>> GetCategores() => GetCategores(CancellationToken.None);
+        public async Task<List<LiveCategory>> GetCategores(CancellationToken cancellationToken)
         {
             List<LiveCategory> categories = new List<LiveCategory>();
-            var resp = await HttpUtil.GetString("https://live.douyin.com/", await GetRequestHeaders());
+            var resp = await HttpUtil.GetString("https://live.douyin.com/", await GetRequestHeaders(cancellationToken: cancellationToken), cancellationToken: cancellationToken);
 
             Regex regex = new Regex("\\{\\\\\"pathname\\\\\":\\\\\"\\/\\\\\",\\\\\"categoryData.*?\\]\\\\n", RegexOptions.Singleline);
             Match match = regex.Match(resp);
@@ -111,7 +113,8 @@ namespace PlayWin.Core
             }
         }
 
-        public async Task<LiveCategoryResult> GetCategoryRooms(LiveSubCategory category, int page = 1)
+        public Task<LiveCategoryResult> GetCategoryRooms(LiveSubCategory category, int page = 1) => GetCategoryRooms(category, page, CancellationToken.None);
+        public async Task<LiveCategoryResult> GetCategoryRooms(LiveSubCategory category, int page, CancellationToken cancellationToken)
         {
             var ids = category.ID.Split(',');
             var partitionId = ids[0];
@@ -139,7 +142,7 @@ namespace PlayWin.Core
                 };
             var url = $"https://live.douyin.com/webcast/web/partition/detail/room/v2/?{Utils.BuildQueryString(reqParams)}";
 
-            var resp = await GetWebResponse(url);
+            var resp = await GetWebResponse(url, cancellationToken: cancellationToken);
             if (string.IsNullOrWhiteSpace(resp)) throw new InvalidOperationException("抖音未返回直播列表，请稍后刷新");
             var json = JObject.Parse(resp);
             LiveRequestException.EnsureSuccess(json, "status_code");
@@ -159,7 +162,7 @@ namespace PlayWin.Core
                 };
                 items.Add(roomItem);
             }
-            var statusError = await ConfirmLiveStatus(items);
+            var statusError = await ConfirmLiveStatus(items, cancellationToken: cancellationToken);
             return new LiveCategoryResult()
             {
                 HasMore = hasMore,
@@ -167,7 +170,8 @@ namespace PlayWin.Core
                 Rooms = items
             };
         }
-        public async Task<LiveCategoryResult> GetRecommendRooms(int page = 1)
+        public Task<LiveCategoryResult> GetRecommendRooms(int page = 1) => GetRecommendRooms(page, CancellationToken.None);
+        public async Task<LiveCategoryResult> GetRecommendRooms(int page, CancellationToken cancellationToken)
         {
             var reqParams = new Dictionary<string, string> {
                     {"aid","6383"},
@@ -192,7 +196,7 @@ namespace PlayWin.Core
                 };
             var url = $"https://live.douyin.com/webcast/web/partition/detail/room/v2/?{Utils.BuildQueryString(reqParams)}";
 
-            var resp = await GetWebResponse(url);
+            var resp = await GetWebResponse(url, cancellationToken: cancellationToken);
 
             var json = JObject.Parse(resp);
             LiveRequestException.EnsureSuccess(json, "status_code");
@@ -211,7 +215,7 @@ namespace PlayWin.Core
                 };
                 items.Add(roomItem);
             }
-            var statusError = await ConfirmLiveStatus(items);
+            var statusError = await ConfirmLiveStatus(items, cancellationToken: cancellationToken);
             return new LiveCategoryResult()
             {
                 HasMore = hasMore,
@@ -219,7 +223,8 @@ namespace PlayWin.Core
                 Rooms = items
             };
         }
-        public async Task<LiveRoomDetail> GetRoomDetail(object roomId)
+        public Task<LiveRoomDetail> GetRoomDetail(object roomId) => GetRoomDetail(roomId, CancellationToken.None);
+        public async Task<LiveRoomDetail> GetRoomDetail(object roomId, CancellationToken cancellationToken)
         {
             // 有两种roomId，一种是webRid，一种是roomId
             // roomId是一次性的，用户每次重新开播都会生成一个新的roomId
@@ -230,10 +235,10 @@ namespace PlayWin.Core
             if (roomId.ToString().Length <= 16)
             {
                 var webRid = roomId as string;
-                return await GetRoomDetailByWebRid(webRid);
+                return await GetRoomDetailByWebRid(webRid, cancellationToken: cancellationToken);
             }
 
-            return await GetRoomDetailByRoomID(roomId as string);
+            return await GetRoomDetailByRoomID(roomId as string, cancellationToken: cancellationToken);
         }
         /// <summary>
         /// 通过RoomId获取直播间详情
@@ -243,9 +248,9 @@ namespace PlayWin.Core
         /// roomId一般长度为19位，例如：7376429659866598196
         /// </param>
         /// <returns></returns>
-        private async Task<LiveRoomDetail> GetRoomDetailByRoomID(string roomId)
+        private async Task<LiveRoomDetail> GetRoomDetailByRoomID(string roomId, CancellationToken cancellationToken = default)
         {
-            var roomData = await GetRoomDataByRoomID(roomId);
+            var roomData = await GetRoomDataByRoomID(roomId, cancellationToken: cancellationToken);
             // 通过房间信息获取WebRid
             var webRid = roomData["data"]["room"]["owner"]["web_rid"].ToString();
             var room = roomData["data"]["room"];
@@ -255,7 +260,7 @@ namespace PlayWin.Core
             // 所以如果roomId对应的直播间状态不是直播中，就通过webRid获取直播间信息
             if (status == 4)
             {
-                var result = await GetRoomDetailByWebRid(webRid);
+                var result = await GetRoomDetailByWebRid(webRid, cancellationToken: cancellationToken);
                 return result;
             }
             var roomStatus = ReadRoomLiveStatus(room["status"]);
@@ -286,26 +291,26 @@ namespace PlayWin.Core
         /// webRid一般长度为11-12位，例如：416144012050
         /// </param>
         /// <returns></returns>
-        private async Task<LiveRoomDetail> GetRoomDetailByWebRid(string webRid)
+        private async Task<LiveRoomDetail> GetRoomDetailByWebRid(string webRid, CancellationToken cancellationToken = default)
         {
             try
             {
-                var result = await GetRoomDetailByWebRidApi(webRid);
+                var result = await GetRoomDetailByWebRidApi(webRid, cancellationToken: cancellationToken);
                 return result;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (!(ex is OperationCanceledException))
             {
                 if (ex is LiveRequestException failure && failure.Kind == LiveFailureKind.Authentication) throw;
-                try { return await GetRoomDetailByWebRidHtml(webRid); }
-                catch { System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(ex).Throw(); throw; }
+                try { return await GetRoomDetailByWebRidHtml(webRid, cancellationToken: cancellationToken); }
+                catch (Exception fallback) when (!(fallback is OperationCanceledException)) { System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(ex).Throw(); throw; }
             }
         }
 
-        private async Task<LiveRoomDetail> GetRoomDetailByWebRidApi(string webRid)
+        private async Task<LiveRoomDetail> GetRoomDetailByWebRidApi(string webRid, CancellationToken cancellationToken = default)
         {
             // 读取房间信息
             //var data = await _getRoomDataByApi(webRid);
-            var data = await GetRoomDataApi(webRid);
+            var data = await GetRoomDataApi(webRid, cancellationToken: cancellationToken);
             var roomData = data["data"][0];
             var userData = data["user"];
 
@@ -338,9 +343,9 @@ namespace PlayWin.Core
 
         }
 
-        private async Task<LiveRoomDetail> GetRoomDetailByWebRidHtml(string webRid)
+        private async Task<LiveRoomDetail> GetRoomDetailByWebRidHtml(string webRid, CancellationToken cancellationToken = default)
         {
-            var roomData = await GetRoomDataHtml(webRid);
+            var roomData = await GetRoomDataHtml(webRid, cancellationToken: cancellationToken);
 
             var room = roomData["roomStore"]["roomInfo"]["room"];
             var owner = room["owner"];
@@ -373,11 +378,11 @@ namespace PlayWin.Core
         /// </summary>
         /// <param name="webRid">直播间RID</param>
         /// <returns></returns>
-        private async Task<string> GetWebCookie(string webRid)
+        private async Task<string> GetWebCookie(string webRid, CancellationToken cancellationToken = default)
         {
-            var resp = await HttpUtil.Head($"https://live.douyin.com/{webRid}",
-                headers: await GetRequestHeaders()
-            );
+            using var resp = await HttpUtil.Head($"https://live.douyin.com/{webRid}",
+                headers: await GetRequestHeaders(cancellationToken: cancellationToken)
+            , cancellationToken: cancellationToken);
             var dyCookie = Cookie;
             foreach (var item in resp.Headers.GetValues("Set-Cookie"))
             {
@@ -390,9 +395,9 @@ namespace PlayWin.Core
             return dyCookie;
         }
 
-        private async Task<JToken> GetRoomDataHtml(string webRid)
+        private async Task<JToken> GetRoomDataHtml(string webRid, CancellationToken cancellationToken = default)
         {
-            var dyCookie = await GetWebCookie(webRid);
+            var dyCookie = await GetWebCookie(webRid, cancellationToken: cancellationToken);
             var resp = await HttpUtil.GetString($"https://live.douyin.com/{webRid}",
                 headers: new Dictionary<string, string>
                 {
@@ -401,7 +406,7 @@ namespace PlayWin.Core
                     { "Authority", AUTHORITY },
                     { "Cookie", dyCookie }
                 }
-            );
+            , cancellationToken: cancellationToken);
             Regex regex = new Regex("\\{\\\\\"state\\\\\":\\{\\\\\"appStore.*?\\]\\\\n", RegexOptions.Singleline);
             Match match = regex.Match(resp);
             string json = match.Success ? match.Groups[0].Value : "";
@@ -413,7 +418,7 @@ namespace PlayWin.Core
             return JObject.Parse(json)["state"];
         }
 
-        private async Task<JToken> GetRoomDataApi(string webRid)
+        private async Task<JToken> GetRoomDataApi(string webRid, CancellationToken cancellationToken = default)
         {
             var reqParams = new Dictionary<string, string> {
                     {"aid","6383" },
@@ -436,7 +441,7 @@ namespace PlayWin.Core
                 };
             var url = $"https://live.douyin.com/webcast/room/web/enter/?{Utils.BuildQueryString(reqParams)}";
 
-            var resp = await GetWebResponse(url);
+            var resp = await GetWebResponse(url, cancellationToken: cancellationToken);
 
 
            
@@ -445,10 +450,10 @@ namespace PlayWin.Core
             return response["data"];
         }
 
-        private async Task<JToken> GetRoomDataByRoomID(string roomId)
+        private async Task<JToken> GetRoomDataByRoomID(string roomId, CancellationToken cancellationToken = default)
         {
             var resp = await HttpUtil.GetString($"https://webcast.amemv.com/webcast/room/reflow/info/",
-                headers: await GetRequestHeaders(),
+                headers: await GetRequestHeaders(cancellationToken: cancellationToken),
                 queryParameters: new Dictionary<string, string>
                 {
                     {"type_id","0" },
@@ -458,11 +463,12 @@ namespace PlayWin.Core
                     {"version_code","99.99.99" },
                     {"app_id","6383" },
                 }
-            );
+            , cancellationToken: cancellationToken);
             return JObject.Parse(resp);
         }
 
-        public Task<List<LivePlayQuality>> GetPlayQuality(LiveRoomDetail roomDetail)
+        public Task<List<LivePlayQuality>> GetPlayQuality(LiveRoomDetail roomDetail) => GetPlayQuality(roomDetail, CancellationToken.None);
+        public Task<List<LivePlayQuality>> GetPlayQuality(LiveRoomDetail roomDetail, CancellationToken cancellationToken)
         {
             List<LivePlayQuality> qualities = new List<LivePlayQuality>();
             if (roomDetail.Data == null)
@@ -543,12 +549,14 @@ namespace PlayWin.Core
             return Task.FromResult(qualities);
         }
 
-        public Task<List<string>> GetPlayUrls(LiveRoomDetail roomDetail, LivePlayQuality qn)
+        public Task<List<string>> GetPlayUrls(LiveRoomDetail roomDetail, LivePlayQuality qn) => GetPlayUrls(roomDetail, qn, CancellationToken.None);
+        public Task<List<string>> GetPlayUrls(LiveRoomDetail roomDetail, LivePlayQuality qn, CancellationToken cancellationToken)
         {
             return Task.FromResult(qn.Data as List<string>);
         }
 
-        public async Task<LiveSearchResult> Search(string keyword, int page = 1)
+        public Task<LiveSearchResult> Search(string keyword, int page = 1) => Search(keyword, page, CancellationToken.None);
+        public async Task<LiveSearchResult> Search(string keyword, int page, CancellationToken cancellationToken)
         {
             var query = new Dictionary<string, string>
             {
@@ -588,7 +596,7 @@ namespace PlayWin.Core
             };
 
             var requestUrl = $"https://www.douyin.com/aweme/v1/web/live/search/?{Utils.BuildQueryString(query)}";
-            var cookie = (await GetRequestHeaders())["Cookie"];
+            var cookie = (await GetRequestHeaders(cancellationToken: cancellationToken))["Cookie"];
             var headers = new Dictionary<string, string>
             {
                 { "accept", "application/json, text/plain, */*" },
@@ -604,7 +612,7 @@ namespace PlayWin.Core
                 { "sec-fetch-site", "same-origin" },
                 { "user-agent", USER_AGENT }
             };
-            var resp = await HttpUtil.GetString(requestUrl, headers);
+            var resp = await HttpUtil.GetString(requestUrl, headers, cancellationToken: cancellationToken);
             var json = JObject.Parse(resp);
             var items = new List<LiveRoomItem>();
             foreach (var item in json["data"])
@@ -632,12 +640,13 @@ namespace PlayWin.Core
             if (!int.TryParse(status?.ToString(), out var value)) return null;
             return value == 2 ? true : value == 4 ? false : (bool?)null;
         }
-        public async Task<bool> GetLiveStatus(object roomId)
+        public Task<bool> GetLiveStatus(object roomId) => GetLiveStatus(roomId, CancellationToken.None);
+        public async Task<bool> GetLiveStatus(object roomId, CancellationToken cancellationToken)
         {
             var key = roomId.ToString();
             lock (liveStatusGate)
                 if (liveStatusCache.TryGetValue(key, out var saved) && saved.expires > DateTime.UtcNow) return saved.live;
-            var result = await GetRoomDetail(roomId: roomId);
+            var result = await GetRoomDetail(roomId: roomId, cancellationToken: cancellationToken);
             lock (liveStatusGate)
             {
                 foreach (var expired in liveStatusCache.Where(entry => entry.Value.expires <= DateTime.UtcNow).Select(entry => entry.Key).ToArray()) liveStatusCache.Remove(expired);
@@ -659,20 +668,22 @@ namespace PlayWin.Core
             if (value == 4) return false;
             throw new LiveRequestException(LiveFailureKind.Platform, "平台未确认当前开播状态");
         }
-        private async Task<Exception> ConfirmLiveStatus(List<LiveRoomItem> items)
+        private async Task<Exception> ConfirmLiveStatus(List<LiveRoomItem> items, CancellationToken cancellationToken = default)
         {
             Exception error = null;
             // Partition feeds use status=0 for unspecified state; query room details before hiding them.
             await Task.WhenAll(items.Where(r => r.IsLive == null).Select(async room =>
             {
-                try { room.IsLive = await GetLiveStatus(room.RoomID); }
-                catch (Exception ex) { room.IsLive = null; System.Threading.Interlocked.CompareExchange(ref error, ex, null); }
+                try { room.IsLive = await GetLiveStatus(room.RoomID, cancellationToken: cancellationToken); }
+                catch (Exception ex) when (!(ex is OperationCanceledException)) { room.IsLive = null; System.Threading.Interlocked.CompareExchange(ref error, ex, null); }
             }));
             return error;
         }
         public Func<string, Task<string>> WebRequestAsync { get; set; }
-        private async Task<string> GetWebResponse(string url)
+        public Func<string, CancellationToken, Task<string>> CancellableWebRequestAsync { get; set; }
+        private async Task<string> GetWebResponse(string url, CancellationToken cancellationToken = default)
         {
+            if (CancellableWebRequestAsync != null) return await CancellableWebRequestAsync(url, cancellationToken);
             if (WebRequestAsync != null) return await WebRequestAsync(url);
             throw new InvalidOperationException("抖音接口需要官网浏览器签名，请使用桌面版");
         }

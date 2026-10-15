@@ -24,6 +24,23 @@ var merged = PlayWin.Core.Helper.GameBrowse.MergeCategories(new[] {
     new PlayWin.Core.Models.LiveGameSource { Site = dySite, Category = new() { ID = "1,1", ParentID = "103,4", Name = "射击游戏" } }
 });
 Check(merged.Count == 2 && merged.Single(c => c.Name == "英雄联盟").Sources.Count == 2, "Same game names did not merge with sources preserved.");
+var imageCategories = new List<PlayWin.Core.Models.LiveCategory> {
+    new() { ID = "103,4", Name = "游戏", Children = new() {
+        new() { ID = "1010014,1", ParentID = "103,4", Name = " 英雄联盟 " },
+        new() { ID = "own", ParentID = "103,4", Name = "已有封面", Pic = "https://example.invalid/original.png" },
+        new() { ID = "unmatched", ParentID = "103,4", Name = "英雄联盟手游" }
+    } }
+};
+var donorCategories = new List<PlayWin.Core.Models.LiveCategory> {
+    new() { ID = "2", Children = new() {
+        new() { ID = "86", ParentID = "2", Name = "英雄联盟", Pic = "//example.invalid/league.png" },
+        new() { ID = "different", Name = "已有封面", Pic = "https://example.invalid/replacement.png" }
+    } }
+};
+Check(PlayWin.Core.Helper.GameBrowse.FillMissingCategoryPictures(imageCategories, donorCategories), "Matching game artwork was not copied.");
+Check(imageCategories[0].Children[0].Pic == "https://example.invalid/league.png" && imageCategories[0].Children[0].ID == "1010014,1" && imageCategories[0].Children[0].ParentID == "103,4", "Artwork fallback changed the Douyin partition or lost its picture.");
+Check(imageCategories[0].Children[1].Pic == "https://example.invalid/original.png" && imageCategories[0].Children[2].Pic == null, "Existing artwork was overwritten or a different game was matched.");
+Check(!PlayWin.Core.Helper.GameBrowse.FillMissingCategoryPictures(imageCategories, donorCategories), "Artwork fallback was not idempotent.");
 var dyFixture = new[] { new PlayWin.Core.Models.LiveCategory { ID = "103,4", Name = "游戏", Children = new() }, new PlayWin.Core.Models.LiveCategory { ID = "101,4", Name = "聊天", Children = new() } };
 Check(PlayWin.Core.Helper.GameBrowse.SelectCategories(dySite, dyFixture).Count == 1, "Douyin non-game category survived.");
 var ownerFixture = Newtonsoft.Json.Linq.JObject.Parse("{\"nickname\":\"test\",\"avatar_thumb\":{\"url_list\":[\"https://example.invalid/avatar\"]}}");

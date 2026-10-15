@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Markup;
 using System;
 using System.Collections.Generic;
@@ -189,19 +189,16 @@ internal static class SmokeTests
         });
         Check("Mini toolbar expands without moving or resizing the video", () =>
         {
-            var work = new RectInt32(-1200, 100, 1200, 900);
             foreach (var scale in new[] { 1d, 1.5d, 2d })
             foreach (var y in new[] { 120, 730 })
             {
                 var video = new RectInt32(-1100, y, 480, 270);
                 var height = (int)Math.Round(44 * scale);
-                var toolbar = MainWindow.GetMiniToolbarBounds(video, work, height);
-                if (toolbar.Height != height || toolbar.Above != (y == 730) || toolbar.Bounds.Width != video.Width ||
-                    toolbar.Bounds.Height - toolbar.Height != video.Height || toolbar.Bounds.Y + (toolbar.Above ? toolbar.Height : 0) != video.Y ||
-                    toolbar.Bounds.Y < work.Y || toolbar.Bounds.Y + toolbar.Bounds.Height > work.Y + work.Height)
-                    throw new Exception("Expanded toolbar changed the video bounds or exceeded the work area.");
-                var collapsed = MainWindow.GetMiniToolbarBounds(video, work, 0);
-                if (collapsed.Height != 0 || collapsed.Above || collapsed.Bounds.Y != video.Y || collapsed.Bounds.Height != video.Height)
+                var toolbar = MainWindow.GetMiniToolbarBounds(video, height);
+                if (toolbar.Width != video.Width || toolbar.Height - height != video.Height || toolbar.X != video.X || toolbar.Y != video.Y)
+                    throw new Exception("Downward toolbar changed the video bounds.");
+                var collapsed = MainWindow.GetMiniToolbarBounds(video, 0);
+                if (collapsed.Y != video.Y || collapsed.Height != video.Height)
                     throw new Exception("Mini toolbar did not collapse to the original video bounds.");
             }
         });
@@ -292,7 +289,7 @@ internal static class SmokeTests
         await CheckWindow("Exit full screen restores latest preset", () => window.SetWindowMode(AppWindowPresenterKind.Default), CheckNormalSize);
         await CheckWindow("Fixed compact overlay", () => window.SetWindowMode(AppWindowPresenterKind.CompactOverlay), () =>
         {
-            if (window.AppWindow.Presenter.Kind != AppWindowPresenterKind.CompactOverlay || window.AppWindow.Size.Width != 480 || window.AppWindow.Size.Height != 270)
+            if (!window.IsMiniMode || window.AppWindow.Presenter is not OverlappedPresenter { IsAlwaysOnTop: true } || window.AppWindow.Size.Width != 480 || window.AppWindow.Size.Height != 270)
                 throw new Exception($"Incorrect compact overlay: {window.AppWindow.Size.Width}×{window.AppWindow.Size.Height}");
         });
         await CheckWindow("Compact overlay cannot be externally resized", () => window.AppWindow.Resize(new SizeInt32(700, 400)), () =>
@@ -637,7 +634,7 @@ internal static class SmokeTests
             await Controls.DouyinLoginDialog.ClearCookiesAsync();
         });
         await CheckAsync("Independent Huya and Douyu login protection and logout", () => PlatformChecks.LoginAsync(window));
-        var reportDirectory = Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PlayWin")).FullName;
+        var reportDirectory = Directory.CreateDirectory(AppPaths.DataDirectory).FullName;
         File.WriteAllLines(Path.Combine(reportDirectory, "smoke-test.log"), output);
         Environment.ExitCode = failed ? 1 : 0;
     }

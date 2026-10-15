@@ -129,12 +129,13 @@ internal static class PlatformChecks
             }
             catch (Exception ex) { failed = true; report.Add("FAIL " + site.Name + " " + ex.GetType().Name + " " + System.Text.RegularExpressions.Regex.Replace(ex.Message, @"https?://\S+", "[URL]")); }
         }
-        File.WriteAllLines(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PlayWin", "platform-live.log"), report);
+        File.WriteAllLines(Path.Combine(AppPaths.EnsureDirectory(), "platform-live.log"), report);
         Environment.ExitCode = failed ? 1 : 0;
     }
-    private static async Task DecodeAsync(MainWindow window, string url, string referer)
+    internal static async Task DecodeAsync(MainWindow window, string url, string referer)
     {
         var config = new MediaSourceConfig(); config.FFmpegOptions.Add("rw_timeout", "10000000"); config.FFmpegOptions.Add("referer", referer);
+        if (referer.Contains("bilibili.com", StringComparison.OrdinalIgnoreCase)) config.FFmpegOptions.Add("user_agent", "Mozilla/5.0 BiliDroid/1.12.0 (bbcallen@gmail.com)");
         using var source = await FFmpegMediaSource.CreateFromUriAsync(url, config).AsTask().WaitAsync(TimeSpan.FromSeconds(20));
         using var player = new MediaPlayer { IsMuted = true, AutoPlay = true };
         var opened = new TaskCompletionSource<bool>();

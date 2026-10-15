@@ -1,6 +1,7 @@
 using PlayWin.Core.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Threading;
 namespace PlayWin.WinUI.ViewModels;
 public class CategoryDetailVM : LiveRoomListVM
 {
@@ -12,5 +13,5 @@ public class CategoryDetailVM : LiveRoomListVM
         DoPropertyChanged(nameof(Category));
         await LoadAsync();
     }
-    protected override Task<List<LiveGameSource>> GetSourcesAsync() => Task.FromResult(Category.Sources);
+    protected override Task<List<LiveGameSource>> GetSourcesAsync(CancellationToken cancellationToken) => Task.FromResult(Category.Sources);
 }

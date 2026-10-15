@@ -9,13 +9,12 @@ namespace PlayWin.WinUI.Views;
 public sealed partial class CategoryDetailPage : Page
 {
     readonly CategoryDetailVM categoryDetailVM = new();
-    readonly DispatcherTimer statusTimer = new() { Interval = TimeSpan.FromSeconds(60) };
     public CategoryDetailPage()
     {
         InitializeComponent(); NavigationCacheMode = NavigationCacheMode.Enabled;
-        Loaded += (_, _) => statusTimer.Start();
-        Unloaded += (_, _) => { statusTimer.Stop(); categoryDetailVM.CancelPending(); };
-        statusTimer.Tick += async (_, _) => await categoryDetailVM.HideStoppedAsync();
+
+        Unloaded += (_, _) => {  categoryDetailVM.CancelPending(); };
+        _ = new PageStatusRefresh(this, () => categoryDetailVM.HasLoaded ? categoryDetailVM.HideStoppedAsync() : categoryDetailVM.LoadAsync(), categoryDetailVM.CancelPending);
     }
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {

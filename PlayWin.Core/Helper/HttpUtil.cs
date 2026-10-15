@@ -1,151 +1,58 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net.Http;
-using System.Net;
-
-namespace PlayWin.Core.Helper
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+namespace PlayWin.Core.Helper;
+public static class HttpUtil
 {
-    public static class HttpUtil
+    private static HttpRequestMessage Request(HttpMethod method, string url, IDictionary<string,string> headers, IDictionary<string,string> query = null)
     {
-        public static async Task<string> GetString(string url, IDictionary<string, string> headers = null, IDictionary<string, string> queryParameters = null)
+        if (query != null)
         {
-            HttpClientHandler httpClientHandler = new HttpClientHandler
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            };
-            using (HttpClient httpClient = new HttpClient(httpClientHandler))
-            {
-                if (headers != null)
-                {
-                    foreach (var item in headers)
-                    {
-                        httpClient.DefaultRequestHeaders.Add(item.Key, item.Value);
-                    }
-                }
-                if (queryParameters != null)
-                {
-                    url += "?";
-                    foreach (var item in queryParameters)
-                    {
-                        url += $"{item.Key}={Uri.EscapeDataString(item.Value)}&";
-                    }
-                    url = url.TrimEnd('&');
-                }
-                var result = await httpClient.GetAsync(url);
-                result.EnsureSuccessStatusCode();
-                return await result.Content.ReadAsStringAsync();
-            }
+            var pairs = new List<string>();
+            foreach (var pair in query) pairs.Add(Uri.EscapeDataString(pair.Key) + "=" + Uri.EscapeDataString(pair.Value));
+            url += (url.Contains("?") ? "&" : "?") + string.Join("&", pairs);
         }
-        public static async Task<HttpResponseMessage> Get(string url, IDictionary<string, string> headers = null, IDictionary<string, string> queryParameters = null)
-        {
-            HttpClientHandler httpClientHandler = new HttpClientHandler
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            };
-            using (HttpClient httpClient = new HttpClient(httpClientHandler))
-            {
-                if (headers != null)
-                {
-                    foreach (var item in headers)
-                    {
-                        httpClient.DefaultRequestHeaders.Add(item.Key, item.Value);
-                    }
-                }
-                if (queryParameters != null)
-                {
-                    url += "?";
-                    foreach (var item in queryParameters)
-                    {
-                        url += $"{item.Key}={Uri.EscapeDataString(item.Value)}&";
-                    }
-                    url = url.TrimEnd('&');
-                }
-                var result = await httpClient.GetAsync(url);
-                result.EnsureSuccessStatusCode();
-                return result;
-            }
-        }
-
-        public static async Task<string> GetUtf8String(string url, IDictionary<string, string> headers = null)
-        {
-            using (HttpClient httpClient = new HttpClient())
-            {
-                if (headers != null)
-                {
-                    foreach (var item in headers)
-                    {
-                        httpClient.DefaultRequestHeaders.Add(item.Key, item.Value);
-                    }
-                }
-                var result = await httpClient.GetAsync(url);
-                result.EnsureSuccessStatusCode();
-                return Encoding.UTF8.GetString(await result.Content.ReadAsByteArrayAsync());
-            }
-        }
-        public static async Task<string> PostString(string url, string data, IDictionary<string, string> headers = null)
-        {
-            using (HttpClient httpClient = new HttpClient())
-            {
-                if (headers != null)
-                {
-                    foreach (var item in headers)
-                    {
-                        httpClient.DefaultRequestHeaders.Add(item.Key, item.Value);
-                    }
-                }
-                List<KeyValuePair<string, string>> body = new List<KeyValuePair<string, string>>();
-                foreach (var item in data.Split('&'))
-                {
-                    var splits = item.Split('=');
-                    body.Add(new KeyValuePair<string, string>(splits[0], splits[1]));
-                }
-                FormUrlEncodedContent content = new FormUrlEncodedContent(body);
-                var result = await httpClient.PostAsync(url, content);
-                result.EnsureSuccessStatusCode();
-                return await result.Content.ReadAsStringAsync();
-            }
-        }
-        public static async Task<string> PostJsonString(string url, string data, IDictionary<string, string> headers = null)
-        {
-            using (HttpClient httpClient = new HttpClient())
-            {
-                if (headers != null)
-                {
-                    foreach (var item in headers)
-                    {
-                        httpClient.DefaultRequestHeaders.Add(item.Key, item.Value);
-                    }
-                }
-                StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
-                var result = await httpClient.PostAsync(url, content);
-                result.EnsureSuccessStatusCode();
-                return await result.Content.ReadAsStringAsync();
-            }
-        }
-
-        public static async Task<HttpResponseMessage> Head(string url, IDictionary<string, string> headers = null)
-        {
-            HttpClientHandler httpClientHandler = new HttpClientHandler
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            };
-            using (HttpClient httpClient = new HttpClient(httpClientHandler))
-            {
-                if (headers != null)
-                {
-                    foreach (var item in headers)
-                    {
-                        httpClient.DefaultRequestHeaders.Add(item.Key, item.Value);
-                    }
-                }
-                var request = new HttpRequestMessage();
-                request.Method = HttpMethod.Head;
-                request.RequestUri = new Uri(url);
-                var response = await httpClient.SendAsync(request);
-                return response;
-            }
-        }
+        var request = new HttpRequestMessage(method, url);
+        if (headers != null) foreach (var pair in headers) request.Headers.TryAddWithoutValidation(pair.Key, pair.Value);
+        return request;
+    }
+    public static async Task<string> GetString(string url, IDictionary<string,string> headers = null, IDictionary<string,string> queryParameters = null, CancellationToken cancellationToken = default)
+    {
+        using var response = await Get(url, headers, queryParameters, cancellationToken).ConfigureAwait(false);
+        return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+    }
+    public static async Task<HttpResponseMessage> Get(string url, IDictionary<string,string> headers = null, IDictionary<string,string> queryParameters = null, CancellationToken cancellationToken = default)
+    {
+        using var request = Request(HttpMethod.Get, url, headers, queryParameters);
+        var response = await HttpTransport.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        try { response.EnsureSuccessStatusCode(); return response; }
+        catch { response.Dispose(); throw; }
+    }
+    public static async Task<string> GetUtf8String(string url, IDictionary<string,string> headers = null, CancellationToken cancellationToken = default)
+    {
+        using var response = await Get(url, headers, cancellationToken: cancellationToken).ConfigureAwait(false);
+        return Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false));
+    }
+    public static async Task<string> PostString(string url, string data, IDictionary<string,string> headers = null, CancellationToken cancellationToken = default)
+    {
+        using var request = Request(HttpMethod.Post, url, headers);
+        request.Content = new StringContent(data, Encoding.UTF8, "application/x-www-form-urlencoded");
+        using var response = await HttpTransport.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode(); return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+    }
+    public static async Task<string> PostJsonString(string url, string data, IDictionary<string,string> headers = null, CancellationToken cancellationToken = default)
+    {
+        using var request = Request(HttpMethod.Post, url, headers);
+        request.Content = new StringContent(data, Encoding.UTF8, "application/json");
+        using var response = await HttpTransport.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode(); return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+    }
+    public static async Task<HttpResponseMessage> Head(string url, IDictionary<string,string> headers = null, CancellationToken cancellationToken = default)
+    {
+        using var request = Request(HttpMethod.Head, url, headers);
+        return await HttpTransport.SendAsync(request, cancellationToken).ConfigureAwait(false);
     }
 }

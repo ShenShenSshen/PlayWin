@@ -3,6 +3,7 @@ using PlayWin.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Threading;
 using PlayWin.Core.Helper;
 using Newtonsoft.Json.Linq;
 using System.Text.RegularExpressions;
@@ -30,12 +31,12 @@ namespace PlayWin.Core
 
         private string buvid3 = "";
         private string buvid4 = "";
-        private async Task<Dictionary<string, string>> GetRequestHeader()
+        private async Task<Dictionary<string, string>> GetRequestHeader(CancellationToken cancellationToken = default)
         {
 
             if (string.IsNullOrEmpty(buvid3))
             {
-                var buvid = await GetBuvid();
+                var buvid = await GetBuvid(cancellationToken: cancellationToken);
                 buvid3 = buvid.Item1;
                 buvid4 = buvid.Item2;
             }
@@ -64,10 +65,11 @@ namespace PlayWin.Core
             return _cookie;
         }
 
-        public async Task<List<LiveCategory>> GetCategores()
+        public Task<List<LiveCategory>> GetCategores() => GetCategores(CancellationToken.None);
+        public async Task<List<LiveCategory>> GetCategores(CancellationToken cancellationToken)
         {
             List<LiveCategory> categories = new List<LiveCategory>();
-            var result = await HttpUtil.GetString("https://api.live.bilibili.com/room/v1/Area/getList?need_entrance=1&parent_id=0", headers: await GetRequestHeader());
+            var result = await HttpUtil.GetString("https://api.live.bilibili.com/room/v1/Area/getList?need_entrance=1&parent_id=0", headers: await GetRequestHeader(cancellationToken: cancellationToken), cancellationToken: cancellationToken);
             var obj = ParseResponse(result);
             foreach (var item in obj["data"])
             {
@@ -76,7 +78,7 @@ namespace PlayWin.Core
                 {
                     subs.Add(new LiveSubCategory()
                     {
-                        Pic = subItem["pic"].ToString() + "@100w.png",
+                        Pic = subItem["pic"].ToString() + "@320w.png",
                         ID = subItem["id"].ToString(),
                         ParentID = subItem["parent_id"].ToString(),
                         Name = subItem["name"].ToString(),
@@ -92,7 +94,8 @@ namespace PlayWin.Core
             }
             return categories;
         }
-        public async Task<LiveCategoryResult> GetCategoryRooms(LiveSubCategory category, int page = 1)
+        public Task<LiveCategoryResult> GetCategoryRooms(LiveSubCategory category, int page = 1) => GetCategoryRooms(category, page, CancellationToken.None);
+        public async Task<LiveCategoryResult> GetCategoryRooms(LiveSubCategory category, int page, CancellationToken cancellationToken)
         {
             LiveCategoryResult categoryResult = new LiveCategoryResult()
             {
@@ -101,7 +104,7 @@ namespace PlayWin.Core
             };
             var url = $"https://api.live.bilibili.com/room/v3/area/getRoomList";
             var query = $"platform=android&parent_area_id={category.ParentID}&area_id={category.ID}&sort_type=online&page_size=30&page={page}";
-            var result = await HttpUtil.GetString($"{url}?{query}", headers: await GetRequestHeader());
+            var result = await HttpUtil.GetString($"{url}?{query}", headers: await GetRequestHeader(cancellationToken: cancellationToken), cancellationToken: cancellationToken);
 
             var obj = ParseResponse(result);
             if (obj["data"]?["list"] == null)
@@ -124,7 +127,8 @@ namespace PlayWin.Core
             }
             return categoryResult;
         }
-        public async Task<LiveCategoryResult> GetRecommendRooms(int page = 1)
+        public Task<LiveCategoryResult> GetRecommendRooms(int page = 1) => GetRecommendRooms(page, CancellationToken.None);
+        public async Task<LiveCategoryResult> GetRecommendRooms(int page, CancellationToken cancellationToken)
         {
             LiveCategoryResult categoryResult = new LiveCategoryResult()
             {
@@ -133,8 +137,8 @@ namespace PlayWin.Core
             };
             var url = $"https://api.live.bilibili.com/xlive/web-interface/v1/second/getListByArea";
             var query = $"platform=web&sort=online&page_size=30&page={page}";
-            query = await GetWbiSign(query);
-            var result = await HttpUtil.GetString($"{url}?{query}", headers: await GetRequestHeader());
+            query = await GetWbiSign(query, cancellationToken: cancellationToken);
+            var result = await HttpUtil.GetString($"{url}?{query}", headers: await GetRequestHeader(cancellationToken: cancellationToken), cancellationToken: cancellationToken);
             var obj = ParseResponse(result);
             categoryResult.HasMore = ((JArray)obj["data"]["list"]).Count > 0;
             foreach (var item in obj["data"]["list"])
@@ -151,12 +155,13 @@ namespace PlayWin.Core
             }
             return categoryResult;
         }
-        public async Task<LiveRoomDetail> GetRoomDetail(object roomId)
+        public Task<LiveRoomDetail> GetRoomDetail(object roomId) => GetRoomDetail(roomId, CancellationToken.None);
+        public async Task<LiveRoomDetail> GetRoomDetail(object roomId, CancellationToken cancellationToken)
         {
             var url = "https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom";
             var query = $"room_id={roomId}";
-            query = await GetWbiSign(query);
-            var result = await HttpUtil.GetString($"{url}?{query}", headers: await GetRequestHeader());
+            query = await GetWbiSign(query, cancellationToken: cancellationToken);
+            var result = await HttpUtil.GetString($"{url}?{query}", headers: await GetRequestHeader(cancellationToken: cancellationToken), cancellationToken: cancellationToken);
             var obj = ParseResponse(result);
 
             return new LiveRoomDetail()
@@ -173,14 +178,15 @@ namespace PlayWin.Core
                 Url = "https://live.bilibili.com/" + roomId
             };
         }
-        public async Task<LiveSearchResult> Search(string keyword, int page = 1)
+        public Task<LiveSearchResult> Search(string keyword, int page = 1) => Search(keyword, page, CancellationToken.None);
+        public async Task<LiveSearchResult> Search(string keyword, int page, CancellationToken cancellationToken)
         {
             LiveSearchResult searchResult = new LiveSearchResult()
             {
                 Rooms = new List<LiveRoomItem>(),
 
             };
-            var result = await HttpUtil.GetString($"https://api.bilibili.com/x/web-interface/search/type?context=&search_type=live&cover_type=user_cover&page={page}&order=&keyword={Uri.EscapeDataString(keyword)}&category_id=&__refresh__=true&_extra=&highlight=0&single_column=0", headers: await GetRequestHeader());
+            var result = await HttpUtil.GetString($"https://api.bilibili.com/x/web-interface/search/type?context=&search_type=live&cover_type=user_cover&page={page}&order=&keyword={Uri.EscapeDataString(keyword)}&category_id=&__refresh__=true&_extra=&highlight=0&single_column=0", headers: await GetRequestHeader(cancellationToken: cancellationToken), cancellationToken: cancellationToken);
             var obj = ParseResponse(result);
 
             foreach (var item in obj["data"]["result"]["live_room"])
@@ -203,15 +209,16 @@ namespace PlayWin.Core
             if (!int.TryParse(status?.ToString(), out var value)) return null;
             return value == 1 ? true : value == 0 || value == 2 ? false : (bool?)null;
         }
-        public async Task<List<LivePlayQuality>> GetPlayQuality(LiveRoomDetail roomDetail)
+        public Task<List<LivePlayQuality>> GetPlayQuality(LiveRoomDetail roomDetail) => GetPlayQuality(roomDetail, CancellationToken.None);
+        public async Task<List<LivePlayQuality>> GetPlayQuality(LiveRoomDetail roomDetail, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(Cookie))
             {
-                return await GetPlayQualityOld(roomDetail.RoomID);
+                return await GetPlayQualityOld(roomDetail.RoomID, cancellationToken: cancellationToken);
             }
             else
             {
-                return await GetPlayQualityNew(roomDetail.RoomID);
+                return await GetPlayQualityNew(roomDetail.RoomID, cancellationToken: cancellationToken);
             }
         }
         /// <summary>
@@ -219,12 +226,12 @@ namespace PlayWin.Core
         /// </summary>
         /// <param name="roomID"></param>
         /// <returns></returns>
-        private async Task<List<LivePlayQuality>> GetPlayQualityNew(string roomID)
+        private async Task<List<LivePlayQuality>> GetPlayQualityNew(string roomID, CancellationToken cancellationToken = default)
         {
 
             List<LivePlayQuality> qualities = new List<LivePlayQuality>();
             var result = await HttpUtil.GetString($"https://api.live.bilibili.com/xlive/web-room/v2/index/getRoomPlayInfo",
-                headers: await GetRequestHeader(),
+                headers: await GetRequestHeader(cancellationToken: cancellationToken),
                 queryParameters: new Dictionary<string, string>() {
                     { "room_id", roomID } ,
                     { "protocol", "0,1" },
@@ -232,7 +239,7 @@ namespace PlayWin.Core
                     { "codec","0,1"},
                     { "platform", "web"}
                 }
-            );
+            , cancellationToken: cancellationToken);
             var obj = ParseResponse(result);
             var qualitiesMap = new Dictionary<int, string>();
             foreach (var item in obj["data"]["playurl_info"]["playurl"]["g_qn_desc"])
@@ -257,11 +264,11 @@ namespace PlayWin.Core
         /// </summary>
         /// <param name="roomID"></param>
         /// <returns></returns>
-        private async Task<List<LivePlayQuality>> GetPlayQualityOld(string roomID)
+        private async Task<List<LivePlayQuality>> GetPlayQualityOld(string roomID, CancellationToken cancellationToken = default)
         {
 
             List<LivePlayQuality> qualities = new List<LivePlayQuality>();
-            var result = await HttpUtil.GetString($"https://api.live.bilibili.com/room/v1/Room/playUrl?cid={roomID}&qn=&platform=web", headers: await GetRequestHeader());
+            var result = await HttpUtil.GetString($"https://api.live.bilibili.com/room/v1/Room/playUrl?cid={roomID}&qn=&platform=web", headers: await GetRequestHeader(cancellationToken: cancellationToken), cancellationToken: cancellationToken);
             var obj = ParseResponse(result);
             foreach (var item in obj["data"]["quality_description"])
             {
@@ -274,23 +281,24 @@ namespace PlayWin.Core
             return qualities;
         }
 
-        public async Task<List<string>> GetPlayUrls(LiveRoomDetail roomDetail, LivePlayQuality qn)
+        public Task<List<string>> GetPlayUrls(LiveRoomDetail roomDetail, LivePlayQuality qn) => GetPlayUrls(roomDetail, qn, CancellationToken.None);
+        public async Task<List<string>> GetPlayUrls(LiveRoomDetail roomDetail, LivePlayQuality qn, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(Cookie))
             {
-                return await GetPlayUrlsOld(roomDetail.RoomID, qn.Data);
+                return await GetPlayUrlsOld(roomDetail.RoomID, qn.Data, cancellationToken: cancellationToken);
             }
             else
             {
-                return await GetPlayUrlsNew(roomDetail.RoomID, qn.Data);
+                return await GetPlayUrlsNew(roomDetail.RoomID, qn.Data, cancellationToken: cancellationToken);
             }
         }
-        private async Task<List<string>> GetPlayUrlsNew(string roomID, object qn)
+        private async Task<List<string>> GetPlayUrlsNew(string roomID, object qn, CancellationToken cancellationToken = default)
         {
             List<string> urls = new List<string>();
             List<LivePlayQuality> qualities = new List<LivePlayQuality>();
             var result = await HttpUtil.GetString($"https://api.live.bilibili.com/xlive/web-room/v2/index/getRoomPlayInfo",
-                headers: await GetRequestHeader(),
+                headers: await GetRequestHeader(cancellationToken: cancellationToken),
                 queryParameters: new Dictionary<string, string>() {
                     { "room_id", roomID } ,
                     { "protocol", "0,1" },
@@ -299,7 +307,7 @@ namespace PlayWin.Core
                     { "platform", "web" },
                     { "qn",qn.ToString()}
                 }
-            );
+            , cancellationToken: cancellationToken);
             var obj = ParseResponse(result);
             var streamList = obj["data"]["playurl_info"]["playurl"]["stream"];
             foreach (var streamItem in streamList)
@@ -333,10 +341,10 @@ namespace PlayWin.Core
         /// <param name="roomID"></param>
         /// <param name="qn"></param>
         /// <returns></returns>
-        private async Task<List<string>> GetPlayUrlsOld(string roomID, object qn)
+        private async Task<List<string>> GetPlayUrlsOld(string roomID, object qn, CancellationToken cancellationToken = default)
         {
             List<string> urls = new List<string>();
-            var result = await HttpUtil.GetString($"https://api.live.bilibili.com/room/v1/Room/playUrl?cid={roomID}&qn={qn}&platform=web", headers: await GetRequestHeader());
+            var result = await HttpUtil.GetString($"https://api.live.bilibili.com/room/v1/Room/playUrl?cid={roomID}&qn={qn}&platform=web", headers: await GetRequestHeader(cancellationToken: cancellationToken), cancellationToken: cancellationToken);
             var obj = ParseResponse(result);
             foreach (var item in obj["data"]["durl"])
             {
@@ -345,9 +353,10 @@ namespace PlayWin.Core
             return urls;
         }
 
-        public async Task<bool> GetLiveStatus(object roomId)
+        public Task<bool> GetLiveStatus(object roomId) => GetLiveStatus(roomId, CancellationToken.None);
+        public async Task<bool> GetLiveStatus(object roomId, CancellationToken cancellationToken)
         {
-            var resp = await HttpUtil.GetString($"https://api.live.bilibili.com/room/v1/Room/get_info?room_id={roomId}", headers: await GetRequestHeader());
+            var resp = await HttpUtil.GetString($"https://api.live.bilibili.com/room/v1/Room/get_info?room_id={roomId}", headers: await GetRequestHeader(cancellationToken: cancellationToken), cancellationToken: cancellationToken);
             var obj = ParseResponse(resp);
             return obj["data"]["live_status"].ToObject<int>() == 1;
         }
@@ -361,7 +370,7 @@ namespace PlayWin.Core
             61, 26, 17, 0, 1, 60, 51, 30, 4, 22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11,
             36, 20, 34, 44, 52
         };
-        private async Task<(string, string)> GetWbiKeys()
+        private async Task<(string, string)> GetWbiKeys(CancellationToken cancellationToken = default)
         {
             if (_imgKey != null && _subKey != null)
             {
@@ -370,7 +379,7 @@ namespace PlayWin.Core
             // 获取最新的 img_key 和 sub_key
             var response = await HttpUtil.GetString(
                 "https://api.bilibili.com/x/web-interface/nav",
-                headers: await GetRequestHeader());
+                headers: await GetRequestHeader(cancellationToken: cancellationToken), cancellationToken: cancellationToken);
             var obj = ParseResponse(response);
 
             var imgUrl = obj["data"]["wbi_img"]["img_url"].ToString();
@@ -390,9 +399,10 @@ namespace PlayWin.Core
             return mixinKeyEncTab.Aggregate("", (s, i) => s + origin[i]).Substring(0, 32);
         }
 
-        public async Task<string> GetWbiSign(string url)
+        public Task<string> GetWbiSign(string url) => GetWbiSign(url, CancellationToken.None);
+        public async Task<string> GetWbiSign(string url, CancellationToken cancellationToken)
         {
-            var (imgKey, subKey) = await GetWbiKeys();
+            var (imgKey, subKey) = await GetWbiKeys(cancellationToken: cancellationToken);
 
             // 为请求参数进行 wbi 签名
             var mixinKey = GetMixinKey(imgKey + subKey);
@@ -413,7 +423,7 @@ namespace PlayWin.Core
             return $"{query}&w_rid={wbi_sign}";
         }
 
-        private async Task<(string, string)> GetBuvid()
+        private async Task<(string, string)> GetBuvid(CancellationToken cancellationToken = default)
         {
             try
             {
@@ -422,18 +432,18 @@ namespace PlayWin.Core
                     {
                         { "cookie", Cookie }
                     }
-                  );
+                  , cancellationToken: cancellationToken);
                 var obj = ParseResponse(result);
 
                 return (obj["data"]["b_3"].ToString(), obj["data"]["b_4"].ToString());
             }
-            catch (Exception)
+            catch (Exception error) when (!(error is OperationCanceledException))
             {
                 return ("", "");
             }
         }
 
-        private async Task<string> GetAssessId()
+        private async Task<string> GetAssessId(CancellationToken cancellationToken = default)
         {
             if (!string.IsNullOrEmpty(_accessId))
             {
@@ -442,7 +452,7 @@ namespace PlayWin.Core
 
             var response = await HttpUtil.GetString(
                 "https://live.bilibili.com/lol",
-                headers: await GetRequestHeader());
+                headers: await GetRequestHeader(cancellationToken: cancellationToken), cancellationToken: cancellationToken);
             // 通过正则表达式"access_id":"(.*?)"提取
             var match = Regex.Match(response, "\"access_id\":\"(.*?)\"");
             if (match.Success)

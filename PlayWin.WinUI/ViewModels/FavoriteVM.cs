@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Windows.Storage.Pickers;
@@ -48,6 +49,7 @@ namespace PlayWin.WinUI.ViewModels
 
 
         private int generation;
+        private CancellationTokenSource requests = new();
         private string emptyMessage = "还没有关注主播";
         public string EmptyMessage { get => emptyMessage; private set { emptyMessage = value; DoPropertyChanged(nameof(EmptyMessage)); } }
         public async void LoadData() => await LoadAsync();
@@ -55,6 +57,7 @@ namespace PlayWin.WinUI.ViewModels
         {
             if (Loading) return;
             var current = generation;
+            var cancellation = requests.Token;
             Loading = true;
             LoaddingLiveStatus = true;
             try
@@ -63,14 +66,15 @@ namespace PlayWin.WinUI.ViewModels
                 using var limit = new System.Threading.SemaphoreSlim(4);
                 var checks = await Task.WhenAll(saved.Select(async item =>
                 {
-                    await limit.WaitAsync();
+                    await limit.WaitAsync(cancellation);
                     try
                     {
                         if (current != generation) return (item, live: false, failed: false, error: (Exception)null);
                         var site = MainVM.Sites.FirstOrDefault(s => s.Name == item.SiteName);
-                        return (item, live: site != null && await site.LiveSite.GetLiveStatus(item.RoomID).WaitAsync(TimeSpan.FromSeconds(10)), failed: site == null, error: (Exception)null);
+                        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellation); timeout.CancelAfter(TimeSpan.FromSeconds(10));
+                        return (item, live: site != null && await site.LiveSite.GetLiveStatus(item.RoomID, timeout.Token), failed: site == null, error: (Exception)null);
                     }
-                    catch (Exception ex) { LogHelper.Log("关注开播状态读取失败", LogType.ERROR, ex); return (item, live: false, failed: true, error: ex); }
+                    catch (Exception ex) when (!cancellation.IsCancellationRequested) { LogHelper.Log("关注开播状态读取失败", LogType.ERROR, ex); return (item, live: false, failed: true, error: ex); }
                     finally { limit.Release(); }
                 }));
                 if (current != generation) return;
@@ -80,10 +84,11 @@ namespace PlayWin.WinUI.ViewModels
                 EmptyMessage = failure.error != null ? RequestErrorMessage.Report(failure.error, failure.item.SiteName) : checks.Any(c => c.failed) ? "关注状态查询失败，请稍后刷新" : saved.Count == 0 ? "还没有关注主播" : "关注的主播暂未开播";
                 IsEmpty = Items.Count == 0;
             }
+            catch (OperationCanceledException) when (cancellation.IsCancellationRequested) { }
             catch (Exception ex) { if (current == generation) { EmptyMessage = "关注数据加载失败，请刷新重试"; IsEmpty = Items.Count == 0; HandleError(ex); } }
             finally { if (current == generation) { Loading = false; LoaddingLiveStatus = false; } }
         }
-        public void CancelPending() { generation++; Loading = false; LoaddingLiveStatus = false; }
+        public void CancelPending() { generation++; requests.Cancel(); requests.Dispose(); requests = new(); Loading = false; LoaddingLiveStatus = false; }
         public override async void Refresh()
         {
             foreach (var site in MainVM.Sites.Select(s => s.LiveSite).OfType<PlayWin.Core.Douyin>()) site.ClearLiveStatusCache();

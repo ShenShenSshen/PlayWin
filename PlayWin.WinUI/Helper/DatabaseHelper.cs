@@ -37,7 +37,7 @@ photo TEXT,
 room_id TEXT,
 watch_time DATETIME);
 ";
-            SqliteCommand createTable = new SqliteCommand(tableCommand, db);
+            using SqliteCommand createTable = new SqliteCommand(tableCommand, db);
             createTable.ExecuteNonQuery();
 
             return Task.CompletedTask;
@@ -49,18 +49,18 @@ watch_time DATETIME);
         {
             if (!MainVM.Sites.Any(x => x.Name == item.SiteName)) { return; }
             if (CheckFavorite(item.RoomID, item.SiteName)!=null) { return; }
-            SqliteCommand command = new SqliteCommand();
+            using SqliteCommand command = new SqliteCommand();
             command.Connection = db;
             command.CommandText = "INSERT INTO Favorite VALUES (NULL,@user_name,@site_name, @photo, @room_id);";
             command.Parameters.AddWithValue("@user_name", item.UserName);
             command.Parameters.AddWithValue("@site_name", item.SiteName);
             command.Parameters.AddWithValue("@photo", item.Photo);
             command.Parameters.AddWithValue("@room_id", item.RoomID);
-            command.ExecuteReader();
+            command.ExecuteNonQuery();
         }
         public static long? CheckFavorite(string roomId, string siteName)
         {
-            SqliteCommand command = new SqliteCommand();
+            using SqliteCommand command = new SqliteCommand();
             command.Connection = db;
             command.CommandText = "SELECT * FROM Favorite WHERE room_id=@room_id and site_name=@site_name";
             command.Parameters.AddWithValue("@site_name", siteName);
@@ -74,7 +74,7 @@ watch_time DATETIME);
         }
         public static void DeleteFavorite(long id)
         {
-            SqliteCommand command = new SqliteCommand();
+            using SqliteCommand command = new SqliteCommand();
             command.Connection = db;
             command.CommandText = "DELETE FROM Favorite WHERE id=@id";
             command.Parameters.AddWithValue("@id", id);
@@ -84,7 +84,7 @@ watch_time DATETIME);
 
         public static void DeleteFavorite()
         {
-            SqliteCommand command = new SqliteCommand();
+            using SqliteCommand command = new SqliteCommand();
             command.Connection = db;
             command.CommandText = "DELETE FROM Favorite";
             command.ExecuteNonQuery();
@@ -94,8 +94,8 @@ watch_time DATETIME);
         public async static Task<List<FavoriteItem>> GetFavorites()
         {
             List<FavoriteItem> favoriteItems = new List<FavoriteItem>();
-            SqliteCommand command = new SqliteCommand("SELECT * FROM Favorite", db);
-            var reader =await command.ExecuteReaderAsync();
+            using SqliteCommand command = new SqliteCommand("SELECT * FROM Favorite", db);
+            using var reader =await command.ExecuteReaderAsync();
             while (reader.Read())
             {
                 favoriteItems.Add(new FavoriteItem()
@@ -114,7 +114,7 @@ watch_time DATETIME);
         public static void AddHistory(HistoryItem item)
         {
             if (!MainVM.Sites.Any(x => x.Name == item.SiteName)) { return; }
-            SqliteCommand command = new SqliteCommand();
+            using SqliteCommand command = new SqliteCommand();
             command.Connection = db;
             var hisId = CheckHistory(item.RoomID, item.SiteName);
             if (hisId != null)
@@ -124,7 +124,7 @@ watch_time DATETIME);
                 command.Parameters.AddWithValue("@site_name", item.SiteName);
                 command.Parameters.AddWithValue("@room_id", item.RoomID);
                 command.Parameters.AddWithValue("@time", DateTime.Now);
-                command.ExecuteReader();
+                command.ExecuteNonQuery();
               
                 return;
             }
@@ -135,11 +135,11 @@ watch_time DATETIME);
             command.Parameters.AddWithValue("@photo", item.Photo);
             command.Parameters.AddWithValue("@room_id", item.RoomID);
             command.Parameters.AddWithValue("@time", DateTime.Now);
-            command.ExecuteReader();
+            command.ExecuteNonQuery();
         }
         public static long? CheckHistory(string roomId, string siteName)
         {
-            SqliteCommand command = new SqliteCommand();
+            using SqliteCommand command = new SqliteCommand();
             command.Connection = db;
             command.CommandText = "SELECT * FROM History WHERE room_id=@room_id and site_name=@site_name";
             command.Parameters.AddWithValue("@site_name", siteName);
@@ -153,7 +153,7 @@ watch_time DATETIME);
         }
         public static void DeleteHistory(long id)
         {
-            SqliteCommand command = new SqliteCommand();
+            using SqliteCommand command = new SqliteCommand();
             command.Connection = db;
             command.CommandText = "DELETE FROM History WHERE id=@id";
             command.Parameters.AddWithValue("@id", id);
@@ -162,7 +162,7 @@ watch_time DATETIME);
         }
         public static void DeleteHistory()
         {
-            SqliteCommand command = new SqliteCommand();
+            using SqliteCommand command = new SqliteCommand();
             command.Connection = db;
             command.CommandText = "DELETE FROM History";
             command.ExecuteNonQuery();
@@ -171,8 +171,8 @@ watch_time DATETIME);
         public async static Task<List<HistoryItem>> GetHistory()
         {
             List<HistoryItem> favoriteItems = new List<HistoryItem>();
-            SqliteCommand command = new SqliteCommand("SELECT * FROM History ORDER BY watch_time DESC", db);
-            var reader =await command.ExecuteReaderAsync();
+            using SqliteCommand command = new SqliteCommand("SELECT * FROM History ORDER BY watch_time DESC", db);
+            using var reader =await command.ExecuteReaderAsync();
             while (reader.Read())
             {
                 favoriteItems.Add(new HistoryItem()

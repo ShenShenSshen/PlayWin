@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><Page x:Class="PlayWin.WinUI.Views.FavoritePage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Windows10version1809="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)" xmlns:controls="using:PlayWin.WinUI.Controls" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:local="using:PlayWin.WinUI.Views" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:models="using:PlayWin.WinUI.Models" mc:Ignorable="d" FontFamily="{StaticResource ContentControlThemeFontFamily}" FontSize="14" Foreground="{ThemeResource AppTextBrush}">
+<?xml version="1.0" ?><Page x:Class="PlayWin.WinUI.Views.FavoritePage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Windows10version1809="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)" xmlns:controls="using:PlayWin.WinUI.Controls" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:local="using:PlayWin.WinUI.Views" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:models="using:PlayWin.WinUI.Models" mc:Ignorable="d" FontFamily="{StaticResource ContentControlThemeFontFamily}" FontSize="14" Foreground="{ThemeResource AppTextBrush}" xmlns:perf="using:PlayWin.WinUI.Helper">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -50,7 +50,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition/>
                             <ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                            <PersonPicture Width="48" Height="48" Background="{ThemeResource AppAvatarBrush}" BorderThickness="0" ProfilePicture="{x:Bind Path=Photo}" Foreground="{ThemeResource AppSelectionTextBrush}"/>
+                            <PersonPicture Width="48" Height="48" Background="{ThemeResource AppAvatarBrush}" BorderThickness="0" Foreground="{ThemeResource AppSelectionTextBrush}" perf:DecodedImage.Url="{x:Bind Path=Photo}"/>
                             <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Text="{x:Bind Path=UserName}" FontSize="14" TextTrimming="CharacterEllipsis" ToolTipService.ToolTip="{x:Bind Path=UserName}"/>
                                 <TextBlock Margin="0,4,0,0" FontSize="13" Foreground="{ThemeResource ReadableSecondaryTextBrush}" Text="{x:Bind Path=SiteName}"/>

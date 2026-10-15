@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace PlayWin.Core.Interface
 {
@@ -62,5 +63,14 @@ namespace PlayWin.Core.Interface
         /// <returns></returns>
         Task<bool> GetLiveStatus(object roomId);
 
+
+        Task<List<LiveCategory>> GetCategores(CancellationToken cancellationToken);
+        Task<LiveSearchResult> Search(string keyword, int page, CancellationToken cancellationToken);
+        Task<LiveCategoryResult> GetCategoryRooms(LiveSubCategory category, int page, CancellationToken cancellationToken);
+        Task<LiveCategoryResult> GetRecommendRooms(int page, CancellationToken cancellationToken);
+        Task<LiveRoomDetail> GetRoomDetail(object roomId, CancellationToken cancellationToken);
+        Task<List<LivePlayQuality>> GetPlayQuality(LiveRoomDetail roomDetail, CancellationToken cancellationToken);
+        Task<List<string>> GetPlayUrls(LiveRoomDetail roomDetail, LivePlayQuality qn, CancellationToken cancellationToken);
+        Task<bool> GetLiveStatus(object roomId, CancellationToken cancellationToken);
     }
 }

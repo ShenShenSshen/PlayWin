@@ -75,12 +75,14 @@ internal static class BrowseChecks
             vm.SelectedGroup = vm.Groups[0];
             var pending = new TaskCompletionSource<List<LiveCategory>>();
             api.Pending = pending.Task;
+            GameCatalog.Invalidate(api);
             var reload = vm.LoadAsync();
             Check(vm.SelectedGroup == null && SettingHelper.GetValue(BrowsePreferences.GroupKey(site), "") == "2", "Temporary clear overwrote the saved group.");
             pending.SetResult(api.Groups);
             await reload;
             Check(vm.SelectedGroup?.ID == "2", "Refresh did not restore the selected group.");
             api.Pending = Task.FromException<List<LiveCategory>>(new System.Net.Http.HttpRequestException("Isolated test"));
+            GameCatalog.Invalidate(api);
             await vm.LoadAsync();
             Check(SettingHelper.GetValue(BrowsePreferences.GroupKey(site), "") == "2", "Network failure overwrote the selected group.");
             api.Pending = null;
@@ -162,14 +164,19 @@ internal static class BrowseChecks
         internal Task<List<LiveCategory>> Pending;
         internal int SearchCalls, StatusCalls;
         internal List<LiveCategory> Groups = new() { new() { ID = "2", Name = "网游", Children = new() { new() { ID = "game", ParentID = "2", Name = "测试游戏" } } }, new() { ID = "3", Name = "手游", Children = new() { new() { ID = "mobile", ParentID = "3", Name = "测试手游" } } } };
+        public new Task<List<LiveCategory>> GetCategores(System.Threading.CancellationToken cancellationToken) => GetCategores().WaitAsync(cancellationToken);
         public new Task<List<LiveCategory>> GetCategores() => Pending ?? Task.FromResult(Groups);
+        public new Task<LiveSearchResult> Search(string keyword, int page, System.Threading.CancellationToken cancellationToken) => Search(keyword, page).WaitAsync(cancellationToken);
         public new Task<LiveSearchResult> Search(string keyword, int page = 1) { SearchCalls++; return SearchResults(); }
+        public new Task<bool> GetLiveStatus(object roomId, System.Threading.CancellationToken cancellationToken) => GetLiveStatus(roomId).WaitAsync(cancellationToken);
         public new Task<bool> GetLiveStatus(object roomId) { StatusCalls++; throw new Exception("No extra status requests allowed."); }
     }
     private sealed class SearchDouyin : PlayWin.Core.Douyin, ILiveSite
     {
         internal int SearchCalls, StatusCalls;
+        public new Task<LiveSearchResult> Search(string keyword, int page, System.Threading.CancellationToken cancellationToken) => Search(keyword, page).WaitAsync(cancellationToken);
         public new Task<LiveSearchResult> Search(string keyword, int page = 1) { SearchCalls++; return SearchResults(); }
+        public new Task<bool> GetLiveStatus(object roomId, System.Threading.CancellationToken cancellationToken) => GetLiveStatus(roomId).WaitAsync(cancellationToken);
         public new Task<bool> GetLiveStatus(object roomId) { StatusCalls++; throw new Exception("No extra status requests allowed."); }
     }
 }

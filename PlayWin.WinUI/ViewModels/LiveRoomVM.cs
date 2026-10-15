@@ -108,6 +108,7 @@ namespace PlayWin.WinUI.ViewModels
         private bool restoringQuality;
         private bool suppressPlayback;
         private int loadGeneration, urlGeneration;
+        private CancellationTokenSource loadCancellation, urlCancellation;
         public LivePlayQuality CurrentQuality
         {
             get { return currentQuality; }
@@ -152,10 +153,13 @@ namespace PlayWin.WinUI.ViewModels
 
 
         public async void LoadData(ILiveSite site, object roomId) => await LoadDataAsync(site, roomId);
-        internal async Task LoadDataAsync(ILiveSite site, object roomId)
+        internal async Task LoadDataAsync(ILiveSite site, object roomId, CancellationToken cancellationToken = default)
         {
+            CancelPendingPlayback();
             var generation = ++loadGeneration;
-            urlGeneration++;
+            var operation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            operation.CancelAfter(TimeSpan.FromSeconds(40));
+            loadCancellation = operation;
             try
             {
                 Loading = true;
@@ -171,7 +175,7 @@ namespace PlayWin.WinUI.ViewModels
                 Photo = "";
 
                 RoomId = roomId;
-                var result = await site.GetRoomDetail(roomId);
+                var result = await site.GetRoomDetail(roomId, operation.Token);
                 if (generation != loadGeneration) return;
                 detail = result;
                 RoomID = result.RoomID;
@@ -193,7 +197,7 @@ namespace PlayWin.WinUI.ViewModels
 
                 if (detail.Status)
                 {
-                    var qualities = await site.GetPlayQuality(result);
+                    var qualities = await site.GetPlayQuality(result, operation.Token);
                     if (generation != loadGeneration) return;
                     Qualities = qualities;
                     if (Qualities != null && Qualities.Count > 0)
@@ -214,6 +218,8 @@ namespace PlayWin.WinUI.ViewModels
                 });
 
             }
+            catch (OperationCanceledException) when (operation.IsCancellationRequested)
+            { if (generation == loadGeneration && !cancellationToken.IsCancellationRequested) HandleError(new TimeoutException(), "房间加载超时，请重试"); }
             catch (Exception ex)
             {
                 if (generation == loadGeneration) HandleError(ex, RequestErrorMessage.Report(ex, site.Name));
@@ -221,6 +227,8 @@ namespace PlayWin.WinUI.ViewModels
             finally
             {
                 if (generation == loadGeneration) Loading = false;
+                if (loadCancellation == operation) loadCancellation = null;
+                operation.Dispose();
             }
         }
 
@@ -247,26 +255,29 @@ namespace PlayWin.WinUI.ViewModels
                 SiteName = Site.Name,
                 UserName = Name
             });
-            IsFavorite = true;
+            FavoriteID = DatabaseHelper.CheckFavorite(RoomID, Site.Name);
+            IsFavorite = FavoriteID.HasValue;
             MessageCenter.UpdateFavorite();
         }
         private void RemoveFavorite()
         {
-            if (FavoriteID == null)
-            {
-                return;
-            }
-            DatabaseHelper.DeleteFavorite(FavoriteID.Value);
+            if (Site == null || string.IsNullOrEmpty(RoomID)) return;
+            FavoriteID = DatabaseHelper.CheckFavorite(RoomID, Site.Name);
+            if (FavoriteID.HasValue) DatabaseHelper.DeleteFavorite(FavoriteID.Value);
+            FavoriteID = null;
             IsFavorite = false;
             MessageCenter.UpdateFavorite();
         }
 
         public async void LoadPlayUrl()
         {
+            urlCancellation?.Cancel();
+            var operation = new CancellationTokenSource(TimeSpan.FromSeconds(25));
+            urlCancellation = operation;
             var generation = ++urlGeneration;
             try
             {
-                var data = await Site.GetPlayUrls(detail, CurrentQuality);
+                var data = await Site.GetPlayUrls(detail, CurrentQuality, operation.Token);
                 if (generation != urlGeneration) return;
                 if (data.Count == 0)
                 {
@@ -286,29 +297,32 @@ namespace PlayWin.WinUI.ViewModels
                 Lines = ls;
                 CurrentLine = Lines[0];
             }
+            catch (OperationCanceledException) when (operation.IsCancellationRequested)
+            { if (generation == urlGeneration) Utils.ShowMessageToast("播放地址加载超时，请重试"); }
             catch (Exception ex)
             {
                 if (generation == urlGeneration) Utils.ShowMessageToast(RequestErrorMessage.Report(ex, Site.Name));
             }
+            finally { if (urlCancellation == operation) urlCancellation = null; operation.Dispose(); }
 
 
 
 
         }
-        internal void CancelPendingPlayback() { loadGeneration++; urlGeneration++; Loading = false; }
+        internal void CancelPendingPlayback() { loadGeneration++; urlGeneration++; loadCancellation?.Cancel(); urlCancellation?.Cancel(); Loading = false; }
         internal async Task<string> RefreshStreamAsync(CancellationToken cancellation)
         {
             if (Site == null || RoomId == null) throw new InvalidOperationException("没有正在播放的直播间");
             var generation = loadGeneration;
-            var refreshed = await Site.GetRoomDetail(RoomId).WaitAsync(TimeSpan.FromSeconds(20), cancellation);
+            var refreshed = await Site.GetRoomDetail(RoomId, cancellation);
             cancellation.ThrowIfCancellationRequested();
             if (generation != loadGeneration) throw new OperationCanceledException(cancellation);
             Living = refreshed.Status;
             if (!Living) return null;
-            var available = await Site.GetPlayQuality(refreshed).WaitAsync(TimeSpan.FromSeconds(15), cancellation);
+            var available = await Site.GetPlayQuality(refreshed, cancellation);
             var quality = available.FirstOrDefault(q => q.Quality == CurrentQuality?.Quality) ?? GetPreferredQuality(Site, available);
             if (quality == null) throw new InvalidOperationException("平台未返回可用画质");
-            var urls = await Site.GetPlayUrls(refreshed, quality).WaitAsync(TimeSpan.FromSeconds(15), cancellation);
+            var urls = await Site.GetPlayUrls(refreshed, quality, cancellation);
             cancellation.ThrowIfCancellationRequested();
             if (generation != loadGeneration) throw new OperationCanceledException(cancellation);
             if (urls.Count == 0) throw new InvalidOperationException("平台未返回播放地址");

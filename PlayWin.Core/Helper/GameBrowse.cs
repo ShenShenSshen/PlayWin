@@ -25,6 +25,29 @@ namespace PlayWin.Core.Helper
             }
             return result;
         }
+        public static bool FillMissingCategoryPictures(IEnumerable<LiveCategory> categories, IEnumerable<LiveCategory> pictureSources)
+        {
+            var pictures = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var game in pictureSources.SelectMany(c => c.Children ?? new List<LiveSubCategory>()))
+            {
+                if (string.IsNullOrWhiteSpace(game.Name) || string.IsNullOrWhiteSpace(game.Pic)) continue;
+                var picture = game.Pic.Trim();
+                if (picture.StartsWith("//", StringComparison.Ordinal)) picture = "https:" + picture;
+                if (!Uri.TryCreate(picture, UriKind.Absolute, out var uri) || (uri.Scheme != Uri.UriSchemeHttps && uri.Scheme != Uri.UriSchemeHttp)) continue;
+                var name = game.Name.Trim();
+                if (!pictures.ContainsKey(name)) pictures.Add(name, picture);
+            }
+            var changed = false;
+            foreach (var game in categories.SelectMany(c => c.Children ?? new List<LiveSubCategory>()))
+            {
+                if (!string.IsNullOrWhiteSpace(game.Pic) || string.IsNullOrWhiteSpace(game.Name)) continue;
+                if (!pictures.TryGetValue(game.Name.Trim(), out var picture)) continue;
+                // Copy only the artwork; partition IDs, names and source objects stay intact.
+                game.Pic = picture;
+                changed = true;
+            }
+            return changed;
+        }
         public static List<LiveGameCategory> MergeCategories(IEnumerable<LiveGameSource> sources) => sources
             .Where(s => !string.IsNullOrWhiteSpace(s.Category.Name))
             .GroupBy(s => s.Category.Name.Trim(), StringComparer.OrdinalIgnoreCase)

@@ -42,11 +42,11 @@ namespace PlayWin.WinUI
 
             this.NavigationCacheMode = NavigationCacheMode.Enabled;
             this.InitializeComponent();
-            MessageCenter.UpdatePanelDisplayModeEvent += MessageCenter_UpdatePanelDisplayModeEvent;
+            Loaded += (_, _) => { MessageCenter.UpdatePanelDisplayModeEvent -= MessageCenter_UpdatePanelDisplayModeEvent; MessageCenter.UpdatePanelDisplayModeEvent += MessageCenter_UpdatePanelDisplayModeEvent; };
             this.KeyDown += MainPage_KeyDown;
             SetPaneMode();
             Loaded += MainPage_CheckUpdateOnStartup;
-            Unloaded += (_, _) => randomLiveOperation?.Cancel();
+            Unloaded += (_, _) => { randomLiveOperation?.Cancel(); MessageCenter.UpdatePanelDisplayModeEvent -= MessageCenter_UpdatePanelDisplayModeEvent; };
         }
 
         private async void MainPage_CheckUpdateOnStartup(object sender, RoutedEventArgs e)
@@ -132,7 +132,7 @@ namespace PlayWin.WinUI
         private async void NavigationView_ItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs args)
         {
             if (args.InvokedItemContainer != RandomLiveItem || randomLiveOperation != null) return;
-            var operation = new System.Threading.CancellationTokenSource();
+            var operation = new System.Threading.CancellationTokenSource(TimeSpan.FromSeconds(60));
             randomLiveOperation = operation;
             RandomLiveItem.IsEnabled = false;
             RandomLiveItem.Content = "正在挑选…";

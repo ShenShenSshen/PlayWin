@@ -19,7 +19,7 @@ internal static class GameBrowseChecks
         var catalogSite = new TestCatalogSite();
         var selectedSources = await GameCatalog.LoadAsync(catalogSite);
         Check(selectedSources.Count == 1 && selectedSources.All(source => source.Site == catalogSite), "Game catalog did not restrict results to the selected platform.");
-        catalogSite.Fail = true;
+        catalogSite.Fail = true; GameCatalog.Invalidate(catalogSite);
         try { await GameCatalog.LoadAsync(catalogSite); throw new Exception("Catalog swallowed a platform failure."); }
         catch (InvalidOperationException ex) when (ex.Message == "Test category unavailable") { }
         var sources = new List<LiveGameSource> { new() { Site = a, Category = new() { ID = "game" } }, new() { Site = b, Category = new() { ID = "game" } } };
@@ -105,7 +105,7 @@ internal static class GameBrowseChecks
     {
         readonly List<LiveGameSource> sources;
         public TestList(List<LiveGameSource> sources) { this.sources = sources; }
-        protected override Task<List<LiveGameSource>> GetSourcesAsync() => Task.FromResult(sources);
+        protected override Task<List<LiveGameSource>> GetSourcesAsync(System.Threading.CancellationToken cancellationToken) => Task.FromResult(sources);
     }
     private class SwitchingList : LiveRoomListVM
     {
@@ -113,12 +113,13 @@ internal static class GameBrowseChecks
         readonly TaskCompletionSource<List<LiveGameSource>> pending = new(TaskCreationOptions.RunContinuationsAsynchronously);
         int calls;
         public SwitchingList(LiveGameSource oldSource, LiveGameSource newSource) { this.oldSource = oldSource; this.newSource = newSource; }
-        protected override Task<List<LiveGameSource>> GetSourcesAsync() => calls++ == 0 ? pending.Task : Task.FromResult(new List<LiveGameSource> { newSource });
+        protected override Task<List<LiveGameSource>> GetSourcesAsync(System.Threading.CancellationToken cancellationToken) => calls++ == 0 ? pending.Task : Task.FromResult(new List<LiveGameSource> { newSource });
         public void Release() => pending.SetResult(new() { oldSource });
     }
     private class TestCatalogSite : PlayWin.Core.BiliBili, ILiveSite
     {
         public bool Fail;
+        public new Task<List<LiveCategory>> GetCategores(System.Threading.CancellationToken cancellationToken) => GetCategores().WaitAsync(cancellationToken);
         public new Task<List<LiveCategory>> GetCategores() => Fail
             ? Task.FromException<List<LiveCategory>>(new InvalidOperationException("Test category unavailable"))
             : Task.FromResult(new List<LiveCategory> { new() { ID = "2", Name = "网游", Children = new() { new() { ID = "game", Name = "Test game" } } } });
@@ -133,6 +134,7 @@ internal static class GameBrowseChecks
         public List<LivePlayQuality> QualityOptions { get; } = new() { new() { Quality = "原画" }, new() { Quality = "高清" } };
         public List<int> Pages { get; } = new();
         public TestSite(string name) { Name = name; }
+        public Task<LiveCategoryResult> GetCategoryRooms(LiveSubCategory category, int page, System.Threading.CancellationToken cancellationToken) => GetCategoryRooms(category, page).WaitAsync(cancellationToken);
         public Task<LiveCategoryResult> GetCategoryRooms(LiveSubCategory category, int page = 1)
         {
             if (Fail) throw new Exception("Test endpoint unavailable");
@@ -141,12 +143,19 @@ internal static class GameBrowseChecks
             var room = new LiveRoomItem { RoomID = page == 1 ? "same" : "next", IsLive = true };
             return Task.FromResult(new LiveCategoryResult { HasMore = page < 2, Rooms = new() { room, room, new() { RoomID = "offline", IsLive = false }, new() { RoomID = "unknown" } } });
         }
+        public Task<bool> GetLiveStatus(object roomId, System.Threading.CancellationToken cancellationToken) => GetLiveStatus(roomId).WaitAsync(cancellationToken);
         public Task<bool> GetLiveStatus(object roomId) => StatusFail ? Task.FromException<bool>(new Exception("Test status unavailable")) : Task.FromResult(Live);
+        public Task<List<LiveCategory>> GetCategores(System.Threading.CancellationToken cancellationToken) => GetCategores().WaitAsync(cancellationToken);
         public Task<List<LiveCategory>> GetCategores() => throw new NotSupportedException();
+        public Task<LiveSearchResult> Search(string keyword, int page, System.Threading.CancellationToken cancellationToken) => Search(keyword, page).WaitAsync(cancellationToken);
         public Task<LiveSearchResult> Search(string keyword, int page = 1) => throw new NotSupportedException();
+        public Task<LiveCategoryResult> GetRecommendRooms(int page, System.Threading.CancellationToken cancellationToken) => GetRecommendRooms(page).WaitAsync(cancellationToken);
         public Task<LiveCategoryResult> GetRecommendRooms(int page = 1) => throw new NotSupportedException();
+        public Task<LiveRoomDetail> GetRoomDetail(object roomId, System.Threading.CancellationToken cancellationToken) => GetRoomDetail(roomId).WaitAsync(cancellationToken);
         public Task<LiveRoomDetail> GetRoomDetail(object roomId) => Task.FromResult(new LiveRoomDetail { RoomID = roomId.ToString(), Title = "Test", UserName = "Test", Status = true });
+        public Task<List<LivePlayQuality>> GetPlayQuality(LiveRoomDetail roomDetail, System.Threading.CancellationToken cancellationToken) => GetPlayQuality(roomDetail).WaitAsync(cancellationToken);
         public Task<List<LivePlayQuality>> GetPlayQuality(LiveRoomDetail roomDetail) => Task.FromResult(QualityOptions);
+        public Task<List<string>> GetPlayUrls(LiveRoomDetail roomDetail, LivePlayQuality qn, System.Threading.CancellationToken cancellationToken) => GetPlayUrls(roomDetail, qn).WaitAsync(cancellationToken);
         public Task<List<string>> GetPlayUrls(LiveRoomDetail roomDetail, LivePlayQuality qn) => Task.FromResult(new List<string> { "https://example.invalid/test-stream" });
     }
 }

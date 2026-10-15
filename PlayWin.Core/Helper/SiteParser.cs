@@ -75,7 +75,7 @@ namespace PlayWin.Core.Helper
         {
             try
             {
-                var headResp = await HttpUtil.Head(url);
+                using var headResp = await HttpUtil.Head(url);
                 if (headResp.Headers.Location != null)
                 {
                     return headResp.Headers.Location.ToString();

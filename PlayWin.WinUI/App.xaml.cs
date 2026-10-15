@@ -1,4 +1,4 @@
-using PlayWin.WinUI.Helper;
+﻿using PlayWin.WinUI.Helper;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -32,6 +32,12 @@ public partial class App : Application
             try
             {
                 if (Environment.GetCommandLineArgs().Contains("--category-repro")) await CategoryRepro.RunAsync(window);
+                else if (Environment.GetCommandLineArgs().Contains("--image-checks")) await CategoryImageChecks.RunAsync(window);
+                else if (Environment.GetCommandLineArgs().Contains("--border-check")) await WindowBorderChecks.RunAsync(window);
+                else if (Environment.GetCommandLineArgs().Contains("--performance-playback")) await PerformanceRegressionChecks.PlaybackAsync(window);
+                else if (Environment.GetCommandLineArgs().Contains("--performance-checks")) await PerformanceRegressionChecks.RunAsync(window);
+                else if (Environment.GetCommandLineArgs().Contains("--favorite-check")) await PerformanceChecks.FavoriteAsync();
+                else if (Environment.GetCommandLineArgs().Contains("--performance")) await PerformanceChecks.RunAsync(window);
                 else if (Environment.GetCommandLineArgs().Contains("--browse-preferences-check")) BrowseChecks.VerifyRestart();
                 else if (Environment.GetCommandLineArgs().Contains("--platform-live")) await PlatformChecks.LiveAsync(window);
                 else if (Environment.GetCommandLineArgs().Contains("--update-download-check")) await UpdateChecks.LiveAsync();
@@ -39,8 +45,8 @@ public partial class App : Application
             }
             catch (Exception ex)
             {
-                if (!Environment.GetCommandLineArgs().Contains("--smoke-test")) throw;
-                var reports = Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "PlayWin"));
+                if (!Environment.GetCommandLineArgs().Contains("--smoke-test") || Environment.GetCommandLineArgs().Contains("--performance")) throw;
+                var reports = Directory.CreateDirectory(AppPaths.DataDirectory);
                 File.WriteAllText(Path.Combine(reports.FullName, "smoke-test.log"), "FAIL Smoke test interrupted\n" + ex);
                 Environment.ExitCode = 1;
             }
@@ -78,11 +84,11 @@ public partial class App : Application
         Windows.Add(window);
         ActiveWindow = window;
         var douyu = (PlayWin.Core.Douyu)ViewModels.MainVM.Sites.First(s => s.LiveSite is PlayWin.Core.Douyu).LiveSite;
-        douyu.SignAsync ??= new DouyuScriptBrowser().SignAsync;
-        if (!Environment.GetCommandLineArgs().Contains("--smoke-test"))
+        if (douyu.SignAsync == null) { var browser = new DouyuScriptBrowser(); douyu.SignAsync = browser.SignAsync; douyu.CancellableSignAsync = browser.SignAsync; }
+        if (!Environment.GetCommandLineArgs().Contains("--smoke-test") || Environment.GetCommandLineArgs().Contains("--performance"))
         {
             var douyin = (PlayWin.Core.Douyin)ViewModels.MainVM.Sites.First(s => s.LiveSite is PlayWin.Core.Douyin).LiveSite;
-            douyin.WebRequestAsync ??= new DouyinWebRequest().GetAsync;
+            if (douyin.WebRequestAsync == null) { var browser = new DouyinWebRequest(); douyin.WebRequestAsync = browser.GetAsync; douyin.CancellableWebRequestAsync = browser.GetAsync; }
         }
         window.Activated += (_, _) => ActiveWindow = window;
         window.Closed += (_, _) =>

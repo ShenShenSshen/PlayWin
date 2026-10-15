@@ -9,17 +9,33 @@ using System;
 namespace PlayWin.WinUI;
 public sealed partial class BaseFramePage : Page
 {
+    private MainWindow owner;
     public BaseFramePage()
     {
         InitializeComponent();
-        MessageCenter.NavigatePageEvent += MessageCenter_NavigatePageEvent;
-        MessageCenter.ChangeTitleEvent += MessageCenter_ChangeTitleEvent;
-        MessageCenter.HideTitlebarEvent += MessageCenter_HideTitlebarEvent;
+
         PointerPressed += BaseFramePage_PointerPressed;
         KeyDown += Page_KeyDown;
         BtnBack.Click += BtnBack_Click;
         MainFrame.Navigated += MainFrame_Navigated;
-        Loaded += (_, _) => App.GetWindowFor(this).SetTitleBar(TitleBar);
+        Loaded += (_, _) =>
+        {
+            Detach();
+            MessageCenter.NavigatePageEvent += MessageCenter_NavigatePageEvent;
+            MessageCenter.ChangeTitleEvent += MessageCenter_ChangeTitleEvent;
+            MessageCenter.HideTitlebarEvent += MessageCenter_HideTitlebarEvent;
+            owner = App.GetWindowFor(this); owner.Closed += OwnerClosed; owner.SetTitleBar(TitleBar);
+        };
+        Unloaded += (_, _) => Detach();
+    }
+    private void OwnerClosed(object sender, WindowEventArgs e) => Detach();
+    private void Detach()
+    {
+        MessageCenter.NavigatePageEvent -= MessageCenter_NavigatePageEvent;
+        MessageCenter.ChangeTitleEvent -= MessageCenter_ChangeTitleEvent;
+        MessageCenter.HideTitlebarEvent -= MessageCenter_HideTitlebarEvent;
+        if (owner != null) owner.Closed -= OwnerClosed;
+        owner = null;
     }
     private void Page_KeyDown(object sender, KeyRoutedEventArgs e)
     {

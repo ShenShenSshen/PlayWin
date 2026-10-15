@@ -2,6 +2,7 @@ using PlayWin.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 namespace PlayWin.WinUI.ViewModels;
 public class SearchVM : LiveRoomListVM
 {
@@ -13,10 +14,10 @@ public class SearchVM : LiveRoomListVM
         keyword = value.Trim();
         await LoadAsync();
     }
-    protected override Task<List<LiveGameSource>> GetSourcesAsync() => Task.FromResult(MainVM.Sites.Select(s => new LiveGameSource { Site = s.LiveSite }).ToList());
-    protected override async Task<LiveCategoryResult> FetchAsync(LiveGameSource source, int page)
+    protected override Task<List<LiveGameSource>> GetSourcesAsync(CancellationToken cancellationToken) => Task.FromResult(MainVM.Sites.Select(s => new LiveGameSource { Site = s.LiveSite }).ToList());
+    protected override async Task<LiveCategoryResult> FetchAsync(LiveGameSource source, int page, CancellationToken cancellationToken)
     {
-        var result = await source.Site.Search(keyword, page);
+        var result = await source.Site.Search(keyword, page, cancellationToken);
         return new LiveCategoryResult { HasMore = result.HasMore, Rooms = result.Rooms.Select(room => (LiveRoomItem)new Models.SearchRoomItem(room, source.Site)).ToList() };
     }
 }

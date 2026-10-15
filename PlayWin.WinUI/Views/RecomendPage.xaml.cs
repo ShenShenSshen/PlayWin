@@ -10,7 +10,6 @@ namespace PlayWin.WinUI.Views;
 public sealed partial class RecomendPage : Page
 {
     readonly RecomendVM recomendVM = new();
-    readonly DispatcherTimer statusTimer = new() { Interval = TimeSpan.FromSeconds(60) };
     private int shortcutGeneration;
     public RecomendPage()
     {
@@ -23,10 +22,10 @@ public sealed partial class RecomendPage : Page
             if (PlatformPicker.SelectedItem != MainVM.BrowseSite) PlatformPicker.SelectedItem = MainVM.BrowseSite;
             else if (!recomendVM.HasLoaded) await recomendVM.LoadAsync();
             else await recomendVM.HideStoppedAsync();
-            if (IsLoaded) statusTimer.Start();
+
         };
-        Unloaded += (_, _) => { shortcutGeneration++; statusTimer.Stop(); recomendVM.CancelPending(); };
-        statusTimer.Tick += async (_, _) => await recomendVM.HideStoppedAsync();
+        Unloaded += (_, _) => { shortcutGeneration++;  recomendVM.CancelPending(); };
+        _ = new PageStatusRefresh(this, () => recomendVM.HasLoaded ? recomendVM.HideStoppedAsync() : recomendVM.LoadAsync(), recomendVM.CancelPending);
     }
     private async void PlatformPicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {

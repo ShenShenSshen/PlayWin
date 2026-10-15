@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><Application x:Class="PlayWin.WinUI.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Windows10version1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)" xmlns:convert="using:PlayWin.WinUI.Converters" xmlns:local="using:PlayWin.WinUI">
+<?xml version="1.0" ?><Application x:Class="PlayWin.WinUI.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Windows10version1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)" xmlns:convert="using:PlayWin.WinUI.Converters" xmlns:local="using:PlayWin.WinUI" xmlns:perf="using:PlayWin.WinUI.Helper">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -44,11 +44,7 @@
                     </Grid.RowDefinitions>
                     <Border CornerRadius="10 10 0 0">
                         <Grid>
-                            <Viewbox Stretch="UniformToFill">
-                                <Grid Width="16" Height="9">
-                                    <Image Source="{Binding Path=Cover}" Stretch="UniformToFill"/>
-                                </Grid>
-                            </Viewbox>
+                            <Image Stretch="UniformToFill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" perf:DecodedImage.Url="{Binding Path=Cover}"/>
                             <Grid Padding="8" VerticalAlignment="Bottom">
                                 <Grid.Background>
                                     <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">

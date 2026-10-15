@@ -4,16 +4,18 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 namespace PlayWin.Core.Helper;
 internal static class PlatformHttp
 {
-    internal static async Task<string> Send(string url, string body, string cookie, string userAgent, string referer)
+    internal static async Task<string> Send(string url, string body, string cookie, string userAgent, string referer, CancellationToken cancellationToken = default)
     {
-        using var client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false, AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate }) { Timeout = TimeSpan.FromSeconds(15) };
-        client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", userAgent);
-        client.DefaultRequestHeaders.Referrer = new Uri(referer);
-        if (!string.IsNullOrEmpty(cookie)) client.DefaultRequestHeaders.TryAddWithoutValidation("Cookie", cookie);
-        using var response = body == null ? await client.GetAsync(url) : await client.PostAsync(url, new StringContent(body, Encoding.UTF8, "application/x-www-form-urlencoded"));
+        using var request = new HttpRequestMessage(body == null ? HttpMethod.Get : HttpMethod.Post, url);
+        request.Headers.TryAddWithoutValidation("User-Agent", userAgent);
+        request.Headers.Referrer = new Uri(referer);
+        if (!string.IsNullOrEmpty(cookie)) request.Headers.TryAddWithoutValidation("Cookie", cookie);
+        if (body != null) request.Content = new StringContent(body, Encoding.UTF8, "application/x-www-form-urlencoded");
+        using var response = await HttpTransport.SendAsync(request, cancellationToken, redirect: false);
         if (!response.IsSuccessStatusCode) throw new LiveRequestException(response.StatusCode == HttpStatusCode.Unauthorized ? LiveFailureKind.Authentication : LiveFailureKind.Platform, "平台请求失败：" + (int)response.StatusCode);
         return Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
     }

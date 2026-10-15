@@ -101,7 +101,7 @@ namespace PlayWin.WinUI.Controls
             try
             {
 
-                var response = await HttpUtil.Get($"https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key={qrcodeKey}");
+                using var response = await HttpUtil.Get($"https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key={qrcodeKey}");
 
                 var respContent = await response.Content.ReadAsStringAsync();
 

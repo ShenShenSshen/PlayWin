@@ -1,0 +1,22 @@
+{
+  "startupMs": 2954.4,
+  "durationSeconds": 0.0349938,
+  "activeEndSeconds": 0.0,
+  "requests": 0,
+  "peakRequests": 0,
+  "results": [],
+  "errors": [],
+  "samples": [
+    {
+      "seconds": 0.0,
+      "mainPrivateMB": 77.9,
+      "childPrivateMB": 0.0,
+      "workingSetMB": 154.53,
+      "cpuMs": 734.4,
+      "threads": 27,
+      "processes": 1,
+      "requests": 0,
+      "activeRequests": 0
+    }
+  ]
+}

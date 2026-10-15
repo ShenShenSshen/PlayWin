@@ -23,13 +23,13 @@ internal static class RandomLive
             attempt.CancelAfter(TimeSpan.FromSeconds(12));
             try
             {
-                var catalog = await GameCatalog.LoadAsync(platform.LiveSite).WaitAsync(attempt.Token);
+                var catalog = await GameCatalog.LoadAsync(platform.LiveSite, attempt.Token);
                 var sources = GameBrowse.OverviewSources(catalog);
                 var batches = await Task.WhenAll(sources.Select(async source =>
                 {
                     try
                     {
-                        var result = await source.Site.GetCategoryRooms(source.Category, 1).WaitAsync(attempt.Token);
+                        var result = await source.Site.GetCategoryRooms(source.Category, 1, attempt.Token);
                         return (rooms: result.Rooms, error: result.Error);
                     }
                     catch (Exception ex) when (!cancellation.IsCancellationRequested)
@@ -48,7 +48,7 @@ internal static class RandomLive
                 {
                     try
                     {
-                        if (!await platform.LiveSite.GetLiveStatus(room.RoomID).WaitAsync(attempt.Token)) continue;
+                        if (!await platform.LiveSite.GetLiveStatus(room.RoomID, attempt.Token)) continue;
                         room.Source = platform.LiveSite;
                         return room;
                     }

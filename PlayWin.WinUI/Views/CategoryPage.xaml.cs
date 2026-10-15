@@ -1,6 +1,7 @@
-﻿using PlayWin.Core.Models;
+using PlayWin.Core.Models;
 using PlayWin.WinUI.Helper;
 using PlayWin.WinUI.ViewModels;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System.Linq;
@@ -10,7 +11,7 @@ public sealed partial class CategoryPage : Page
     readonly CategoryVM categoryVM = new();
     public CategoryPage()
     {
-        InitializeComponent(); NavigationCacheMode = NavigationCacheMode.Enabled;
+        InitializeComponent(); Unloaded += (_, _) => categoryVM.CancelPending(); NavigationCacheMode = NavigationCacheMode.Enabled;
         GroupPicker.SelectionChanged += (_, change) => PlatformTabAnimation.Play(GroupPicker, change);
         PlatformPicker.ItemsSource = MainVM.Sites;
         PlatformPicker.SelectedItem = MainVM.BrowseSite;
@@ -18,6 +19,7 @@ public sealed partial class CategoryPage : Page
         {
             if (PlatformPicker.SelectedItem != MainVM.BrowseSite) PlatformPicker.SelectedItem = MainVM.BrowseSite;
             else if (categoryVM.Items.Count == 0) _ = LoadCategoriesAsync();
+            else _ = categoryVM.CompletePicturesAsync();
         };
     }
     private async System.Threading.Tasks.Task LoadCategoriesAsync()
@@ -35,7 +37,13 @@ public sealed partial class CategoryPage : Page
     private void GamesGrid_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
     {
         args.ItemContainer.ContextFlyout = null;
-        if (args.InRecycleQueue || args.Item is not LiveGameCategory game || game.Sources == null || game.Sources.Count == 0) return;
+        var image = (args.ItemContainer.ContentTemplateRoot as FrameworkElement)?.FindName("GameImage") as Image;
+        if (args.InRecycleQueue)
+        {
+            if (image != null) DecodedImage.SetUrl(image, null);
+            return;
+        }
+        if (args.Item is not LiveGameCategory game || game.Sources == null || game.Sources.Count == 0) return;
         var site = MainVM.Sites.Single(s => s.LiveSite == game.Sources[0].Site);
         var action = new MenuFlyoutItem();
         var menu = new MenuFlyout();

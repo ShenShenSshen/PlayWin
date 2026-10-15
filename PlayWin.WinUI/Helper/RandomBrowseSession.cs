@@ -29,7 +29,8 @@ internal sealed class RandomBrowseSession
             bool live;
             try
             {
-                live = await room.Source.GetLiveStatus(room.RoomID).WaitAsync(TimeSpan.FromSeconds(10), cancellation);
+                using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellation); timeout.CancelAfter(TimeSpan.FromSeconds(10));
+                live = await room.Source.GetLiveStatus(room.RoomID, timeout.Token);
             }
             catch (Exception ex) when (!cancellation.IsCancellationRequested)
             {

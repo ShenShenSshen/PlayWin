@@ -1,0 +1,24 @@
+{
+  "catalogHits": 0,
+  "catalogLoads": 0,
+  "startupMs": 609.3,
+  "durationSeconds": 0.0126085,
+  "activeEndSeconds": 0.0,
+  "requests": 0,
+  "peakRequests": 0,
+  "results": [],
+  "errors": [],
+  "samples": [
+    {
+      "seconds": 0.0,
+      "mainPrivateMB": 79.05,
+      "childPrivateMB": 0.0,
+      "workingSetMB": 160.08,
+      "cpuMs": 609.4,
+      "threads": 26,
+      "processes": 1,
+      "requests": 0,
+      "activeRequests": 0
+    }
+  ]
+}
