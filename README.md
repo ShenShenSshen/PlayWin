@@ -83,7 +83,7 @@ v1.0.4 已通过离线数据、图片解码与显隐、取消与返回、缓存�
 
 ## 来源与许可证
 
-原项目：[https://github.com/xiaoyaocz/AllLive](https://github.com/xiaoyaocz/AllLive)。感谢原作者及项目依赖的维护者。
+设计参考项目：[https://github.com/xiaoyaocz/AllLive](https://github.com/xiaoyaocz/AllLive)。感谢原作者及项目依赖的维护者。
 
 采用 [MIT 许可证](LICENSE)，保留原作者版权声明。与直播平台无官方关联。
 
